@@ -34,20 +34,31 @@ function kill(proc) {
   try { process.kill(-proc.pid, "SIGKILL"); } catch { proc.kill("SIGKILL"); }
 }
 
+/** Starts Chrome on a free port: it may take a while on a cold CI machine, so it gets 30 s, and
+ * one more try on another port. Resolves to the process, its port and its first page. */
+async function launch(reducedMotion) {
+  for (let attempt = 1; ; attempt++) {
+    const port = 9500 + Math.floor(Math.random() * 400);
+    const args = ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), "site-test-"))}`,
+      "--hide-scrollbars", "--no-first-run", "--host-resolver-rules=MAP api.github.com 127.0.0.1:1", "about:blank"];
+    if (reducedMotion) args.push("--force-prefers-reduced-motion");
+    // Its own process group: closing it ends Chrome's helper processes too, not only the main one.
+    const proc = spawn(chrome, args, { stdio: "ignore", detached: true });
+    let tabs;
+    for (let i = 0; i < 300 && !tabs?.length; i++) {
+      try { tabs = await (await fetch(`http://127.0.0.1:${port}/json`)).json(); } catch { await new Promise((r) => setTimeout(r, 100)); }
+    }
+    const page = tabs?.find((t) => t.type === "page");
+    if (page) return { proc, page };
+    kill(proc);
+    if (attempt === 2) throw new Error(`Chrome didn't start in 30 s, twice`);
+  }
+}
+
 /** Starts Chrome and opens one page. GitHub's API is blocked: the page then shows its own text. */
 export async function open({ reducedMotion = true } = {}) {
-  const port = 9500 + Math.floor(Math.random() * 400);
-  const args = ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), "site-test-"))}`,
-    "--hide-scrollbars", "--no-first-run", "--host-resolver-rules=MAP api.github.com 127.0.0.1:1", "about:blank"];
-  if (reducedMotion) args.push("--force-prefers-reduced-motion");
-  // Its own process group: closing it ends Chrome's helper processes too, not only the main one.
-  const proc = spawn(chrome, args, { stdio: "ignore", detached: true });
-  let tabs;
-  for (let i = 0; i < 100 && !tabs?.length; i++) {
-    try { tabs = await (await fetch(`http://127.0.0.1:${port}/json`)).json(); } catch { await new Promise((r) => setTimeout(r, 100)); }
-  }
-  if (!tabs?.length) { kill(proc); throw new Error(`Chrome didn't answer on port ${port}`); }
-  const ws = new WebSocket(tabs.find((t) => t.type === "page").webSocketDebuggerUrl);
+  const { proc, page } = await launch(reducedMotion);
+  const ws = new WebSocket(page.webSocketDebuggerUrl);
   await new Promise((r) => (ws.onopen = r));
   let id = 0;
   const waiting = new Map();
