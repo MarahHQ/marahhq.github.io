@@ -1,0 +1,1209 @@
+/* The site's styles: Tailwind, with the Marah theme. Layout, spacing and type are utilities in
+   the HTML. This file holds the theme, the base styles, and the components: the parts with
+   states, pseudo-elements or SVG that utilities would only spell out at length. */
+@import "tailwindcss" source(none);
+
+@source "./";
+
+/* Inter, the Default theme's font, in Latin only (OFL: assets/fonts/OFL-Inter.txt). */
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-semibold.woff2") format("woff2");
+  font-weight: 500 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/inter-bold.woff2") format("woff2");
+  font-weight: 700 900;
+  font-display: swap;
+}
+
+@theme {
+  /* The page's three widths: a phone up to 600 px, a tablet up to 960 px, a small laptop up to
+     1200 px. The page is written for a desktop first, so it uses max-sm:, max-md: and max-lg:. */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 601px;
+  --breakpoint-md: 961px;
+  --breakpoint-lg: 1201px;
+
+  /* The logo's colours: ice blue and blue on deep navy. Only these. */
+  --color-*: initial;
+  --color-bg: #0d1926;
+  --color-night: #0a1520;
+  --color-page: #0f1f30;
+  --color-panel: #102332;
+  --color-panel-hi: #13293d;
+  --color-deep: #0b1724;
+  --color-ink: #07111b;
+  --color-line: #1d3750;
+  --color-edge: #3a6d98;
+  --color-ice: #82d8f5;
+  --color-blue: #4c8bdc;
+  --color-text: #eef6fb;
+  --color-muted: #b4c7d6;
+  --color-code: #d9eef8;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* Sizes only: the line height stays the body's 1.6 unless a utility sets it. */
+  --text-caption: 13px;
+  --text-small: 14px;
+  --text-body: 15px;
+  --text-lead: 17px;
+  --text-section: clamp(34px, 4vw, 56px);
+
+  --radius-pill: 999px;
+  --radius-card: 18px;
+  --radius-box: 14px;
+
+  --shadow-glow: 0 0 25px rgba(130, 216, 245, 0.5);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+    background: var(--color-page);
+  }
+  body {
+    color: var(--color-text);
+    background:
+      radial-gradient(ellipse at 60% 12%, #173a5a 0%, transparent 40%),
+      linear-gradient(160deg, var(--color-night), var(--color-bg) 55%, var(--color-page));
+    font: 16px/1.6 var(--font-sans);
+  }
+  a {
+    color: var(--color-ice);
+    text-decoration: underline;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+  }
+  img,
+  svg {
+    display: inline;
+  }
+  button {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-ice);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  /* All motion stops when the visitor asks for less. The screenshot switch still fades. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    /* Here, not in components: an !important rule of an earlier layer wins over a later one's. */
+    .screen-stack > img.screen-next.show {
+      transition: opacity 0.3s ease !important;
+    }
+  }
+}
+
+/* One class for a thing used across the page. Each one works with every variant (hover:, max-sm:). */
+@utility wrap {
+  width: min(1280px, 100% - 64px);
+  margin-inline: auto;
+  @variant max-lg {
+    width: min(1280px, 100% - 48px);
+  }
+  @variant max-sm {
+    width: calc(100% - 32px);
+  }
+}
+@utility eyebrow {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-ice);
+}
+@utility pill {
+  display: inline-block;
+  margin: 0;
+  padding: 6px 16px;
+  border: 1px solid var(--color-edge);
+  border-radius: 999px;
+  background: rgba(16, 35, 50, 0.7);
+  color: var(--color-text);
+  font-size: 13px;
+}
+@utility accent-text {
+  color: var(--color-ice);
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    background: linear-gradient(100deg, #a6e6fa, var(--color-ice) 45%, #6fa8ef);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+@utility hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+@layer components {
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Buttons: the ice gradient, and the outline. The hover glow is a layer that only fades. */
+  .cta,
+  .btn-outline {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 999px;
+    padding: 14px 24px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s;
+  }
+  .cta::after,
+  .btn-outline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 28px rgba(130, 216, 245, 0.45);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .cta {
+    background: linear-gradient(105deg, #9ae2f8, var(--color-ice) 45%, #6bb6ec);
+    color: var(--color-bg);
+    border: 1px solid #b8ecfb;
+    box-shadow: 0 0 22px rgba(130, 216, 245, 0.3);
+  }
+  .btn-outline {
+    color: var(--color-text);
+    border: 1px solid #5d7d99;
+    background: rgba(13, 25, 38, 0.5);
+  }
+  .cta:hover,
+  .btn-outline:hover,
+  .cta:focus-visible,
+  .btn-outline:focus-visible {
+    transform: translateY(-2px);
+  }
+  .cta:hover::after,
+  .btn-outline:hover::after,
+  .cta:focus-visible::after,
+  .btn-outline:focus-visible::after {
+    opacity: 1;
+  }
+  .btn-outline:hover,
+  .btn-outline:focus-visible {
+    border-color: var(--color-ice);
+  }
+  .cta:active,
+  .btn-outline:active {
+    transform: translateY(0) scale(0.98);
+  }
+  .cta.small,
+  .btn-outline.small {
+    padding: 10px 20px;
+  }
+
+  /* The header: its links, and the menu button that folds them on a tablet or a phone. Not
+     utilities: the script folds the links, so their display must stay a component's. */
+  #nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .menu {
+    display: none;
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    color: var(--color-text);
+    padding: 9px 11px;
+    border-radius: 12px;
+    line-height: 0;
+  }
+  @media (width < 1201px) {
+    .nav-link {
+      padding: 8px 10px;
+    }
+  }
+
+  /* The header's links: a line grows under the one you point at. */
+  .nav-link {
+    position: relative;
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 16px;
+    border-radius: 999px;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 4px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-ice);
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+  }
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /* An icon on a tile, as in the feature strip. */
+  .icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #173a5a, var(--color-panel));
+    border: 1px solid var(--color-line);
+    transition:
+      translate 0.3s ease,
+      rotate 0.3s ease,
+      border-color 0.3s;
+  }
+  .icon svg {
+    width: 32px;
+    height: 32px;
+    fill: none;
+    stroke: var(--color-ice);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* A card with a gradient border that glows under the pointer. */
+  .platform {
+    position: relative;
+    min-height: 104px;
+    padding: 14px 10px;
+    border-radius: 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    background:
+      linear-gradient(var(--color-panel), #0c1c2b) padding-box,
+      linear-gradient(125deg, var(--color-ice), var(--color-blue)) border-box;
+    border: 2px solid transparent;
+    transition: transform 0.25s ease;
+  }
+  .platform::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 26px rgba(130, 216, 245, 0.4);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .platform:hover {
+    transform: translateY(-4px);
+  }
+  .platform:hover::after {
+    opacity: 1;
+  }
+
+  /* A download card: a soft light follows the pointer (site.js sets --mx and --my). */
+  .card {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px 16px;
+    border-radius: 18px;
+    text-decoration: none;
+    color: var(--color-text);
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    transition:
+      border-color 0.2s,
+      transform 0.2s ease;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(130, 216, 245, 0.16),
+      transparent 70%
+    );
+  }
+  .card > * {
+    position: relative;
+  }
+  .card:hover,
+  .card:focus-visible {
+    border-color: var(--color-ice);
+    transform: translateY(-4px);
+  }
+  .card:hover::before,
+  .card:focus-visible::before {
+    opacity: 1;
+  }
+  .card strong {
+    font-size: 17px;
+  }
+  .card span {
+    color: var(--color-muted);
+    font-size: 14px;
+  }
+  .card small {
+    color: var(--color-muted);
+    font-size: 12.5px;
+  }
+
+  /* A command to copy: monospace on ink, with a copy button that turns into a tick. */
+  .cmd {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--color-ink);
+    border: 1px solid var(--color-line);
+  }
+  .cmd code {
+    flex: 1;
+    min-width: 0;
+    font: 13.5px/1.55 var(--font-mono);
+    color: var(--color-code);
+    overflow-wrap: anywhere;
+  }
+  .cmd > code::before {
+    content: "$ ";
+    color: var(--color-ice);
+  }
+  .cmd pre {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    overflow-x: auto;
+  }
+  .cmd pre code {
+    white-space: pre;
+    overflow-wrap: normal;
+  }
+  .copy {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: var(--color-line);
+    color: var(--color-text);
+    border: 1px solid var(--color-edge);
+    border-radius: 10px;
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .copy svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .copy .i-done {
+    display: none;
+  }
+  .copy.done {
+    background: var(--color-ice);
+    border-color: var(--color-ice);
+    color: var(--color-bg);
+  }
+  .copy.done .i-copy {
+    display: none;
+  }
+  .copy.done .i-done {
+    display: block;
+  }
+  .copy:hover,
+  .copy:focus-visible {
+    border-color: var(--color-ice);
+  }
+  .hint code {
+    font-size: 13px;
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  /* Tabs, and the screenshot switcher: the chosen one is filled. */
+  .tab {
+    background: none;
+    border: 0;
+    color: var(--color-muted);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .tab[aria-selected="true"] {
+    background: var(--color-line);
+    color: var(--color-text);
+  }
+  .chip-button {
+    background: var(--color-panel);
+    border: 1px solid var(--color-edge);
+    border-radius: 999px;
+    color: var(--color-text);
+    padding: 9px 20px;
+    font-weight: 600;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s,
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .chip-button:hover,
+  .chip-button:focus-visible {
+    border-color: var(--color-ice);
+    transform: translateY(-2px);
+  }
+  .chip-button:active {
+    transform: scale(0.97);
+  }
+  .chip-button[aria-pressed="true"] {
+    background: var(--color-ice);
+    border-color: var(--color-ice);
+    color: var(--color-bg);
+  }
+
+  /* A list with ticks; the release line gets a dot. */
+  .ticks li::before {
+    content: "✓";
+    color: var(--color-ice);
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .ticks li[data-release]::before {
+    content: "●";
+    font-size: 10px;
+    vertical-align: 2px;
+  }
+
+  /* Numbered steps: the number sits in an ice circle. */
+  .steps {
+    counter-reset: step;
+  }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 20px 20px 20px 76px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: 18px;
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-ice);
+    color: var(--color-bg);
+    font-weight: 800;
+  }
+  .steps li:hover {
+    transform: translateX(6px);
+    border-color: var(--color-edge);
+  }
+
+  /* The screenshots: a picture on a tilted card. site.js slides the next one in on a layer. */
+  .screen-stack > img {
+    position: relative;
+    display: block;
+    width: 100%;
+    border: 2px solid var(--color-ice);
+    border-radius: 14px;
+    transform: rotate(3deg);
+    box-shadow: var(--shadow-glow);
+  }
+  .screen-stack > img.screen-next {
+    position: absolute;
+    top: 24px;
+    left: 20px;
+    width: calc(100% - 40px);
+    opacity: 0;
+    pointer-events: none;
+    translate: 9% 0;
+    scale: 0.94;
+  }
+  .screen-stack > img.screen-next.show {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    transition:
+      opacity 0.35s ease,
+      translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+      scale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .screen-stack > #screen {
+    transition:
+      opacity 0.45s ease,
+      translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+      scale 0.6s ease;
+  }
+  .screen-stack > #screen.leaving {
+    opacity: 0.15;
+    translate: -7% 0;
+    scale: 0.94;
+  }
+  .screen-stack.swing .screen-back {
+    animation: swing 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .screen-stack > img.screen-next {
+      translate: none;
+      scale: none;
+    }
+  }
+  .screen-back {
+    position: absolute;
+    inset: 0 30px 40px 0;
+    border: 2px solid var(--color-blue);
+    border-radius: 16px;
+    transform: rotate(-5deg);
+  }
+  /* The Home of the themes section, tilted until you point at it. */
+  .theme-shot {
+    rotate: 2deg;
+  }
+
+  /* The theme file, coloured as an editor would. */
+  .editor i {
+    font-style: normal;
+    color: #9cc0ff;
+  }
+  .editor s {
+    text-decoration: none;
+    color: #a6e3b8;
+  }
+  .editor u {
+    text-decoration: none;
+    color: #f0a5d8;
+  }
+  .editor em {
+    font-style: normal;
+    color: #5f7f99;
+  }
+  .sw {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+    vertical-align: -1px;
+    border-radius: 3px;
+    background: var(--c);
+    box-shadow: 0 0 10px var(--c);
+  }
+
+  /* The controller drawing. Its parts are SVG, styled by class; site.js lights .b and .call. */
+  .gamepad svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .gamepad .shell {
+    fill: url(#pad-wing);
+    stroke: #a3b6c7;
+    stroke-width: 1;
+    filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.55));
+  }
+  .gamepad .core {
+    fill: url(#pad-core);
+    stroke: #2e3e4f;
+    stroke-width: 1;
+  }
+  .gamepad .core-edge {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 1;
+  }
+  .gamepad:focus-visible .shell,
+  .gamepad.live .shell {
+    stroke: var(--color-ice);
+    stroke-width: 2.5;
+  }
+  .gamepad .touch {
+    fill: url(#pad-touch);
+    stroke: #b0c0ce;
+    stroke-width: 1;
+  }
+  .gamepad .touch-hi {
+    stroke: #fff;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.9;
+  }
+  .gamepad .lightbar {
+    fill: none;
+    stroke: var(--color-ice);
+    stroke-width: 3;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 5px var(--color-ice));
+  }
+  .gamepad .well {
+    fill: url(#pad-well);
+  }
+  .gamepad .stick-ring {
+    fill: #060b11;
+    stroke: #2c3b4a;
+    stroke-width: 1;
+  }
+  .gamepad .cap {
+    fill: url(#pad-cap);
+    stroke: #3d5063;
+    stroke-width: 0.8;
+  }
+  .gamepad .dish {
+    fill: url(#pad-dish);
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 0.8;
+    pointer-events: none;
+  }
+  .gamepad .mute {
+    fill: #f0a35c;
+    opacity: 0.85;
+  }
+  .gamepad .speaker circle {
+    fill: #050a10;
+  }
+  .gamepad .b {
+    cursor: pointer;
+  }
+  .gamepad .b .k {
+    fill: url(#pad-key);
+    stroke: #0c131a;
+    stroke-width: 1;
+    transition:
+      fill 0.12s,
+      stroke 0.12s;
+  }
+  .gamepad .b .k.trig {
+    fill: url(#pad-trigger);
+    stroke: #0c131a;
+  }
+  .gamepad .b .k.bump {
+    fill: #2a3846;
+    stroke: #0c131a;
+  }
+  .gamepad .b .k.dk {
+    fill: url(#pad-dkey);
+    stroke: #9fb1c1;
+  }
+  .gamepad .edge {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.25);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+  .gamepad .hi {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.18);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+  .gamepad .b text {
+    fill: #c9d6e2;
+    font: 700 11px var(--font-sans);
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+  }
+  .gamepad .ps text {
+    font-size: 7.5px;
+  }
+  .gamepad .g {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.12s;
+  }
+  .gamepad .tri .g {
+    stroke: #7fe0c4;
+  }
+  .gamepad .cir .g {
+    stroke: #ff8f8f;
+  }
+  .gamepad .crs .g {
+    stroke: #9cc0ff;
+  }
+  .gamepad .sq .g {
+    stroke: #f0a5d8;
+  }
+  .gamepad .b:hover .k {
+    stroke: var(--color-ice);
+  }
+  .gamepad .b.on .k,
+  .gamepad .b.on .k.cap,
+  .gamepad .b.on .k.dk,
+  .gamepad .b.on .k.trig,
+  .gamepad .b.on .k.bump {
+    fill: var(--color-ice);
+    stroke: var(--color-ice);
+  }
+  .gamepad .b.on text {
+    fill: var(--color-bg);
+  }
+  .gamepad .b.on .g {
+    stroke: var(--color-bg);
+  }
+  /* The lines from each button to what it does. */
+  .gamepad .call {
+    pointer-events: none;
+  }
+  .gamepad .call polyline {
+    fill: none;
+    stroke: #5f87ab;
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+    transition: stroke 0.15s;
+  }
+  .gamepad .call circle {
+    fill: var(--color-ice);
+    stroke: var(--color-bg);
+    stroke-width: 1;
+  }
+  .gamepad .call text {
+    font: 15px var(--font-sans);
+  }
+  .gamepad .call .cn {
+    fill: var(--color-text);
+    font-weight: 700;
+  }
+  .gamepad .call .cw {
+    fill: var(--color-muted);
+    font-size: 13.5px;
+  }
+  .gamepad .call .ck {
+    fill: #7f9bb3;
+  }
+  .gamepad .call.on polyline {
+    stroke: var(--color-ice);
+    stroke-dasharray: none;
+    stroke-width: 1.6;
+  }
+  .gamepad .call.on .cn {
+    fill: var(--color-ice);
+  }
+  .gamepad .call.on .cw {
+    fill: var(--color-text);
+  }
+  /* On a tablet or a phone the labels get too small: the list below says it instead, and the
+     controller fills the width (the picture is cut to it). */
+  @media (width < 961px) {
+    .gamepad {
+      overflow: hidden;
+    }
+    .gamepad .calls {
+      display: none;
+    }
+    .gamepad svg {
+      width: 240%;
+      max-width: none;
+      margin: -21% 0 -16% -70%;
+    }
+  }
+  .keys > div.on {
+    border-color: var(--color-ice);
+    background: #15324b;
+  }
+  kbd {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 0 6px;
+    border-radius: 6px;
+    border: 1px solid var(--color-edge);
+    font: 600 12px/1.6 var(--font-sans);
+    color: var(--color-muted);
+    background: var(--color-deep);
+  }
+
+  /* A fold animates its height: the grid row goes from 0fr to 1fr. */
+  .fold {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.3s ease;
+  }
+  .fold.open,
+  .open > .fold {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .fold-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+  .chev {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: var(--color-ice);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: rotate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .repos-toggle {
+    padding-right: 56px;
+  }
+  .chev-ring {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--color-edge);
+    background: var(--color-deep);
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+  }
+  .repos-toggle[aria-expanded="true"] {
+    border-color: var(--color-ice);
+  }
+  .repos-toggle[aria-expanded="true"] .chev-ring {
+    background: var(--color-ice);
+    border-color: var(--color-ice);
+  }
+  .repos-toggle[aria-expanded="true"] .chev {
+    stroke: var(--color-bg);
+    rotate: 180deg;
+  }
+  .repo {
+    min-width: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    background: var(--color-panel);
+    transition:
+      border-color 0.25s,
+      background-color 0.25s;
+  }
+  .repo:hover {
+    border-color: #2c5272;
+  }
+  .repo.open {
+    border-color: var(--color-edge);
+    background: linear-gradient(160deg, var(--color-panel-hi), var(--color-panel));
+  }
+  .repo.open .repo-head .chev {
+    rotate: 180deg;
+  }
+
+  /* The comparison table: one row a question, the launcher's answer, the OS's answer. */
+  .compare {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 560px;
+  }
+  .compare th,
+  .compare td {
+    padding: 16px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-line);
+    vertical-align: top;
+  }
+  .compare thead th {
+    font-size: 18px;
+  }
+  .compare tbody th {
+    font-weight: 600;
+    color: var(--color-muted);
+    width: 30%;
+  }
+  .compare tfoot td {
+    border-bottom: 0;
+    padding-top: 24px;
+  }
+  .compare tbody td:nth-child(3),
+  .compare thead th:nth-child(3) {
+    background: rgba(130, 216, 245, 0.05);
+  }
+  /* On a phone the table's buttons move under it: a column is too narrow for them. */
+  @media (width < 601px) {
+    .compare {
+      min-width: 0;
+      font-size: 14px;
+    }
+    .compare th,
+    .compare td {
+      padding: 12px 8px;
+    }
+    .compare tbody th {
+      width: 28%;
+    }
+    .compare tfoot {
+      display: none;
+    }
+  }
+
+  /* A question that opens: a plus turns into a cross. */
+  .qa {
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    background: var(--color-panel);
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .qa:hover,
+  .qa[open] {
+    border-color: var(--color-edge);
+  }
+  .qa summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+  }
+  .qa summary::-webkit-details-marker {
+    display: none;
+  }
+  .qa summary::after {
+    content: "";
+    flex: none;
+    width: 14px;
+    height: 14px;
+    transition: transform 0.25s ease;
+    background:
+      linear-gradient(var(--color-ice), var(--color-ice)) center / 100% 2px no-repeat,
+      linear-gradient(var(--color-ice), var(--color-ice)) center / 2px 100% no-repeat;
+  }
+  .qa[open] summary::after {
+    transform: rotate(45deg);
+  }
+  .qa p {
+    margin: 0;
+    padding: 0 22px 18px;
+    color: var(--color-muted);
+  }
+
+  /* The mobile menu: on a tablet or a phone, with the script, the links fold under a button. */
+  @media (width < 961px) {
+    .js .menu {
+      display: block;
+      order: 3;
+    }
+    .js #nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      padding: 16px 24px;
+      background: var(--color-night);
+      border-bottom: 1px solid var(--color-line);
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .js #nav.open {
+      display: flex;
+    }
+  }
+}
+
+/* Motion. All of it moves only transform, translate, scale and opacity, so the browser
+   doesn't lay the page out again. With prefers-reduced-motion: reduce, none of it runs. */
+@keyframes bob {
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+}
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+@keyframes pop {
+  from {
+    scale: 0.92;
+  }
+}
+@keyframes float {
+  50% {
+    translate: 0 -8px;
+  }
+}
+@keyframes glow {
+  50% {
+    opacity: 0.6;
+    scale: 1.12;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+@keyframes swing {
+  40% {
+    rotate: -5deg;
+    translate: -14px 6px;
+  }
+}
+
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Hero: the copy comes in line by line. The mascot is the largest picture, so it never
+       starts hidden: it only grows a little. */
+    .hero-copy > * {
+      animation: enter 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    }
+    .hero-copy > :nth-child(2) {
+      animation-delay: 0.08s;
+    }
+    .hero-copy > :nth-child(3) {
+      animation-delay: 0.16s;
+    }
+    .hero-copy > :nth-child(4) {
+      animation-delay: 0.24s;
+    }
+    .mascot {
+      animation: bob 5s ease-in-out infinite;
+    }
+    .mascot-wrap {
+      animation: pop 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    }
+    .mascot-glow {
+      animation: glow 5s ease-in-out infinite;
+    }
+    .preview {
+      animation: enter 0.7s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    }
+    .preview-frame {
+      animation: float 7s 1s ease-in-out infinite;
+    }
+    .screen-back {
+      transition: transform 0.5s ease;
+    }
+    .screen-stack:hover .screen-back {
+      transform: rotate(-7deg);
+    }
+    .theme-shot {
+      transition:
+        rotate 0.5s ease,
+        translate 0.5s ease;
+    }
+    .theme-art:hover .theme-shot {
+      rotate: 0deg;
+      translate: 0 -6px;
+    }
+    .qa[open] p {
+      animation: fade-in 0.3s ease;
+    }
+
+    /* Scroll reveal. The head script adds .reveal; site.js adds .in when a part comes into view. */
+    .reveal [data-reveal]:not(.in),
+    .reveal [data-stagger]:not(.in) > * {
+      opacity: 0;
+    }
+    .reveal [data-reveal].in,
+    .reveal [data-stagger].in > * {
+      animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+      animation-delay: calc(var(--i, 0) * 90ms);
+    }
+    [data-stagger] > :nth-child(2) {
+      --i: 1;
+    }
+    [data-stagger] > :nth-child(3) {
+      --i: 2;
+    }
+    [data-stagger] > :nth-child(4) {
+      --i: 3;
+    }
+    [data-stagger] > :nth-child(5) {
+      --i: 4;
+    }
+    [data-stagger] > :nth-child(6) {
+      --i: 5;
+    }
+  }
+}

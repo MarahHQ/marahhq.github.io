@@ -17,7 +17,7 @@ nav.querySelectorAll("a").forEach((link) =>
   link.addEventListener("click", () => {
     nav.classList.remove("open");
     menu.setAttribute("aria-expanded", "false");
-  })
+  }),
 );
 
 // Scroll reveal: a part fades up the first time it comes into view. The CSS hides the
@@ -33,13 +33,16 @@ if ("IntersectionObserver" in window) {
       }
     },
     // A low threshold: on a phone a part can be taller than the screen.
-    { rootMargin: "0px 0px -8% 0px", threshold: 0 }
+    { rootMargin: "0px 0px -8% 0px", threshold: 0 },
   );
   parts.forEach((part) => seen.observe(part));
   // A link or button that gets keyboard focus is shown at once, even at the screen's edge.
   document.addEventListener("focusin", (event) => {
-    for (let part = event.target.closest("[data-reveal], [data-stagger]"); part;
-      part = part.parentElement.closest("[data-reveal], [data-stagger]")) {
+    for (
+      let part = event.target.closest("[data-reveal], [data-stagger]");
+      part;
+      part = part.parentElement.closest("[data-reveal], [data-stagger]")
+    ) {
       part.classList.add("in");
       seen.unobserve(part);
     }
@@ -69,7 +72,10 @@ function load(src) {
     img.decoding = "async";
     img.src = src;
     // If the decode fails, the swap still goes on and the browser shows what it can.
-    decoded.set(src, img.decode().catch(() => {}));
+    decoded.set(
+      src,
+      img.decode().catch(() => {}),
+    );
   }
   return decoded.get(src);
 }
@@ -83,7 +89,7 @@ function warmWhenNear() {
       near.disconnect();
       buttons.forEach((button) => load(button.dataset.src));
     },
-    { rootMargin: "600px 0px" }
+    { rootMargin: "600px 0px" },
   );
   near.observe(document.querySelector("#screens"));
 }
@@ -123,11 +129,14 @@ async function show(button) {
     stack.classList.add("swing");
   }
   // A timer, not transitionend: the timer fires even when the transition does not run.
-  fadeDone = setTimeout(async () => {
-    screen.src = src;
-    await screen.decode().catch(() => {});
-    if (mine === turn) settle(src);
-  }, reduced.matches ? 320 : 620);
+  fadeDone = setTimeout(
+    async () => {
+      screen.src = src;
+      await screen.decode().catch(() => {});
+      if (mine === turn) settle(src);
+    },
+    reduced.matches ? 320 : 620,
+  );
 }
 // Puts `src` on #screen and hides the layer, both at once, with no transition.
 function settle(src) {
@@ -205,12 +214,15 @@ document.querySelectorAll("[data-copy]").forEach((button) => {
       button.setAttribute("aria-label", "Couldn't copy: select the text instead");
     }
     clearTimeout(undo);
-    undo = setTimeout(() => { button.classList.remove("done"); button.setAttribute("aria-label", label); }, 1800);
+    undo = setTimeout(() => {
+      button.classList.remove("done");
+      button.setAttribute("aria-label", label);
+    }, 1800);
   });
 });
 
 // The repositories card opens their panel in place, and the panel is an accordion: one distro
-// open at a time. Both slide (the CSS animates each collapse's height). Without this script
+// open at a time. Both slide (the CSS animates each fold's height). Without this script
 // everything shows, open.
 const reposToggle = document.querySelector(".repos-toggle");
 const repos = document.querySelector("#repos");
@@ -227,9 +239,15 @@ if (reposToggle && repos) {
     const open = !repos.classList.contains("open");
     setOpen(repos, open);
     reposToggle.setAttribute("aria-expanded", String(open));
-    if (open) setTimeout(() => repos.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "nearest" }), 200);
+    if (open)
+      setTimeout(() => repos.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "nearest" }), 200);
   });
-  reposToggle.addEventListener("keydown", (event) => { if (event.key === " ") { event.preventDefault(); reposToggle.click(); } });
+  reposToggle.addEventListener("keydown", (event) => {
+    if (event.key === " ") {
+      event.preventDefault();
+      reposToggle.click();
+    }
+  });
 
   const items = [...repos.querySelectorAll("[data-repo]")];
   function openRepo(item) {
@@ -237,7 +255,7 @@ if (reposToggle && repos) {
       const open = other === item && !item.classList.contains("open");
       other.classList.toggle("open", open);
       other.querySelector(".repo-head").setAttribute("aria-expanded", String(open));
-      other.querySelector(".collapse").inert = !open;
+      other.querySelector(".fold").inert = !open;
     }
   }
   items.forEach((item) => item.querySelector(".repo-head").addEventListener("click", () => openRepo(item)));
@@ -250,11 +268,15 @@ if (reposToggle && repos) {
 const LATEST = "https://github.com/MarahHQ/marah-launcher/releases/latest/download/";
 const forYou = document.querySelector("[data-for-you]");
 const ua = navigator.userAgent;
-const mine =
-  /Android|iPhone|iPad/.test(ua) ? null :
-  /Windows/.test(ua) ? ["Windows", "marah-launcher-windows-x86_64-setup.exe"] :
-  /Mac OS X|Macintosh/.test(ua) ? ["macOS", "marah-launcher-macos-universal.dmg"] :
-  /Linux|X11/.test(ua) ? ["Linux (AppImage)", "Marah-Launcher-x86_64.AppImage"] : null;
+const mine = /Android|iPhone|iPad/.test(ua)
+  ? null
+  : /Windows/.test(ua)
+    ? ["Windows", "marah-launcher-windows-x86_64-setup.exe"]
+    : /Mac OS X|Macintosh/.test(ua)
+      ? ["macOS", "marah-launcher-macos-universal.dmg"]
+      : /Linux|X11/.test(ua)
+        ? ["Linux (AppImage)", "Marah-Launcher-x86_64.AppImage"]
+        : null;
 if (forYou && mine) {
   forYou.textContent = `Download for ${mine[0]}`;
   forYou.href = LATEST + mine[1];
@@ -265,14 +287,16 @@ if (forYou && mine) {
 // The page carries no version numbers, so it is never wrong without this. GitHub allows
 // 60 calls an hour per visitor; an hour's cache in the browser keeps it to two.
 const day = (iso) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-const size = (bytes) => bytes >= 1e9 ? `${(bytes / 1e9).toFixed(1)} GB` : `${Math.round(bytes / 1e6)} MB`;
+const size = (bytes) => (bytes >= 1e9 ? `${(bytes / 1e9).toFixed(1)} GB` : `${Math.round(bytes / 1e6)} MB`);
 async function latest(repo) {
   const key = `marah-release-${repo}`;
   try {
     const kept = JSON.parse(localStorage.getItem(key) || "null");
     if (kept && Date.now() - kept.at < 36e5) return kept.release;
   } catch {}
-  const res = await fetch(`https://api.github.com/repos/MarahHQ/${repo}/releases/latest`, { headers: { Accept: "application/vnd.github+json" } });
+  const res = await fetch(`https://api.github.com/repos/MarahHQ/${repo}/releases/latest`, {
+    headers: { Accept: "application/vnd.github+json" },
+  });
   if (!res.ok) throw new Error(res.status);
   const body = await res.json();
   const release = {
@@ -280,28 +304,36 @@ async function latest(repo) {
     date: body.published_at,
     assets: Object.fromEntries((body.assets || []).map((a) => [a.name, a.size])),
   };
-  try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), release })); } catch {}
+  try {
+    localStorage.setItem(key, JSON.stringify({ at: Date.now(), release }));
+  } catch {}
   return release;
 }
 function say(which, text) {
-  document.querySelectorAll(`[data-release="${which}"]`).forEach((el) => { el.textContent = text; });
-}
-latest("marah-launcher").then((r) => {
-  say("launcher", `${r.tag} · ${day(r.date)}`);
-  document.querySelectorAll("[data-size]").forEach((el) => {
-    const bytes = r.assets[el.dataset.size];
-    if (bytes) el.textContent = size(bytes);
+  document.querySelectorAll(`[data-release="${which}"]`).forEach((el) => {
+    el.textContent = text;
   });
-  if (forYou && forYou.dataset.file && r.assets[forYou.dataset.file]) {
-    forYou.textContent += ` · ${size(r.assets[forYou.dataset.file])}`;
-  }
-}).catch(() => {});
-latest("marah-os").then((r) => {
-  // The ISO, whole or in parts; not the checksums.
-  const iso = Object.entries(r.assets).filter(([name]) => /\.iso(\.part-[a-z]+)?$/.test(name));
-  const total = iso.reduce((sum, [, bytes]) => sum + bytes, 0);
-  say("os", `${r.tag} · ${total ? `${size(total)} · ` : ""}${day(r.date)}`);
-}).catch(() => {});
+}
+latest("marah-launcher")
+  .then((r) => {
+    say("launcher", `${r.tag} · ${day(r.date)}`);
+    document.querySelectorAll("[data-size]").forEach((el) => {
+      const bytes = r.assets[el.dataset.size];
+      if (bytes) el.textContent = size(bytes);
+    });
+    if (forYou && forYou.dataset.file && r.assets[forYou.dataset.file]) {
+      forYou.textContent += ` · ${size(r.assets[forYou.dataset.file])}`;
+    }
+  })
+  .catch(() => {});
+latest("marah-os")
+  .then((r) => {
+    // The ISO, whole or in parts; not the checksums.
+    const iso = Object.entries(r.assets).filter(([name]) => /\.iso(\.part-[a-z]+)?$/.test(name));
+    const total = iso.reduce((sum, [, bytes]) => sum + bytes, 0);
+    say("os", `${r.tag} · ${total ? `${size(total)} · ` : ""}${day(r.date)}`);
+  })
+  .catch(() => {});
 
 // ── The controller: a key, a click or a real controller lights what it does ──
 const pad = document.querySelector("[data-pad]");
@@ -345,9 +377,21 @@ if (pad) {
   pad.querySelectorAll("[data-act]").forEach((b) => b.addEventListener("click", () => hit(b.dataset.act, b)));
   // Keys count only while the controller has the focus, so the page's own keys still work.
   const KEYS = {
-    ArrowUp: "move", ArrowDown: "move", ArrowLeft: "move", ArrowRight: "move",
-    Enter: "select", Escape: "back", Backspace: "back", "/": "search", t: "trailer", T: "trailer",
-    ContextMenu: "menu", PageUp: "page", PageDown: "page", Delete: "notice", Tab: "bar",
+    ArrowUp: "move",
+    ArrowDown: "move",
+    ArrowLeft: "move",
+    ArrowRight: "move",
+    Enter: "select",
+    Escape: "back",
+    Backspace: "back",
+    "/": "search",
+    t: "trailer",
+    T: "trailer",
+    ContextMenu: "menu",
+    PageUp: "page",
+    PageDown: "page",
+    Delete: "notice",
+    Tab: "bar",
   };
   const DPAD = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
   pad.addEventListener("keydown", (event) => {
@@ -361,19 +405,58 @@ if (pad) {
   // A real controller, in the browser's standard layout: 0 ✕, 1 ○, 2 □, 3 △, 4 L1, 5 R1,
   // 6 L2, 7 R2, 8 Create, 9 Options, 12 to 15 the D-pad, 16 PS. Read only while the section
   // is on screen and a controller is there.
-  const PADS = { 0: "select", 1: "back", 2: "trailer", 3: "search", 4: "bar", 5: "bar", 6: "page", 7: "page",
-    8: "notice", 9: "menu", 12: "move", 13: "move", 14: "move", 15: "move", 16: "home" };
-  const PAD_BUTTON = { 4: ".l1", 5: ".r1", 6: ".l2", 7: ".r2", 12: ".dp.up", 13: ".dp.down", 14: ".dp.left", 15: ".dp.right" };
-  let onScreen = false, polling = false, was = [], psSince = 0, psHeld = false, stickWas = false;
+  const PADS = {
+    0: "select",
+    1: "back",
+    2: "trailer",
+    3: "search",
+    4: "bar",
+    5: "bar",
+    6: "page",
+    7: "page",
+    8: "notice",
+    9: "menu",
+    12: "move",
+    13: "move",
+    14: "move",
+    15: "move",
+    16: "home",
+  };
+  const PAD_BUTTON = {
+    4: ".l1",
+    5: ".r1",
+    6: ".l2",
+    7: ".r2",
+    12: ".dp.up",
+    13: ".dp.down",
+    14: ".dp.left",
+    15: ".dp.right",
+  };
+  let onScreen = false,
+    polling = false,
+    was = [],
+    psSince = 0,
+    psHeld = false,
+    stickWas = false;
   function poll() {
     const gp = [...(navigator.getGamepads ? navigator.getGamepads() : [])].find(Boolean);
-    if (!gp || !onScreen) { polling = false; pad.classList.remove("live"); return; }
+    if (!gp || !onScreen) {
+      polling = false;
+      pad.classList.remove("live");
+      return;
+    }
     pad.classList.add("live");
     const now = gp.buttons.map((b) => b.pressed);
     now.forEach((down, i) => {
       if (i === 16) {
-        if (down && !was[i]) { psSince = performance.now(); psHeld = false; }
-        if (down && !psHeld && performance.now() - psSince >= 600) { psHeld = true; hit("hold"); }
+        if (down && !was[i]) {
+          psSince = performance.now();
+          psHeld = false;
+        }
+        if (down && !psHeld && performance.now() - psSince >= 600) {
+          psHeld = true;
+          hit("hold");
+        }
         if (!down && was[i] && !psHeld) hit("home");
         return;
       }
