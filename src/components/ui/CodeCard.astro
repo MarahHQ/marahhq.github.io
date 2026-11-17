@@ -19,5 +19,5 @@ const { name, text, id } = Astro.props;
     <b class="ml-2 text-[12.5px] leading-[normal] font-semibold text-muted">{name}</b>
     {id && <CopyButton target={id} label={`Copy ${name}`} class="ml-auto size-8" />}
   </div>
-  <pre class="overflow-x-auto px-4.5 py-4"><code id={id} class="font-mono text-[13.5px] leading-[1.75] text-code">{text}</code></pre>
+  <pre class="overflow-x-auto px-4.5 py-4"><code id={id} class="font-mono text-[15px] leading-[1.65] text-code">{text}</code></pre>
 </div>
