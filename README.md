@@ -28,7 +28,8 @@ npm run format    # Prettier, which also sorts the Tailwind classes
   - `ui/`: the parts the page repeats: `CopyButton`, `Commands`, `RepoItem` and `Chevron`.
   - `Header.astro` and `Footer.astro`.
 - `src/styles/site.css`: Tailwind's entry.
-  - **The theme:** the logo's colours, Inter, the text sizes and the three widths. The page is
+  - **The theme:** the logo's colours, the fonts (Inter, and Outfit for headings), the text sizes
+    and the three widths. The page is
     written for a desktop first: `max-lg:` is up to 1200 px, `max-md:` up to 960 px, `max-sm:` up
     to 600 px.
   - **The base styles.**
@@ -47,9 +48,11 @@ npm run format    # Prettier, which also sorts the Tailwind classes
   its whitespace as written: Astro 7's default trims it, which would join words and move the
   controller's labels.
 - `public/`: copied as it is, so its URLs never change.
-  - `assets/fonts/`: Inter in Latin only (`inter-*.woff2`), under the SIL Open Font License
-    (`OFL-Inter.txt`). Made from the Default theme's TTF files with fontTools
-    (`pyftsubset … --flavor=woff2`).
+  - `assets/fonts/`: Latin-only subsets, made with fontTools (`pyftsubset … --flavor=woff2`), each
+    under the SIL Open Font License:
+    - Inter (`inter-*.woff2`, `OFL-Inter.txt`), the text: the Default theme's own TTF files.
+    - Outfit (`outfit.woff2`, `OFL-Outfit.txt`), the headings and the logo's name: the variable
+      font from google/fonts. `--font-display` in `src/styles/site.css` picks it.
   - `assets/logo.svg` (animated) and `logo-static.svg`: the logo. `logo-mark.svg` is the gamepad
     alone.
   - `assets/icon-180.png`: the icon for a phone's home screen.
