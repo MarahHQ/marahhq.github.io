@@ -1058,26 +1058,144 @@
     color: var(--color-muted);
   }
 
-  /* The mobile menu: on a tablet or a phone, with the script, the links fold under a button. */
+  /* The header's blur sits on a layer behind it: a backdrop-filter on the header itself would
+     hold the menu's fixed panel inside the header's box. */
+  .site-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(10, 21, 32, 0.85);
+    backdrop-filter: blur(14px);
+  }
+
+  /* The menu's parts that only the folded menu shows. */
+  .nav-title,
+  .nav-close,
+  .nav-extra,
+  .nav-scrim {
+    display: none;
+  }
+
+  /* The menu: on a tablet or a phone, with the script, the links move into a panel that slides
+     in from the right over a dimmed page. Without the script they stay in the header. */
   @media (width < 961px) {
     .js .menu {
       display: block;
       order: 3;
     }
     .js #nav {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      padding: 16px 24px;
-      background: var(--color-night);
-      border-bottom: 1px solid var(--color-line);
+      position: fixed;
+      z-index: 40;
+      inset: 0 0 0 auto;
+      width: min(320px, 86vw);
       flex-direction: column;
       align-items: stretch;
+      flex-wrap: nowrap;
+      gap: 4px;
+      padding: 22px 18px calc(24px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      background: linear-gradient(180deg, var(--color-panel-hi), var(--color-night) 60%);
+      border-left: 1px solid var(--color-line);
+      box-shadow: -24px 0 60px rgba(0, 0, 0, 0.5);
+      translate: 100% 0;
+      visibility: hidden;
+      transition:
+        translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+        visibility 0s linear 0.35s;
     }
     .js #nav.open {
-      display: flex;
+      translate: 0 0;
+      visibility: visible;
+      transition:
+        translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+        visibility 0s;
+    }
+    .js .nav-title {
+      display: block;
+      margin: 6px 0 14px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-ice);
+    }
+    .js .nav-close {
+      display: grid;
+      place-items: center;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--color-line);
+      background: var(--color-panel);
+      color: var(--color-text);
+    }
+    .js .nav-close:hover,
+    .js .nav-close:focus-visible {
+      border-color: var(--color-ice);
+    }
+    .js #nav .nav-link {
+      font-size: 18px;
+      padding: 13px 16px;
+      border-radius: 12px;
+      transition: background-color 0.2s;
+    }
+    .js #nav .nav-link::after {
+      display: none;
+    }
+    .js #nav .nav-link:hover,
+    .js #nav .nav-link:focus-visible {
+      background: var(--color-panel);
+    }
+    /* The links come in one after another as the panel opens. */
+    .js #nav.open .nav-link {
+      animation: menu-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+    }
+    .js #nav.open .nav-link:nth-of-type(2) {
+      animation-delay: 0.04s;
+    }
+    .js #nav.open .nav-link:nth-of-type(3) {
+      animation-delay: 0.08s;
+    }
+    .js #nav.open .nav-link:nth-of-type(4) {
+      animation-delay: 0.12s;
+    }
+    .js #nav.open .nav-link:nth-of-type(5) {
+      animation-delay: 0.16s;
+    }
+    .js #nav.open .nav-link:nth-of-type(6) {
+      animation-delay: 0.2s;
+    }
+    .js .nav-extra {
+      display: grid;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid var(--color-line);
+    }
+    .js .nav-extra .btn-outline {
+      gap: 10px;
+    }
+    .js .nav-scrim {
+      display: block;
+      position: fixed;
+      z-index: 30;
+      inset: 0;
+      background: rgba(4, 9, 15, 0.6);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .menu-open .nav-scrim {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .menu-open {
+      overflow: hidden;
     }
   }
 }
@@ -1121,6 +1239,12 @@
   from {
     opacity: 0;
     translate: 0 -6px;
+  }
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    translate: 24px 0;
   }
 }
 @keyframes swing {

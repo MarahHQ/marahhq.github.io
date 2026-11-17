@@ -5,20 +5,32 @@ window.marahReady = true;
 document.documentElement.classList.add("js");
 const reduced = matchMedia("(prefers-reduced-motion: reduce)");
 
-// The mobile menu.
+// The menu: on a tablet or a phone, a panel that slides in from the right, over a dimmed page.
+// It closes on its close button, the dim page, Escape or a link, and gives the focus back.
 const menu = document.querySelector(".menu");
 const nav = document.querySelector("#nav");
-menu.hidden = false;
-menu.addEventListener("click", () => {
-  const open = nav.classList.toggle("open");
+const folded = matchMedia("(width < 961px)");
+function setMenu(open) {
+  nav.classList.toggle("open", open);
+  document.documentElement.classList.toggle("menu-open", open);
   menu.setAttribute("aria-expanded", String(open));
+  if (open) nav.querySelector(".nav-link").focus({ preventScroll: true });
+}
+menu.hidden = false;
+menu.addEventListener("click", () => setMenu(true));
+nav.querySelector(".nav-close").addEventListener("click", () => {
+  setMenu(false);
+  menu.focus();
 });
-nav.querySelectorAll("a").forEach((link) =>
-  link.addEventListener("click", () => {
-    nav.classList.remove("open");
-    menu.setAttribute("aria-expanded", "false");
-  }),
-);
+document.querySelector(".nav-scrim").addEventListener("click", () => setMenu(false));
+nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setMenu(false)));
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !nav.classList.contains("open")) return;
+  setMenu(false);
+  menu.focus();
+});
+// A window that grows past the tablet width shows the links in the header again.
+folded.addEventListener("change", () => folded.matches || setMenu(false));
 
 // Scroll reveal: a part fades up the first time it comes into view. The CSS hides the
 // parts only when motion is allowed, so with reduced motion this only adds a class.

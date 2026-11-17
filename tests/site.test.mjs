@@ -89,6 +89,19 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     await browser.run(`document.querySelector('.menu').click()`);
     await sleep(500);
     assert.equal(await shown(), true);
+    assert.equal(await browser.run(`return document.activeElement.textContent`), "Get it", "the focus moves into the menu");
+    assert.equal(await browser.run(`return getComputedStyle(document.documentElement).overflow`), "hidden", "the page doesn't scroll behind it");
+    await browser.run(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))`);
+    await sleep(500);
+    assert.equal(await shown(), false, "Escape closes it");
+    assert.ok(await browser.run(`return document.activeElement.classList.contains('menu')`), "the focus goes back to the menu button");
+    await browser.run(`document.querySelector('.menu').click()`);
+    await sleep(500);
+    await browser.run(`document.querySelector('.nav-scrim').click()`);
+    await sleep(500);
+    assert.equal(await shown(), false, "the dim page closes it");
+    await browser.run(`document.querySelector('.menu').click()`);
+    await sleep(500);
     await browser.run(`document.querySelector('#nav a').click()`);
     await sleep(500);
     assert.equal(await shown(), false, "a link closes it");
@@ -99,9 +112,11 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     const wide = await browser.run(`document.querySelector('.repos-toggle').click();
       document.querySelectorAll('#faq details').forEach((d) => (d.open = true));
       await new Promise((r) => setTimeout(r, 300));
-      return [...document.querySelectorAll('body *')].filter((e) => e.getBoundingClientRect().right > innerWidth + 1 && !e.closest('.gamepad, pre, .overflow-x-auto'))
-        .map((e) => e.tagName + '.' + (e.getAttribute('class') ?? '').split(' ')[0]).slice(0, 5)`);
-    assert.deepEqual(wide, []);
+      const visible = (e) => getComputedStyle(e).visibility !== 'hidden';
+      return { scroll: document.scrollingElement.scrollWidth - innerWidth,
+        past: [...document.querySelectorAll('body *')].filter((e) => visible(e) && e.getBoundingClientRect().right > innerWidth + 1 && !e.closest('.gamepad, pre, .overflow-x-auto'))
+          .map((e) => e.tagName + '.' + (e.getAttribute('class') ?? '').split(' ')[0]).slice(0, 5) }`);
+    assert.deepEqual(wide, { scroll: 0, past: [] });
   });
 
   it("shows the 404 page for a missing address", async () => {
