@@ -56,16 +56,21 @@ button { font: inherit; cursor: pointer; }
 .brand img { filter: drop-shadow(0 0 10px var(--glow)); }
 nav { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 nav a {
-  color: var(--text); text-decoration: none; font-weight: 600; font-size: 15px;
-  padding: 10px 16px; border: 1px solid transparent; border-radius: 999px;
+  position: relative; color: var(--text); text-decoration: none; font-weight: 600; font-size: 15px;
+  padding: 10px 16px; border-radius: 999px;
 }
-nav a:hover { border-color: var(--blue); }
+nav a::after {
+  content: ""; position: absolute; left: 16px; right: 16px; bottom: 4px; height: 2px; border-radius: 2px;
+  background: var(--ice); transform: scaleX(0); transition: transform .25s ease;
+}
+nav a:hover::after, nav a:focus-visible::after { transform: scaleX(1); }
 .nav-right { display: flex; gap: 16px; align-items: center; }
 .github {
   display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
   background: var(--line); color: var(--text);
 }
-.github:hover { background: #26486a; }
+.github { transition: background-color .2s, transform .2s; }
+.github:hover, .github:focus-visible { background: #26486a; transform: translateY(-2px); }
 .menu {
   display: none;
   background: var(--panel); border: 1px solid var(--line); color: var(--text);
@@ -74,16 +79,24 @@ nav a:hover { border-color: var(--blue); }
 
 /* Buttons */
 .cta, .outline {
-  display: inline-flex; align-items: center; justify-content: center; text-align: center;
+  position: relative; display: inline-flex; align-items: center; justify-content: center; text-align: center;
   border-radius: 999px; padding: 14px 24px; font-weight: 700; font-size: 15px;
-  text-decoration: none; transition: transform .2s, box-shadow .2s;
+  text-decoration: none; transition: transform .2s ease, border-color .2s;
+}
+/* The hover glow is a layer that fades in: only its opacity changes. */
+.cta::after, .outline::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: 0 0 28px rgba(130, 216, 245, .45); opacity: 0; transition: opacity .25s ease;
 }
 .cta {
   background: linear-gradient(105deg, #9ae2f8, var(--ice) 45%, #6bb6ec);
   color: var(--bg); border: 1px solid #b8ecfb; box-shadow: 0 0 22px rgba(130, 216, 245, .3);
 }
 .outline { color: var(--text); border: 1px solid #5d7d99; background: rgba(13, 25, 38, .5); }
-.cta:hover, .outline:hover { transform: translateY(-2px); box-shadow: 0 0 24px rgba(130, 216, 245, .35); }
+.cta:hover, .outline:hover, .cta:focus-visible, .outline:focus-visible { transform: translateY(-2px); }
+.cta:hover::after, .outline:hover::after, .cta:focus-visible::after, .outline:focus-visible::after { opacity: 1; }
+.outline:hover, .outline:focus-visible { border-color: var(--ice); }
+.cta:active, .outline:active { transform: translateY(0) scale(.98); }
 .small { padding: 10px 20px; }
 .actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
 
@@ -132,7 +145,9 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 .icon {
   flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 18px;
   background: linear-gradient(145deg, #173a5a, var(--panel)); border: 1px solid var(--line);
+  transition: transform .3s ease, border-color .3s;
 }
+.features article:hover .icon { transform: translateY(-3px) rotate(-4deg); border-color: var(--ice); }
 .icon svg { width: 32px; height: 32px; fill: none; stroke: var(--ice); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .features h2 { font-size: 17px; margin: 0 0 6px; letter-spacing: -.01em; }
 .features p { font-size: 14px; color: var(--muted); margin: 0; }
@@ -151,6 +166,15 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
               linear-gradient(125deg, var(--ice), var(--blue)) border-box;
   border: 2px solid transparent;
 }
+.platform-cards li { position: relative; transition: transform .25s ease; }
+.platform-cards li::after {
+  content: ""; position: absolute; inset: -2px; border-radius: inherit; pointer-events: none;
+  box-shadow: 0 0 26px rgba(130, 216, 245, .4); opacity: 0; transition: opacity .25s ease;
+}
+.platform-cards li:hover { transform: translateY(-4px); }
+.platform-cards li:hover::after { opacity: 1; }
+.platform-intro a span { display: inline-block; transition: transform .2s ease; }
+.platform-intro a:hover span, .platform-intro a:focus-visible span { transform: translateX(4px); }
 .platform-cards strong { font-size: 18px; }
 .platform-cards span { font-size: 13px; color: var(--muted); line-height: 1.35; }
 
@@ -166,16 +190,25 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
   position: relative; display: block; width: 100%; border: 2px solid var(--ice); border-radius: 14px;
   transform: rotate(3deg); box-shadow: 0 0 25px rgba(130, 216, 245, .5);
 }
+/* site.js fades the next picture in on this layer, over #screen, then swaps #screen under it. */
+.screen-stack > img.screen-next {
+  position: absolute; top: 24px; left: 20px; width: calc(100% - 40px);
+  opacity: 0; transition: opacity .4s ease; pointer-events: none; box-shadow: none;
+}
+.screen-stack > img.screen-next.show { opacity: 1; }
 .screen-back { position: absolute; inset: 0 30px 40px 0; border: 2px solid var(--blue); border-radius: 16px; transform: rotate(-5deg); }
 .screen-stack figcaption { margin-top: 28px; }
 .experience-copy h2 { font-size: clamp(30px, 3.1vw, 46px); margin: 20px 0; }
 .experience-copy p:not(.pill) { font-size: 17px; color: var(--muted); }
-.switcher { display: flex; gap: 10px; margin-top: 24px; }
+.experience-inner > * { min-width: 0; }
+.switcher { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 .switcher[hidden] { display: none; }
 .switcher button {
   background: var(--panel); border: 1px solid #3a6d98; border-radius: 999px; color: var(--text);
-  padding: 9px 20px; font-weight: 600;
+  padding: 9px 20px; font-weight: 600; transition: transform .2s ease, border-color .2s, background-color .2s, color .2s;
 }
+.switcher button:hover, .switcher button:focus-visible { border-color: var(--ice); transform: translateY(-2px); }
+.switcher button:active { transform: scale(.97); }
 .switcher button[aria-pressed="true"] { background: var(--ice); border-color: var(--ice); color: var(--bg); }
 
 /* Designed for play */
@@ -200,6 +233,8 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
   display: grid; place-items: center; border-radius: 50%;
   background: var(--ice); color: var(--bg); font-weight: 800;
 }
+.steps li { transition: transform .25s ease, border-color .25s; }
+.steps li:hover { transform: translateX(6px); border-color: #3a6d98; }
 .steps strong { display: block; font-size: 17px; }
 .steps span { color: var(--muted); font-size: 15px; }
 
@@ -212,11 +247,19 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 .download p:not(.eyebrow) { margin-inline: auto; }
 .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 32px 0 20px; }
 .card {
+  position: relative; overflow: hidden;
   height: 100%; display: flex; flex-direction: column; gap: 4px; padding: 20px 16px; border-radius: 18px;
   text-decoration: none; color: var(--text); background: var(--panel); border: 1px solid var(--line);
-  transition: border-color .15s, transform .15s;
+  transition: border-color .2s, transform .2s ease;
 }
-.card:hover { border-color: var(--ice); transform: translateY(-2px); }
+/* A soft light under the pointer. site.js sets --mx and --my; without them it sits in the middle. */
+.card::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s ease;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(130, 216, 245, .16), transparent 70%);
+}
+.card > * { position: relative; }
+.card:hover, .card:focus-visible { border-color: var(--ice); transform: translateY(-4px); }
+.card:hover::before, .card:focus-visible::before { opacity: 1; }
 .card strong { font-size: 17px; }
 .card span { color: var(--muted); font-size: 14px; }
 .download .note { font-size: 15px; }
@@ -224,8 +267,23 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 /* FAQ */
 .faq { padding-block: 80px; max-width: 860px; }
 .faq h2 { font-size: clamp(30px, 3vw, 42px); margin: 0 0 24px; text-align: center; }
-.faq details { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); margin-bottom: 12px; }
-.faq summary { padding: 18px 22px; font-weight: 700; cursor: pointer; }
+.faq details {
+  border: 1px solid var(--line); border-radius: 16px; background: var(--panel); margin-bottom: 12px;
+  transition: border-color .2s;
+}
+.faq details:hover, .faq details[open] { border-color: #3a6d98; }
+.faq summary {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px 22px; font-weight: 700; cursor: pointer; list-style: none;
+}
+.faq summary::-webkit-details-marker { display: none; }
+/* A plus that turns into a cross when the answer is open. */
+.faq summary::after {
+  content: ""; flex: none; width: 14px; height: 14px; transition: transform .25s ease;
+  background: linear-gradient(var(--ice), var(--ice)) center / 100% 2px no-repeat,
+              linear-gradient(var(--ice), var(--ice)) center / 2px 100% no-repeat;
+}
+.faq details[open] summary::after { transform: rotate(45deg); }
 .faq details p { margin: 0; padding: 0 22px 18px; color: var(--muted); }
 
 /* Footer */
@@ -236,6 +294,43 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 .footer-links a { font-size: 15px; }
 
 @keyframes bob { 50% { transform: translateY(-12px); } }
+
+/* Motion. All of it moves only transform, translate, scale and opacity, so the browser
+   does not lay the page out again. With prefers-reduced-motion: reduce, none of it runs. */
+@keyframes rise { from { opacity: 0; translate: 0 28px; } }
+@keyframes enter { from { opacity: 0; translate: 0 16px; } }
+@keyframes pop { from { scale: .92; } }
+@keyframes float { 50% { translate: 0 -8px; } }
+@keyframes glow { 50% { opacity: .6; scale: 1.12; } }
+@keyframes fade-in { from { opacity: 0; translate: 0 -6px; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Hero: the copy comes in line by line. The mascot is the largest picture, so it
+     never starts hidden: it only grows a little. */
+  .hero-copy > * { animation: enter .6s cubic-bezier(.2, .7, .2, 1) backwards; }
+  .hero-copy > :nth-child(2) { animation-delay: .08s; }
+  .hero-copy > :nth-child(3) { animation-delay: .16s; }
+  .hero-copy > :nth-child(4) { animation-delay: .24s; }
+  .mascot-wrap { animation: pop .8s cubic-bezier(.2, .7, .2, 1) backwards; }
+  .mascot-glow { animation: glow 5s ease-in-out infinite; }
+  .preview { animation: enter .7s .2s cubic-bezier(.2, .7, .2, 1) backwards; }
+  .preview-frame { animation: float 7s 1s ease-in-out infinite; }
+  .screen-back { transition: transform .5s ease; }
+  .screen-stack:hover .screen-back { transform: rotate(-7deg); }
+  .faq details[open] p { animation: fade-in .3s ease; }
+
+  /* Scroll reveal. The head script adds .reveal; site.js adds .in when a part comes into view. */
+  .reveal [data-reveal]:not(.in), .reveal [data-stagger]:not(.in) > * { opacity: 0; }
+  .reveal [data-reveal].in, .reveal [data-stagger].in > * {
+    animation: rise .7s cubic-bezier(.2, .7, .2, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+  [data-stagger] > :nth-child(2) { --i: 1; }
+  [data-stagger] > :nth-child(3) { --i: 2; }
+  [data-stagger] > :nth-child(4) { --i: 3; }
+  [data-stagger] > :nth-child(5) { --i: 4; }
+  [data-stagger] > :nth-child(6) { --i: 5; }
+}
 
 /* Tablet */
 @media (max-width: 1200px) {
