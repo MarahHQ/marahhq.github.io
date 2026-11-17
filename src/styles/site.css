@@ -5,30 +5,35 @@
 
 @source "../";
 
-/* Inter, the Default theme's font, in Latin only (OFL: assets/fonts/OFL-Inter.txt). */
-/* Outfit, the headings' font: geometric and round, as the logo is. Latin only, the variable font
-   (OFL: public/assets/fonts/OFL-Outfit.txt). */
+/* Ubuntu, for all text, and Ubuntu Mono, for commands and code. Latin only, with the box-drawing
+   characters for the folder tree (Ubuntu Font Licence: public/assets/fonts/UFL-Ubuntu.txt). */
 @font-face {
-  font-family: "Outfit";
-  src: url("/assets/fonts/outfit.woff2") format("woff2");
-  font-weight: 100 900;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("/assets/fonts/inter-regular.woff2") format("woff2");
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-regular.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
-  font-family: "Inter";
-  src: url("/assets/fonts/inter-semibold.woff2") format("woff2");
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-medium.woff2") format("woff2");
   font-weight: 500 600;
   font-display: swap;
 }
 @font-face {
-  font-family: "Inter";
-  src: url("/assets/fonts/inter-bold.woff2") format("woff2");
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-bold.woff2") format("woff2");
+  font-weight: 700 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu Mono";
+  src: url("/assets/fonts/ubuntu-mono-regular.woff2") format("woff2");
+  font-weight: 400 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu Mono";
+  src: url("/assets/fonts/ubuntu-mono-bold.woff2") format("woff2");
   font-weight: 700 900;
   font-display: swap;
 }
@@ -58,10 +63,10 @@
   --color-muted: #b4c7d6;
   --color-code: #d9eef8;
 
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
-  /* The headings and the logo's name. One line to go back to Inter: var(--font-sans). */
-  --font-display: "Outfit", "Inter", system-ui, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-sans: "Ubuntu", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif;
+  /* The headings and the logo's name: the same Ubuntu, as its own token. */
+  --font-display: var(--font-sans);
+  --font-mono: "Ubuntu Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
   /* Sizes only: the line height stays the body's 1.6 unless a utility sets it. */
   --text-caption: 13px;
@@ -453,13 +458,26 @@
   .cmd code {
     flex: 1;
     min-width: 0;
-    font: 13.5px/1.55 var(--font-mono);
+    font: 15px/1.5 var(--font-mono);
     color: var(--color-code);
     overflow-wrap: anywhere;
   }
   .cmd > code::before {
     content: "$ ";
     color: var(--color-ice);
+  }
+  /* A command scrolls without a scrollbar: the copy button copies it all. The right edge fades,
+     so a line that goes on shows it does. */
+  .cmd pre,
+  .cmd > code {
+    scrollbar-width: none;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+  }
+  .cmd pre::-webkit-scrollbar {
+    display: none;
+  }
+  .cmd > code {
+    mask-image: none;
   }
   .cmd pre {
     flex: 1;
@@ -515,7 +533,7 @@
     border-color: var(--color-ice);
   }
   .hint code {
-    font-size: 13px;
+    font-size: 14.5px;
     color: var(--color-text);
     white-space: nowrap;
   }
