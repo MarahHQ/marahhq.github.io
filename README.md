@@ -5,6 +5,8 @@ The Marah site, served by GitHub Pages from `main`. No build step.
 - `index.html`: the page.
 - `404.html`: the page for a missing address. Its paths start with `/`, because it is served at any depth.
 - `assets/site.css`: the styles.
+- `scripts/stamp.sh`: puts a hash of `site.css` and `site.js` in the pages' links to them. Run it
+  after you change either file, so no browser pairs a new page with an old cached file.
 - `assets/site.js`: the page's live parts. The page reads in full without it.
   - The mobile menu, the scroll reveal, the screenshot switcher (it decodes each picture before a
     crossfade) and the light on the download cards.

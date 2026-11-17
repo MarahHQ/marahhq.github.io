@@ -22,13 +22,13 @@
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="preload" href="assets/fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/inter-bold.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/site.css?v=d8f5fafa">
 <script>
   // The scroll reveal hides sections until site.js shows them. If site.js does not run, show everything.
   document.documentElement.classList.add("reveal");
   setTimeout(function () { if (!window.marahReady) document.documentElement.classList.remove("reveal"); }, 4000);
 </script>
-<script src="assets/site.js" defer></script>
+<script src="assets/site.js?v=788dfe0f" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -87,19 +87,19 @@
 
 <section class="features wrap" id="features" aria-label="Features" data-stagger>
   <article>
-    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></div>
+    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></div>
     <div><h2>One library</h2><p>Games from emulators, PC folders and Steam, in one place.</p></div>
   </article>
   <article>
-    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 4 4v3a3 3 0 0 1-5.4 1.8L14 15h-4l-1.6 1.8A3 3 0 0 1 3 15v-3a4 4 0 0 1 4-4z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="16" cy="12" r=".6"/></svg></div>
+    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M7 8h10a4 4 0 0 1 4 4v3a3 3 0 0 1-5.4 1.8L14 15h-4l-1.6 1.8A3 3 0 0 1 3 15v-3a4 4 0 0 1 4-4z"/><path d="M8 11v3M6.5 12.5h3"/><circle cx="16" cy="12" r=".6"/></svg></div>
     <div><h2>Made for a controller</h2><p>Every screen works with a pad. A keyboard and a mouse work too.</p></div>
   </article>
   <article>
-    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.5-.8 1.5-1.5 0-1.2-1-1.5-1-2.5s.7-1.5 1.7-1.5H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="11" cy="7" r="1"/><circle cx="16" cy="8.5" r="1"/></svg></div>
+    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.5-.8 1.5-1.5 0-1.2-1-1.5-1-2.5s.7-1.5 1.7-1.5H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="11" cy="7" r="1"/><circle cx="16" cy="8.5" r="1"/></svg></div>
     <div><h2>Themes you can swap</h2><p>The screens are Slint themes. A theme changes the whole layout.</p></div>
   </article>
   <article>
-    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/></svg></div>
+    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/></svg></div>
     <div><h2>Free software</h2><p>GPL-3.0-or-later. Read the code, change it, share it.</p></div>
   </article>
 </section>
@@ -141,7 +141,7 @@
       <div class="panel" role="tabpanel" id="panel-terminal" aria-labelledby="tab-terminal">
         <div class="cmd">
           <code id="install-cmd">curl -fsSL https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-linux-x86_64.tar.gz | tar xz &amp;&amp; ./marah-launcher-linux-x86_64/install.sh</code>
-          <button type="button" class="copy" data-copy="install-cmd" aria-label="Copy the command" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+          <button type="button" class="copy" data-copy="install-cmd" aria-label="Copy the command" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
         </div>
         <p class="hint">Installs for you only, with no sudo, in <code>~/.local/lib/marah-launcher</code>. <code>install.sh --uninstall</code> removes it.</p>
       </div>
@@ -334,7 +334,7 @@
     <figcaption>A few lines of the Default theme, and the Home it draws.</figcaption>
   </figure>
   <div class="session" data-reveal>
-    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+    <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
     <div>
       <h3>The whole screen, with no desktop behind it</h3>
       <p>The deb, rpm and Arch packages add a Marah Launcher session to the login screen. Pick it,
@@ -440,39 +440,53 @@
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-macos-universal.dmg"><strong>macOS</strong><span>Apple Silicon and Intel</span><small data-size="marah-launcher-macos-universal.dmg"></small></a></li>
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/Marah-Launcher-x86_64.AppImage"><strong>Linux</strong><span>AppImage, x86-64</span><small data-size="Marah-Launcher-x86_64.AppImage"></small></a></li>
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-linux-x86_64.tar.gz"><strong>Linux</strong><span>Archive with install.sh, x86-64</span><small data-size="marah-launcher-linux-x86_64.tar.gz"></small></a></li>
-      <li><a class="card repos-toggle" href="#repos" aria-controls="repos"><strong>Fedora, Debian, Ubuntu</strong><span>DNF and APT repositories</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a></li>
+      <li><a class="card repos-toggle" href="#repos" aria-controls="repos"><strong>Fedora, Debian, Ubuntu</strong><span>DNF and APT repositories</span><span class="chev-ring" aria-hidden="true"><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></a></li>
     </ul>
-    <div class="repos" id="repos" role="region" aria-label="Install from a package repository">
+    <div class="collapse repos-wrap open" id="repos" role="region" aria-label="Install from a package repository"><div class="collapse-inner">
+    <div class="repos">
       <p class="repos-lead">Install from a repository, and Marah Launcher updates with the rest of your
       system. The repositories' metadata is signed with <a href="https://marahhq.github.io/packages/marah.asc">this key</a>.</p>
-      <details class="repo" open>
-        <summary><span class="distro">Fedora</span><span class="pm">DNF</span></summary>
-        <div class="cmd">
+      <div class="repo open" data-repo>
+        <h3 class="repo-h"><button type="button" class="repo-head" id="repo-dnf-h" aria-expanded="true" aria-controls="repo-dnf">
+          <span class="distro">Fedora</span><span class="pm">DNF</span><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button></h3>
+        <div class="collapse" id="repo-dnf" role="region" aria-labelledby="repo-dnf-h"><div class="collapse-inner">
+          <div class="cmd">
 <pre><code id="cmd-dnf">sudo curl -fsSLo /etc/yum.repos.d/marah.repo https://marahhq.github.io/packages/rpm/marah.repo
 sudo dnf install marah-launcher</code></pre>
-          <button type="button" class="copy" data-copy="cmd-dnf" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
-        </div>
-      </details>
-      <details class="repo">
-        <summary><span class="distro">Debian and Ubuntu</span><span class="pm">APT</span></summary>
-        <div class="cmd">
+            <button type="button" class="copy" data-copy="cmd-dnf" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+          </div>
+        </div></div>
+      </div>
+      <div class="repo open" data-repo>
+        <h3 class="repo-h"><button type="button" class="repo-head" id="repo-apt-h" aria-expanded="true" aria-controls="repo-apt">
+          <span class="distro">Debian and Ubuntu</span><span class="pm">APT</span><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button></h3>
+        <div class="collapse" id="repo-apt" role="region" aria-labelledby="repo-apt-h"><div class="collapse-inner">
+          <div class="cmd">
 <pre><code id="cmd-apt">sudo curl -fsSLo /usr/share/keyrings/marah.asc https://marahhq.github.io/packages/marah.asc
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/marah.asc] https://marahhq.github.io/packages/deb stable main" |
   sudo tee /etc/apt/sources.list.d/marah.list
 sudo apt update &amp;&amp; sudo apt install marah-launcher</code></pre>
-          <button type="button" class="copy" data-copy="cmd-apt" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
-        </div>
-      </details>
-      <details class="repo">
-        <summary><span class="distro">Arch Linux</span><span class="pm">pacman</span></summary>
-        <p class="hint">There is no repository yet. Download the <code>.pkg.tar.zst</code> file from
-        <a href="https://github.com/MarahHQ/marah-launcher/releases/latest">the latest release</a>, then install it:</p>
-        <div class="cmd">
+            <button type="button" class="copy" data-copy="cmd-apt" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+          </div>
+        </div></div>
+      </div>
+      <div class="repo open" data-repo>
+        <h3 class="repo-h"><button type="button" class="repo-head" id="repo-pacman-h" aria-expanded="true" aria-controls="repo-pacman">
+          <span class="distro">Arch Linux</span><span class="pm">pacman</span><svg class="chev" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button></h3>
+        <div class="collapse" id="repo-pacman" role="region" aria-labelledby="repo-pacman-h"><div class="collapse-inner">
+          <p class="hint">There is no repository yet. Download the <code>.pkg.tar.zst</code> file from
+          <a href="https://github.com/MarahHQ/marah-launcher/releases/latest">the latest release</a>, then install it:</p>
+          <div class="cmd">
 <pre><code id="cmd-pacman">sudo pacman -U ./marah-launcher-*-x86_64.pkg.tar.zst</code></pre>
-          <button type="button" class="copy" data-copy="cmd-pacman" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
-        </div>
-      </details>
+            <button type="button" class="copy" data-copy="cmd-pacman" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+          </div>
+        </div></div>
+      </div>
     </div>
+    </div></div>
     <p class="note">Every file, with its SHA-256: <a href="https://github.com/MarahHQ/marah-launcher/releases/latest">the latest release</a>.</p>
   </div>
 </section>

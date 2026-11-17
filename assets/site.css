@@ -449,33 +449,40 @@ kbd {
 .download .note { font-size: 15px; }
 
 /* The package repositories, opened from their download card */
-.repos-toggle { padding-right: 40px; }
-.chev { position: absolute; right: 14px; top: 50%; translate: 0 -50%; width: 20px; height: 20px; fill: none; stroke: var(--ice); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: rotate .25s ease; }
-.repos-toggle[aria-expanded="true"] { border-color: var(--ice); }
-.repos-toggle[aria-expanded="true"] .chev { rotate: 180deg; }
-.repos { text-align: left; max-width: 900px; margin: 8px auto 24px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-.repo { min-width: 0; }
-.repos[hidden] { display: none; }
-.repos-lead { margin: 0 0 4px !important; font-size: 15px !important; max-width: none !important; text-align: center; }
-.repo { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); transition: border-color .2s; }
-.repo:hover, .repo[open] { border-color: #3a6d98; }
-.repo summary { display: flex; align-items: center; gap: 12px; padding: 16px 20px; cursor: pointer; list-style: none; font-weight: 700; }
-.repo summary::-webkit-details-marker { display: none; }
-.repo summary::after {
-  content: ""; margin-left: auto; flex: none; width: 14px; height: 14px; transition: transform .25s ease;
-  background: linear-gradient(var(--ice), var(--ice)) center / 100% 2px no-repeat,
-              linear-gradient(var(--ice), var(--ice)) center / 2px 100% no-repeat;
+/* A collapse animates its height: the grid row goes from 0fr to 1fr. */
+.collapse { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .4s cubic-bezier(.2, .8, .2, 1), opacity .3s ease; }
+.collapse.open, .open > .collapse { grid-template-rows: 1fr; opacity: 1; }
+.collapse-inner { min-height: 0; overflow: hidden; }
+.repos-toggle { padding-right: 56px; }
+.chev-ring {
+  position: absolute; right: 14px; top: 50%; translate: 0 -50%; display: grid; place-items: center;
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid #3a6d98; background: #0b1724;
+  transition: background-color .2s, border-color .2s;
 }
-.repo[open] summary::after { transform: rotate(45deg); }
+.chev { width: 18px; height: 18px; fill: none; stroke: var(--ice); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: rotate .35s cubic-bezier(.2, .8, .2, 1); }
+.repos-toggle[aria-expanded="true"] { border-color: var(--ice); }
+.repos-toggle[aria-expanded="true"] .chev-ring { background: var(--ice); border-color: var(--ice); }
+.repos-toggle[aria-expanded="true"] .chev { stroke: var(--bg); rotate: 180deg; }
+.repos { text-align: left; max-width: 900px; margin: 4px auto 0; padding: 4px 0 24px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.repos-lead { margin: 0 0 6px !important; font-size: 15px !important; max-width: none !important; text-align: center; }
+.repo { min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); transition: border-color .25s, background-color .25s; }
+.repo:hover { border-color: #2c5272; }
+.repo.open { border-color: #3a6d98; background: linear-gradient(160deg, #13293d, var(--panel)); }
+.repo-h { margin: 0; font-size: inherit; }
+.repo-head {
+  width: 100%; display: flex; align-items: center; gap: 12px; padding: 16px 20px; text-align: left;
+  background: none; border: 0; color: var(--text); font-weight: 700; font-size: 16px; border-radius: 16px;
+}
+.repo-head .chev { margin-left: auto; flex: none; }
+.repo.open .repo-head .chev { rotate: 180deg; }
 .repo .pm { padding: 2px 10px; border-radius: 999px; border: 1px solid #3a6d98; font-size: 12px; font-weight: 600; color: var(--muted); }
 .repo .cmd { margin: 0 16px 16px; }
 .repo .cmd pre { flex: 1; min-width: 0; margin: 0; overflow-x: auto; }
 .repo .cmd code { white-space: pre; overflow-wrap: normal; }
 .repo .cmd code::before { content: none; }
 .repo .hint { margin: 0 20px 12px; text-align: left; }
-@media (prefers-reduced-motion: no-preference) {
-  .repos.opening { animation: rise .4s cubic-bezier(.2, .7, .2, 1); }
-  .repo[open] .cmd { animation: fade-in .3s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .collapse { transition: none !important; }
 }
 
 /* FAQ */
