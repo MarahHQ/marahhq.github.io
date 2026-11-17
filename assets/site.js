@@ -97,33 +97,47 @@ async function show(button) {
   const mine = ++turn;
   buttons.forEach((other) => other.setAttribute("aria-pressed", String(other === button)));
   const { src, alt } = button.dataset;
+  if (src === screen.getAttribute("src") && !layer.classList.contains("show")) return;
   await load(src);
   if (mine !== turn) return; // A later click won.
   screen.alt = alt;
-  if (reduced.matches) {
-    screen.src = src;
-    return;
-  }
   clearTimeout(fadeDone);
   if (layer.classList.contains("show")) {
-    // A click during a fade: the picture on the layer becomes the base, then the layer
-    // hides and the new picture fades in from 0.
-    screen.src = layer.src;
+    // A click during a switch: the picture on the layer becomes the base at once, then the
+    // next one comes in from the start.
+    settle(layer.src);
     await screen.decode().catch(() => {});
     if (mine !== turn) return;
-    layer.classList.remove("show");
     await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
     if (mine !== turn) return;
   }
+  // The new picture slides in from the right on the layer; the old one slides out to the
+  // left and the card behind swings. With reduced motion, the new picture only fades in.
   layer.src = src;
   layer.classList.add("show");
+  if (!reduced.matches) {
+    screen.classList.add("leaving");
+    stack.classList.remove("swing");
+    void stack.offsetWidth; // Starts the swing again.
+    stack.classList.add("swing");
+  }
   // A timer, not transitionend: the timer fires even when the transition does not run.
   fadeDone = setTimeout(async () => {
     screen.src = src;
     await screen.decode().catch(() => {});
-    if (mine === turn) layer.classList.remove("show");
-  }, 450);
+    if (mine === turn) settle(src);
+  }, reduced.matches ? 320 : 620);
 }
+// Puts `src` on #screen and hides the layer, both at once, with no transition.
+function settle(src) {
+  for (const img of [screen, layer]) img.style.transition = "none";
+  screen.src = src;
+  screen.classList.remove("leaving");
+  layer.classList.remove("show");
+  void screen.offsetWidth;
+  for (const img of [screen, layer]) img.style.transition = "";
+}
+const stack = screen.closest(".screen-stack");
 switcher.hidden = false;
 buttons.forEach((button) => button.addEventListener("click", () => show(button)));
 

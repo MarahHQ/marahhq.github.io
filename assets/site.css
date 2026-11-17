@@ -195,13 +195,21 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
   position: relative; display: block; width: 100%; border: 2px solid var(--ice); border-radius: 14px;
   transform: rotate(3deg); box-shadow: 0 0 25px rgba(130, 216, 245, .5);
 }
-/* site.js fades the next picture in on this layer, over #screen, then swaps #screen under it. */
+/* site.js brings the next picture in on this layer, over #screen, then swaps #screen under it. */
 .screen-stack > img.screen-next {
   position: absolute; top: 24px; left: 20px; width: calc(100% - 40px);
-  opacity: 0; pointer-events: none; box-shadow: none;
+  opacity: 0; pointer-events: none;
+  translate: 9% 0; scale: .94;
 }
-/* Only the fade in is animated. The layer hides at once, so the next fade starts from 0. */
-.screen-stack > img.screen-next.show { opacity: 1; transition: opacity .4s ease; }
+.screen-stack > img.screen-next.show {
+  opacity: 1; translate: 0 0; scale: 1;
+  transition: opacity .35s ease, translate .6s cubic-bezier(.2, .8, .2, 1), scale .6s cubic-bezier(.2, .8, .2, 1);
+}
+/* The old picture slides out to the left and dims. */
+.screen-stack > #screen { transition: opacity .45s ease, translate .6s cubic-bezier(.2, .8, .2, 1), scale .6s ease; }
+.screen-stack > #screen.leaving { opacity: .15; translate: -7% 0; scale: .94; }
+@keyframes swing { 40% { rotate: -5deg; translate: -14px 6px; } }
+.screen-stack.swing .screen-back { animation: swing .6s cubic-bezier(.2, .8, .2, 1); }
 .screen-back { position: absolute; inset: 0 30px 40px 0; border: 2px solid var(--blue); border-radius: 16px; transform: rotate(-5deg); }
 .screen-stack figcaption { margin-top: 28px; }
 .experience-copy h2 { font-size: clamp(30px, 3.1vw, 46px); margin: 20px 0; }
@@ -535,4 +543,9 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+/* With reduced motion the next screenshot still fades in, without moving. */
+@media (prefers-reduced-motion: reduce) {
+  .screen-stack > img.screen-next { translate: none; scale: none; }
+  .screen-stack > img.screen-next.show { transition: opacity .3s ease !important; }
 }

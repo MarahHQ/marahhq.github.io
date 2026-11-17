@@ -243,17 +243,21 @@
           <g class="b create" data-act="notice"><rect class="k" x="124" y="44" width="9" height="20" rx="4.5"/></g>
           <g class="b options" data-act="menu"><rect class="k" x="267" y="44" width="9" height="20" rx="4.5"/></g>
           <!-- The D-pad: four arrow-shaped buttons in a shallow well. -->
+          <g transform="translate(-6 -8)">
           <circle class="well" cx="75" cy="110" r="38"/>
-          <g class="b dp up" data-act="move"><path class="k dk" d="M68 82h14q3 0 3 3v14l-10 8-10-8v-14q0-3 3-3z"/></g>
-          <g class="b dp down" data-act="move"><path class="k dk" d="M68 138h14q3 0 3-3v-14l-10-8-10 8v14q0 3 3 3z"/></g>
-          <g class="b dp left" data-act="move"><path class="k dk" d="M47 103v14q0 3 3 3h14l8-10-8-10h-14q-3 0-3 3z"/></g>
-          <g class="b dp right" data-act="move"><path class="k dk" d="M103 103v14q0 3-3 3h-14l-8-10 8-10h14q3 0 3 3z"/></g>
+            <g class="b dp up" data-act="move"><path class="k dk" d="M68 82h14q3 0 3 3v14l-10 8-10-8v-14q0-3 3-3z"/></g>
+            <g class="b dp down" data-act="move"><path class="k dk" d="M68 138h14q3 0 3-3v-14l-10-8-10 8v14q0 3 3 3z"/></g>
+            <g class="b dp left" data-act="move"><path class="k dk" d="M47 103v14q0 3 3 3h14l8-10-8-10h-14q-3 0-3 3z"/></g>
+            <g class="b dp right" data-act="move"><path class="k dk" d="M103 103v14q0 3-3 3h-14l-8-10 8-10h14q3 0 3 3z"/></g>
+          </g>
           <!-- The face buttons, in a shallow well. -->
+          <g transform="translate(336 101) scale(.9) translate(-318 -109)">
           <circle class="well" cx="318" cy="109" r="46"/>
-          <g class="b fc tri" data-act="search"><circle class="k" cx="318" cy="82" r="13"/><path class="hi" d="M309 76a12 12 0 0 1 18 0"/><path class="g" d="M318 75.5l6.5 11h-13z"/></g>
-          <g class="b fc cir" data-act="back"><circle class="k" cx="345" cy="109" r="13"/><path class="hi" d="M336 103a12 12 0 0 1 18 0"/><circle class="g" cx="345" cy="109" r="6"/></g>
-          <g class="b fc crs" data-act="select"><circle class="k" cx="318" cy="136" r="13"/><path class="hi" d="M309 130a12 12 0 0 1 18 0"/><path class="g" d="M313 131l10 10M323 131l-10 10"/></g>
-          <g class="b fc sq" data-act="trailer"><circle class="k" cx="291" cy="109" r="13"/><path class="hi" d="M282 103a12 12 0 0 1 18 0"/><rect class="g" x="285.5" y="103.5" width="11" height="11" rx="1"/></g>
+            <g class="b fc tri" data-act="search"><circle class="k" cx="318" cy="82" r="13"/><path class="hi" d="M309 76a12 12 0 0 1 18 0"/><path class="g" d="M318 75.5l6.5 11h-13z"/></g>
+            <g class="b fc cir" data-act="back"><circle class="k" cx="345" cy="109" r="13"/><path class="hi" d="M336 103a12 12 0 0 1 18 0"/><circle class="g" cx="345" cy="109" r="6"/></g>
+            <g class="b fc crs" data-act="select"><circle class="k" cx="318" cy="136" r="13"/><path class="hi" d="M309 130a12 12 0 0 1 18 0"/><path class="g" d="M313 131l10 10M323 131l-10 10"/></g>
+            <g class="b fc sq" data-act="trailer"><circle class="k" cx="291" cy="109" r="13"/><path class="hi" d="M282 103a12 12 0 0 1 18 0"/><rect class="g" x="285.5" y="103.5" width="11" height="11" rx="1"/></g>
+          </g>
           <!-- The sticks: dished caps in their rings. -->
           <g class="b stick ls" data-act="move"><circle class="ring" cx="148" cy="150" r="24"/><circle class="k cap" cx="148" cy="150" r="18"/><circle class="dish" cx="148" cy="151" r="12"/></g>
           <g class="stick rs"><circle class="ring" cx="252" cy="150" r="24"/><circle class="cap" cx="252" cy="150" r="18"/><circle class="dish" cx="252" cy="151" r="12"/></g>
@@ -266,15 +270,15 @@
         <g class="call" data-call="page" data-for="l2"><polyline points="328,106 270,58 262,58"/><circle cx="328" cy="106" r="2.6"/><text x="256" y="58" text-anchor="end"><tspan class="cn">L2</tspan><tspan x="256" dy="18" class="cw">A page up<tspan class="ck"> · Page Up</tspan></tspan></text></g>
         <g class="call" data-call="bar" data-for="l1"><polyline points="352,131 270,102 262,102"/><circle cx="352" cy="131" r="2.6"/><text x="256" y="102" text-anchor="end"><tspan class="cn">L1</tspan><tspan x="256" dy="18" class="cw">Top bar, or the section before<tspan class="ck"> · Shift+Tab</tspan></tspan></text></g>
         <g class="call" data-call="notice" data-for="create"><polyline points="408,144 270,146 262,146"/><circle cx="408" cy="144" r="2.6"/><text x="256" y="146" text-anchor="end"><tspan class="cn">Create</tspan><tspan x="256" dy="18" class="cw">Close the newest notice<tspan class="ck"> · Delete</tspan></tspan></text></g>
-        <g class="call" data-call="move" data-for="dp"><polyline points="326,200 270,198 262,198"/><circle cx="326" cy="200" r="2.6"/><text x="256" y="198" text-anchor="end"><tspan class="cn">D-pad</tspan><tspan x="256" dy="18" class="cw">Move<tspan class="ck"> · Arrow keys</tspan></tspan></text></g>
+        <g class="call" data-call="move" data-for="dp"><polyline points="321,192 270,198 262,198"/><circle cx="321" cy="192" r="2.6"/><text x="256" y="198" text-anchor="end"><tspan class="cn">D-pad</tspan><tspan x="256" dy="18" class="cw">Move<tspan class="ck"> · Arrow keys</tspan></tspan></text></g>
         <g class="call" data-call="move" data-for="ls"><polyline points="410,252 270,262 262,262"/><circle cx="410" cy="252" r="2.6"/><text x="256" y="262" text-anchor="end"><tspan class="cn">Left stick</tspan><tspan x="256" dy="18" class="cw">Move</tspan></text></g>
         <g class="call" data-call="page" data-for="r2"><polyline points="632,106 690,58 698,58"/><circle cx="632" cy="106" r="2.6"/><text x="704" y="58" text-anchor="start"><tspan class="cn">R2</tspan><tspan x="704" dy="18" class="cw">A page down<tspan class="ck"> · Page Down</tspan></tspan></text></g>
         <g class="call" data-call="bar" data-for="r1"><polyline points="608,131 690,102 698,102"/><circle cx="608" cy="131" r="2.6"/><text x="704" y="102" text-anchor="start"><tspan class="cn">R1</tspan><tspan x="704" dy="18" class="cw">Top bar, or the section after<tspan class="ck"> · Tab</tspan></tspan></text></g>
         <g class="call" data-call="menu" data-for="options"><polyline points="552,144 690,146 698,146"/><circle cx="552" cy="144" r="2.6"/><text x="704" y="146" text-anchor="start"><tspan class="cn">Options</tspan><tspan x="704" dy="18" class="cw">The game’s menu<tspan class="ck"> · Menu</tspan></tspan></text></g>
-        <g class="call" data-call="search" data-for="tri"><polyline points="611,172 690,186 698,186"/><circle cx="611" cy="172" r="2.6"/><text x="704" y="186" text-anchor="start"><tspan class="cn">△ Triangle</tspan><tspan x="704" dy="18" class="cw">Search<tspan class="ck"> · /</tspan></tspan></text></g>
-        <g class="call" data-call="back" data-for="cir"><polyline points="638,199 690,226 698,226"/><circle cx="638" cy="199" r="2.6"/><text x="704" y="226" text-anchor="start"><tspan class="cn">○ Circle</tspan><tspan x="704" dy="18" class="cw">Back<tspan class="ck"> · Esc</tspan></tspan></text></g>
-        <g class="call" data-call="trailer" data-for="sq"><polyline points="571,212 571,306 698,306"/><circle cx="571" cy="212" r="2.6"/><text x="704" y="306" text-anchor="start"><tspan class="cn">□ Square</tspan><tspan x="704" dy="18" class="cw">The game’s trailer<tspan class="ck"> · T</tspan></tspan></text></g>
-        <g class="call" data-call="select" data-for="crs"><polyline points="609,232 690,266 698,266"/><circle cx="609" cy="232" r="2.6"/><text x="704" y="266" text-anchor="start"><tspan class="cn">✕ Cross</tspan><tspan x="704" dy="18" class="cw">Select<tspan class="ck"> · Enter</tspan></tspan></text></g>
+        <g class="call" data-call="search" data-for="tri"><polyline points="628,167 690,186 698,186"/><circle cx="628" cy="167" r="2.6"/><text x="704" y="186" text-anchor="start"><tspan class="cn">△ Triangle</tspan><tspan x="704" dy="18" class="cw">Search<tspan class="ck"> · /</tspan></tspan></text></g>
+        <g class="call" data-call="back" data-for="cir"><polyline points="652,191 690,226 698,226"/><circle cx="652" cy="191" r="2.6"/><text x="704" y="226" text-anchor="start"><tspan class="cn">○ Circle</tspan><tspan x="704" dy="18" class="cw">Back<tspan class="ck"> · Esc</tspan></tspan></text></g>
+        <g class="call" data-call="trailer" data-for="sq"><polyline points="592,203 592,306 698,306"/><circle cx="592" cy="203" r="2.6"/><text x="704" y="306" text-anchor="start"><tspan class="cn">□ Square</tspan><tspan x="704" dy="18" class="cw">The game’s trailer<tspan class="ck"> · T</tspan></tspan></text></g>
+        <g class="call" data-call="select" data-for="crs"><polyline points="624,223 690,266 698,266"/><circle cx="624" cy="223" r="2.6"/><text x="704" y="266" text-anchor="start"><tspan class="cn">✕ Cross</tspan><tspan x="704" dy="18" class="cw">Select<tspan class="ck"> · Enter</tspan></tspan></text></g>
           <g class="call" data-call="home" data-for="ps"><polyline points="480,242 480,390"/><circle cx="480" cy="242" r="2.6"/><text x="480" y="408" text-anchor="middle"><tspan class="cn">PS button</tspan><tspan x="480" dy="18" class="cw">Tap: Home · Hold: close the game, or the power menu</tspan></text></g>
         </g>
       </svg>
