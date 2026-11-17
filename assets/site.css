@@ -290,7 +290,16 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 }
 .cmd code { flex: 1; min-width: 0; font: 13.5px/1.55 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; color: #d9eef8; overflow-wrap: anywhere; }
 .cmd code::before { content: "$ "; color: var(--ice); }
-.copy { flex: none; background: var(--line); color: var(--text); border: 1px solid #3a6d98; border-radius: 10px; padding: 6px 14px; font-size: 14px; font-weight: 600; }
+.copy {
+  flex: none; display: grid; place-items: center; width: 36px; height: 36px; padding: 0;
+  background: var(--line); color: var(--text); border: 1px solid #3a6d98; border-radius: 10px;
+  transition: border-color .2s, background-color .2s, color .2s;
+}
+.copy svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.copy .i-done { display: none; }
+.copy.done { background: var(--ice); border-color: var(--ice); color: var(--bg); }
+.copy.done .i-copy { display: none; }
+.copy.done .i-done { display: block; }
 .copy:hover, .copy:focus-visible { border-color: var(--ice); }
 .hint { margin: 0; color: var(--muted); font-size: 14px; }
 .hint code { font-size: 13px; color: var(--text); white-space: nowrap; }
@@ -436,6 +445,36 @@ kbd {
 .card strong { font-size: 17px; }
 .card span { color: var(--muted); font-size: 14px; }
 .download .note { font-size: 15px; }
+
+/* The package repositories, opened from their download card */
+.repos-toggle { padding-right: 40px; }
+.chev { position: absolute; right: 14px; top: 50%; translate: 0 -50%; width: 20px; height: 20px; fill: none; stroke: var(--ice); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: rotate .25s ease; }
+.repos-toggle[aria-expanded="true"] { border-color: var(--ice); }
+.repos-toggle[aria-expanded="true"] .chev { rotate: 180deg; }
+.repos { text-align: left; max-width: 900px; margin: 8px auto 24px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.repo { min-width: 0; }
+.repos[hidden] { display: none; }
+.repos-lead { margin: 0 0 4px !important; font-size: 15px !important; max-width: none !important; text-align: center; }
+.repo { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); transition: border-color .2s; }
+.repo:hover, .repo[open] { border-color: #3a6d98; }
+.repo summary { display: flex; align-items: center; gap: 12px; padding: 16px 20px; cursor: pointer; list-style: none; font-weight: 700; }
+.repo summary::-webkit-details-marker { display: none; }
+.repo summary::after {
+  content: ""; margin-left: auto; flex: none; width: 14px; height: 14px; transition: transform .25s ease;
+  background: linear-gradient(var(--ice), var(--ice)) center / 100% 2px no-repeat,
+              linear-gradient(var(--ice), var(--ice)) center / 2px 100% no-repeat;
+}
+.repo[open] summary::after { transform: rotate(45deg); }
+.repo .pm { padding: 2px 10px; border-radius: 999px; border: 1px solid #3a6d98; font-size: 12px; font-weight: 600; color: var(--muted); }
+.repo .cmd { margin: 0 16px 16px; }
+.repo .cmd pre { flex: 1; min-width: 0; margin: 0; overflow-x: auto; }
+.repo .cmd code { white-space: pre; overflow-wrap: normal; }
+.repo .cmd code::before { content: none; }
+.repo .hint { margin: 0 20px 12px; text-align: left; }
+@media (prefers-reduced-motion: no-preference) {
+  .repos.opening { animation: rise .4s cubic-bezier(.2, .7, .2, 1); }
+  .repo[open] .cmd { animation: fade-in .3s ease; }
+}
 
 /* FAQ */
 .faq { padding-block: 80px; max-width: 860px; }

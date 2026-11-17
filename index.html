@@ -141,7 +141,7 @@
       <div class="panel" role="tabpanel" id="panel-terminal" aria-labelledby="tab-terminal">
         <div class="cmd">
           <code id="install-cmd">curl -fsSL https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-linux-x86_64.tar.gz | tar xz &amp;&amp; ./marah-launcher-linux-x86_64/install.sh</code>
-          <button type="button" class="copy" data-copy="install-cmd" hidden>Copy</button>
+          <button type="button" class="copy" data-copy="install-cmd" aria-label="Copy the command" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
         </div>
         <p class="hint">Installs for you only, with no sudo, in <code>~/.local/lib/marah-launcher</code>. <code>install.sh --uninstall</code> removes it.</p>
       </div>
@@ -436,8 +436,39 @@
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-macos-universal.dmg"><strong>macOS</strong><span>Apple Silicon and Intel</span><small data-size="marah-launcher-macos-universal.dmg"></small></a></li>
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/Marah-Launcher-x86_64.AppImage"><strong>Linux</strong><span>AppImage, x86-64</span><small data-size="Marah-Launcher-x86_64.AppImage"></small></a></li>
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-linux-x86_64.tar.gz"><strong>Linux</strong><span>Archive with install.sh, x86-64</span><small data-size="marah-launcher-linux-x86_64.tar.gz"></small></a></li>
-      <li><a class="card" href="https://marahhq.github.io/packages"><strong>Fedora, Debian, Ubuntu</strong><span>DNF and APT repositories</span></a></li>
+      <li><a class="card repos-toggle" href="#repos" aria-controls="repos"><strong>Fedora, Debian, Ubuntu</strong><span>DNF and APT repositories</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></a></li>
     </ul>
+    <div class="repos" id="repos" role="region" aria-label="Install from a package repository">
+      <p class="repos-lead">Install from a repository, and Marah Launcher updates with the rest of your
+      system. The repositories' metadata is signed with <a href="https://marahhq.github.io/packages/marah.asc">this key</a>.</p>
+      <details class="repo" open>
+        <summary><span class="distro">Fedora</span><span class="pm">DNF</span></summary>
+        <div class="cmd">
+<pre><code id="cmd-dnf">sudo curl -fsSLo /etc/yum.repos.d/marah.repo https://marahhq.github.io/packages/rpm/marah.repo
+sudo dnf install marah-launcher</code></pre>
+          <button type="button" class="copy" data-copy="cmd-dnf" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+        </div>
+      </details>
+      <details class="repo">
+        <summary><span class="distro">Debian and Ubuntu</span><span class="pm">APT</span></summary>
+        <div class="cmd">
+<pre><code id="cmd-apt">sudo curl -fsSLo /usr/share/keyrings/marah.asc https://marahhq.github.io/packages/marah.asc
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/marah.asc] https://marahhq.github.io/packages/deb stable main" |
+  sudo tee /etc/apt/sources.list.d/marah.list
+sudo apt update &amp;&amp; sudo apt install marah-launcher</code></pre>
+          <button type="button" class="copy" data-copy="cmd-apt" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+        </div>
+      </details>
+      <details class="repo">
+        <summary><span class="distro">Arch Linux</span><span class="pm">pacman</span></summary>
+        <p class="hint">There is no repository yet. Download the <code>.pkg.tar.zst</code> file from
+        <a href="https://github.com/MarahHQ/marah-launcher/releases/latest">the latest release</a>, then install it:</p>
+        <div class="cmd">
+<pre><code id="cmd-pacman">sudo pacman -U ./marah-launcher-*-x86_64.pkg.tar.zst</code></pre>
+          <button type="button" class="copy" data-copy="cmd-pacman" aria-label="Copy the commands" title="Copy" hidden><svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+        </div>
+      </details>
+    </div>
     <p class="note">Every file, with its SHA-256: <a href="https://github.com/MarahHQ/marah-launcher/releases/latest">the latest release</a>.</p>
   </div>
 </section>
