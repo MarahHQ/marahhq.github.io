@@ -109,6 +109,29 @@
   button {
     cursor: pointer;
   }
+  /* Thin scrollbars in the site's colours. Firefox and Chrome read scrollbar-color; Safari reads
+     the ::-webkit-scrollbar rules. Phones mostly draw their own, over the content. */
+  html {
+    scrollbar-color: var(--color-edge) transparent; /* Inherited: every scroll box has it. */
+  }
+  * {
+    scrollbar-width: thin;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: var(--color-edge) padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-ice);
+  }
   :focus-visible {
     outline: 3px solid var(--color-ice);
     outline-offset: 3px;
@@ -1025,42 +1048,47 @@
     }
   }
 
-  /* A question that opens: a plus turns into a cross. */
+  /* A question that opens: its answer slides out (a fold), and the plus turns into a cross. */
   .qa {
     border: 1px solid var(--color-line);
     border-radius: 16px;
     background: var(--color-panel);
     margin-bottom: 12px;
-    transition: border-color 0.2s;
+    transition:
+      border-color 0.2s,
+      background-color 0.25s;
   }
   .qa:hover,
-  .qa[open] {
+  .qa.open {
     border-color: var(--color-edge);
   }
-  .qa summary {
+  .qa.open {
+    background: linear-gradient(160deg, var(--color-panel-hi), var(--color-panel));
+  }
+  .qa-head {
     display: flex;
+    width: 100%;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     padding: 18px 22px;
+    border-radius: 16px;
+    text-align: left;
+    font: inherit;
     font-weight: 700;
-    cursor: pointer;
-    list-style: none;
+    color: var(--color-text);
   }
-  .qa summary::-webkit-details-marker {
-    display: none;
-  }
-  .qa summary::after {
+  .qa-head::after {
     content: "";
     flex: none;
     width: 14px;
     height: 14px;
-    transition: transform 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     background:
       linear-gradient(var(--color-ice), var(--color-ice)) center / 100% 2px no-repeat,
       linear-gradient(var(--color-ice), var(--color-ice)) center / 2px 100% no-repeat;
   }
-  .qa[open] summary::after {
+  .qa.open .qa-head::after {
     transform: rotate(45deg);
   }
   .qa p {
@@ -1071,6 +1099,12 @@
 
   /* The header's blur sits on a layer behind it: a backdrop-filter on the header itself would
      hold the menu's fixed panel inside the header's box. */
+  .site-header {
+    border-bottom: 1px solid var(--color-line);
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
   .site-header::before {
     content: "";
     position: absolute;
@@ -1078,6 +1112,18 @@
     z-index: -1;
     background: rgba(10, 21, 32, 0.85);
     backdrop-filter: blur(14px);
+    transition: opacity 0.3s ease;
+  }
+  /* At the top of the page the header is see-through; once the page scrolls, it is a thin bar
+     with its background, its border and a shadow (site.js and the head script set the class). */
+  .hdr-top .site-header {
+    border-bottom-color: transparent;
+  }
+  .hdr-top .site-header::before {
+    opacity: 0;
+  }
+  .hdr-scrolled .site-header {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   }
 
   /* The menu's parts that only the folded menu shows. */
@@ -1246,12 +1292,6 @@
     scale: 1.12;
   }
 }
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    translate: 0 -6px;
-  }
-}
 @keyframes menu-in {
   from {
     opacity: 0;
@@ -1310,9 +1350,6 @@
     .theme-art:hover .theme-shot {
       rotate: 0deg;
       translate: 0 -6px;
-    }
-    .qa[open] p {
-      animation: fade-in 0.3s ease;
     }
 
     /* Scroll reveal. The head script adds .reveal; site.js adds .in when a part comes into view. */

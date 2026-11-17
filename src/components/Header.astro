@@ -2,16 +2,16 @@
 // The header: the logo, the links (a slide-in menu on a tablet or a phone), GitHub and Download.
 ---
 
-<header class="site-header sticky top-0 z-10 border-b border-line">
+<header class="site-header sticky top-0 z-10">
   <!-- In the header, under the menu panel: the header is its own layer. -->
   <div class="nav-scrim" aria-hidden="true"></div>
-  <div class="wrap flex min-h-20 items-center justify-between gap-6 max-md:flex-wrap max-sm:min-h-17">
+  <div class="wrap flex min-h-20 items-center justify-between gap-6 transition-[min-height] duration-300 ease-out in-[.hdr-scrolled]:min-h-16 max-md:flex-wrap max-sm:min-h-17 max-sm:in-[.hdr-scrolled]:min-h-14">
     <a
       class="flex items-center gap-3 font-display text-[20px] leading-[1.05] font-extrabold tracking-[-.03em] text-text no-underline max-sm:text-[17px]"
       href="#top"
     >
       <img
-        class="drop-shadow-[0_0_10px_rgba(130,216,245,.35)] max-sm:size-10"
+        class="size-13 drop-shadow-[0_0_10px_rgba(130,216,245,.35)] transition-[width,height] duration-300 ease-out in-[.hdr-scrolled]:size-10 max-sm:size-10 max-sm:in-[.hdr-scrolled]:size-9"
         src="assets/logo-mark.svg"
         alt=""
         width="52"
@@ -45,6 +45,9 @@
       </a>
       <a class="nav-link" href="#pad">
         Controller
+      </a>
+      <a class="nav-link" href="#add-game">
+        Add a game
       </a>
       <a class="nav-link" href="#os">
         Marah OS
