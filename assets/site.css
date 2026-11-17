@@ -276,24 +276,33 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 .pad-say strong { color: var(--ice); }
 .gamepad { width: 100%; max-width: 1120px; margin-inline: auto; border-radius: 24px; outline-offset: 8px; }
 .gamepad svg { display: block; width: 100%; height: auto; overflow: visible; }
-.gamepad .shell { fill: url(#pad-wing); stroke: #9fb4c6; stroke-width: 1; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .5)); }
-.gamepad .core { fill: url(#pad-core); }
+.gamepad .shell { fill: url(#pad-wing); stroke: #a3b6c7; stroke-width: 1; filter: drop-shadow(0 22px 28px rgba(0, 0, 0, .55)); }
+.gamepad .core { fill: url(#pad-core); stroke: #2e3e4f; stroke-width: 1; }
+.gamepad .core-edge { fill: none; stroke: rgba(255, 255, 255, .5); stroke-width: 1; }
 .gamepad:focus-visible .shell, .gamepad.live .shell { stroke: var(--ice); stroke-width: 2.5; }
-.gamepad .touch { fill: url(#pad-touch); stroke: #b5c4d1; stroke-width: 1; }
+.gamepad .touch { fill: url(#pad-touch); stroke: #b0c0ce; stroke-width: 1; }
+.gamepad .touch-hi { stroke: #fff; stroke-width: 1.5; stroke-linecap: round; opacity: .9; }
 .gamepad .lightbar { fill: none; stroke: var(--ice); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 5px var(--ice)); }
-.gamepad .ring { fill: #070d14; stroke: #2c3b4a; stroke-width: 1; }
-.gamepad .cap { fill: url(#pad-cap); stroke: #3d5063; stroke-width: 1; }
-.gamepad .mute { fill: #f0a35c; opacity: .8; }
+.gamepad .well { fill: url(#pad-well); }
+.gamepad .ring { fill: #060b11; stroke: #2c3b4a; stroke-width: 1; }
+.gamepad .cap { fill: url(#pad-cap); stroke: #3d5063; stroke-width: .8; }
+.gamepad .dish { fill: url(#pad-dish); stroke: rgba(255, 255, 255, .08); stroke-width: .8; pointer-events: none; }
+.gamepad .mute { fill: #f0a35c; opacity: .85; }
+.gamepad .speaker circle { fill: #050a10; }
 .gamepad .b { cursor: pointer; }
-.gamepad .b .k { fill: #1c2733; stroke: #3d5063; stroke-width: 1; transition: fill .12s, stroke .12s; }
-.gamepad .l2 .k, .gamepad .r2 .k, .gamepad .l1 .k, .gamepad .r1 .k { fill: #172331; stroke: #2c3b4a; }
+.gamepad .b .k { fill: url(#pad-key); stroke: #0c131a; stroke-width: 1; transition: fill .12s, stroke .12s; }
+.gamepad .b .k.trig { fill: url(#pad-trigger); stroke: #0c131a; }
+.gamepad .b .k.bump { fill: #2a3846; stroke: #0c131a; }
+.gamepad .b .k.dk { fill: url(#pad-dkey); stroke: #9fb1c1; }
+.gamepad .edge { fill: none; stroke: rgba(255, 255, 255, .25); stroke-width: 1.5; stroke-linecap: round; pointer-events: none; }
+.gamepad .hi { fill: none; stroke: rgba(255, 255, 255, .18); stroke-width: 1.2; stroke-linecap: round; pointer-events: none; }
 .gamepad .b text { fill: #c9d6e2; font: 700 11px var(--font); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .gamepad .ps text { font-size: 7.5px; }
 .gamepad .g { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .12s; }
 .gamepad .tri .g { stroke: #7fe0c4; } .gamepad .cir .g { stroke: #ff8f8f; }
 .gamepad .crs .g { stroke: #9cc0ff; } .gamepad .sq .g { stroke: #f0a5d8; }
 .gamepad .b:hover .k { stroke: var(--ice); }
-.gamepad .b.on .k, .gamepad .b.on .k.cap { fill: var(--ice); stroke: var(--ice); }
+.gamepad .b.on .k, .gamepad .b.on .k.cap, .gamepad .b.on .k.dk, .gamepad .b.on .k.trig, .gamepad .b.on .k.bump { fill: var(--ice); stroke: var(--ice); }
 .gamepad .b.on text { fill: var(--bg); }
 .gamepad .b.on .g { stroke: var(--bg); }
 /* The lines from each button to what it does. */
