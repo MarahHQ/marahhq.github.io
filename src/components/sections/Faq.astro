@@ -1,5 +1,6 @@
 ---
-// The questions. An answer is HTML: it may hold a link.
+// The questions. Each answer slides open (site.js); without the script every answer shows. An
+// answer is HTML: it may hold a link.
 const questions = [
   {
     q: "Is Marah Launcher free?",
@@ -37,11 +38,19 @@ const questions = [
     Questions
   </h2>
   <div data-stagger>
-    {questions.map(({ q, a }) => (
-      <details class="qa">
-        <summary>{q}</summary>
-        <p set:html={a} />
-      </details>
+    {questions.map(({ q, a }, i) => (
+      <div class="qa open" data-qa>
+        <h3 class="font-sans text-[16px] leading-[inherit] tracking-normal">
+          <button type="button" class="qa-head" id={`qa-${i}-h`} aria-expanded="true" aria-controls={`qa-${i}`}>
+            {q}
+          </button>
+        </h3>
+        <div class="fold" id={`qa-${i}`} role="region" aria-labelledby={`qa-${i}-h`}>
+          <div class="fold-inner">
+            <p set:html={a} />
+          </div>
+        </div>
+      </div>
     ))}
   </div>
 </section>

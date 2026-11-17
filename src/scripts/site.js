@@ -32,6 +32,31 @@ document.addEventListener("keydown", (event) => {
 // A window that grows past the tablet width shows the links in the header again.
 folded.addEventListener("change", () => folded.matches || setMenu(false));
 
+// The header: see-through at the top of the page, a thin bar once it scrolls. One read a frame.
+const root = document.documentElement;
+let headerFrame = 0;
+function headerState() {
+  headerFrame = 0;
+  const top = scrollY < 8;
+  root.classList.toggle("hdr-top", top);
+  root.classList.toggle("hdr-scrolled", !top);
+}
+addEventListener("scroll", () => (headerFrame ||= requestAnimationFrame(headerState)), { passive: true });
+headerState();
+
+// The questions: each answer slides open and shut on its own. They start closed.
+document.querySelectorAll("[data-qa]").forEach((item) => {
+  const head = item.querySelector(".qa-head");
+  const answer = item.querySelector(".fold");
+  const set = (open) => {
+    item.classList.toggle("open", open);
+    head.setAttribute("aria-expanded", String(open));
+    answer.inert = !open;
+  };
+  set(false);
+  head.addEventListener("click", () => set(!item.classList.contains("open")));
+});
+
 // Scroll reveal: a part fades up the first time it comes into view. The CSS hides the
 // parts only when motion is allowed, so with reduced motion this only adds a class.
 const parts = document.querySelectorAll("[data-reveal], [data-stagger]");

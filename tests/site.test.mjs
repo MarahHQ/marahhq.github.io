@@ -112,13 +112,51 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
   it("doesn't scroll sideways on a phone, with every panel open", async () => {
     await browser.load(site.url, { width: 390, ua: ANDROID });
     const wide = await browser.run(`document.querySelector('.repos-toggle').click();
-      document.querySelectorAll('#faq details').forEach((d) => (d.open = true));
+      document.querySelectorAll('.qa-head').forEach((b) => b.click());
       await new Promise((r) => setTimeout(r, 300));
       const visible = (e) => getComputedStyle(e).visibility !== 'hidden';
       return { scroll: document.scrollingElement.scrollWidth - innerWidth,
         past: [...document.querySelectorAll('body *')].filter((e) => visible(e) && e.getBoundingClientRect().right > innerWidth + 1 && !e.closest('.gamepad, pre, .overflow-x-auto'))
           .map((e) => e.tagName + '.' + (e.getAttribute('class') ?? '').split(' ')[0]).slice(0, 5) }`);
     assert.deepEqual(wide, { scroll: 0, past: [] });
+  });
+
+  it("slides each answer open and shut on its own", async () => {
+    await browser.load(site.url);
+    const state = () => browser.run(`return [...document.querySelectorAll('[data-qa]')].map((q) =>
+      [q.classList.contains('open'), Math.round(q.querySelector('.fold').getBoundingClientRect().height) > 0, q.querySelector('.qa-head').getAttribute('aria-expanded')])`);
+    const start = await state();
+    assert.ok(start.length >= 5 && start.every(([open, shown, expanded]) => !open && !shown && expanded === "false"), "all closed");
+    await browser.run(`document.querySelectorAll('.qa-head')[1].click(); document.querySelectorAll('.qa-head')[3].click()`);
+    await sleep(500);
+    const now = await state();
+    assert.deepEqual(now.map(([open]) => open).slice(0, 4), [false, true, false, true], "two open at once");
+    assert.ok(now[1][1] && now[3][1], "their answers show");
+  });
+
+  it("makes the header a thin bar once the page scrolls", async () => {
+    await browser.load(site.url);
+    const header = () => browser.run(`const h = document.querySelector('.site-header');
+      return { top: document.documentElement.classList.contains('hdr-top'), height: Math.round(h.getBoundingClientRect().height),
+        border: getComputedStyle(h).borderBottomColor }`);
+    const top = await header();
+    assert.equal(top.top, true);
+    assert.equal(top.border, "rgba(0, 0, 0, 0)", "no border at the top");
+    await browser.run(`scrollTo({ top: 1500, behavior: 'instant' })`);
+    await sleep(500);
+    const down = await header();
+    assert.equal(down.top, false);
+    assert.ok(down.height < top.height, `thinner: ${top.height} → ${down.height}`);
+    assert.notEqual(down.border, "rgba(0, 0, 0, 0)");
+  });
+
+  it("copies the example game file", async () => {
+    await browser.load(site.url);
+    const text = await browser.run(`document.querySelector('[data-copy=add-game-json]').click();
+      await new Promise((r) => setTimeout(r, 200)); return navigator.clipboard.readText()`);
+    const file = JSON.parse(text);
+    assert.equal(file.format, 1, "a game file without format 1 is skipped");
+    assert.ok(file.starts.length && file.art.cover.startsWith("launcher_art/"));
   });
 
   it("shows the 404 page for a missing address", async () => {

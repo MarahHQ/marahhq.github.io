@@ -43,6 +43,8 @@ import Footer from "../components/Footer.astro";
     <script is:inline>
       // The scroll reveal hides sections until site.js shows them. If site.js does not run, show everything.
       document.documentElement.classList.add("reveal");
+      // The header is see-through at the top of the page, and a thin bar once the page scrolls.
+      document.documentElement.classList.add(scrollY < 8 ? "hdr-top" : "hdr-scrolled");
       setTimeout(function () {
         if (!window.marahReady) document.documentElement.classList.remove("reveal");
       }, 4000);
