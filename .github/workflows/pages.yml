@@ -11,6 +11,10 @@ on:
 permissions:
   contents: read
 
+# Astro sends usage data unless told not to.
+env:
+  ASTRO_TELEMETRY_DISABLED: 1
+
 # One publish at a time; a newer push doesn't cancel one that runs.
 concurrency:
   group: pages-${{ github.ref }}
@@ -28,7 +32,7 @@ jobs:
       - run: npm ci
       - name: Check the formatting
         run: npx prettier --check src/
-      # Builds dist/, then checks it in headless Chrome (ubuntu-latest has Chrome).
+      # Astro builds dist/, then the checks run in headless Chrome (ubuntu-latest has Chrome).
       - run: npm run check
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v5

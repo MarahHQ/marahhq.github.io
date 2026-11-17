@@ -3,24 +3,24 @@
    states, pseudo-elements or SVG that utilities would only spell out at length. */
 @import "tailwindcss" source(none);
 
-@source "./";
+@source "../";
 
 /* Inter, the Default theme's font, in Latin only (OFL: assets/fonts/OFL-Inter.txt). */
 @font-face {
   font-family: "Inter";
-  src: url("fonts/inter-regular.woff2") format("woff2");
+  src: url("/assets/fonts/inter-regular.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("fonts/inter-semibold.woff2") format("woff2");
+  src: url("/assets/fonts/inter-semibold.woff2") format("woff2");
   font-weight: 500 600;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("fonts/inter-bold.woff2") format("woff2");
+  src: url("/assets/fonts/inter-bold.woff2") format("woff2");
   font-weight: 700 900;
   font-display: swap;
 }

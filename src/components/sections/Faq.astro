@@ -1,0 +1,47 @@
+---
+// The questions. An answer is HTML: it may hold a link.
+const questions = [
+  {
+    q: "Is Marah Launcher free?",
+    a: "Yes. It is free software under the GNU GPL, version 3 or later.",
+  },
+  {
+    q: "Do I need Marah OS?",
+    a: "No. Marah Launcher runs on Linux, macOS and Windows. Marah OS is for a PC that starts straight into it.",
+  },
+  {
+    q: "Do Switch and Steam games work on every system?",
+    a: "Not yet. Switch and Steam games work on Linux. PS5, PS4 and PC games work on Linux, macOS and Windows.",
+  },
+  {
+    q: "Will every PS5, PS4 or Switch game run?",
+    a: "Not yet. The emulators are young. Before you start a game, its page says how well it should run on this PC, and Settings → This PC says the same for each console.",
+  },
+  {
+    q: "Does it need the internet?",
+    a: "To download the emulators, the Switch firmware, games and updates, yes. Games you have already set up start without it.",
+  },
+  {
+    q: "How do I update?",
+    a: "Marah Launcher checks for its own updates in Settings → Updates. With the deb, rpm or Arch package, your package manager updates it. On Marah OS, it comes with the system's update.",
+  },
+  {
+    q: "Where do I report a problem?",
+    a: 'Open an issue for <a href="https://github.com/MarahHQ/marah-launcher/issues">Marah Launcher</a> or <a href="https://github.com/MarahHQ/marah-os/issues">Marah OS</a>. Say which game and which PC: it helps a lot.',
+  },
+];
+---
+
+<section class="wrap max-w-[860px] py-20" id="faq" aria-labelledby="faq-title">
+  <h2 class="mb-6 text-center text-[clamp(30px,3vw,42px)]" id="faq-title" data-reveal>
+    Questions
+  </h2>
+  <div data-stagger>
+    {questions.map(({ q, a }) => (
+      <details class="qa">
+        <summary>{q}</summary>
+        <p set:html={a} />
+      </details>
+    ))}
+  </div>
+</section>

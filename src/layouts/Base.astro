@@ -1,0 +1,69 @@
+---
+// The frame of every page: the head, the skip link, the header, main and the footer. The
+// stylesheet and the script are bundled by Astro, with hashed names.
+import "../styles/site.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0d1926" />
+    <meta name="color-scheme" content="dark" />
+    <title>Marah Launcher: all your games, one launcher</title>
+    <meta
+      name="description"
+      content="Marah Launcher puts your games from emulators, PC folders and Steam in one library, played on the TV with a controller. Marah OS starts straight into it."
+    />
+    <link rel="canonical" href="https://marahhq.github.io/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Marah Launcher" />
+    <meta property="og:url" content="https://marahhq.github.io/" />
+    <meta property="og:title" content="Marah Launcher: all your games, one launcher" />
+    <meta
+      property="og:description"
+      content="Games from emulators, PC folders and Steam in one library, played on the TV with a controller. Free software for Linux, macOS and Windows."
+    />
+    <meta property="og:image" content="https://marahhq.github.io/assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Marah Launcher: all your games, one launcher. The home screen, beside the logo."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="assets/logo-static.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icon-180.png" />
+    <link rel="preload" href="assets/fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="assets/fonts/inter-bold.woff2" as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      // The scroll reveal hides sections until site.js shows them. If site.js does not run, show everything.
+      document.documentElement.classList.add("reveal");
+      setTimeout(function () {
+        if (!window.marahReady) document.documentElement.classList.remove("reveal");
+      }, 4000);
+    </script>
+  </head>
+  <body>
+    <a
+      class="absolute -top-[60px] left-4 z-20 rounded-[10px] bg-ice px-4 py-2.5 font-bold text-bg focus:top-3"
+      href="#main"
+    >
+      Skip to content
+    </a>
+
+    <Header />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+    <script>
+      import "../scripts/site.js";
+    </script>
+  </body>
+</html>

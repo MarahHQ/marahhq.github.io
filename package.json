@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "The Marah site",
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
     "test": "node --test tests/site.test.mjs",
     "check": "npm run build && npm test",
     "format": "prettier --write src/"
@@ -19,7 +21,10 @@
   "homepage": "https://github.com/MarahHQ/marahhq.github.io#readme",
   "devDependencies": {
     "@tailwindcss/cli": "4.3.5",
+    "@tailwindcss/vite": "4.3.5",
+    "astro": "7.4.12",
     "prettier": "3.10.1",
+    "prettier-plugin-astro": "1.1.2",
     "prettier-plugin-tailwindcss": "0.8.1",
     "tailwindcss": "4.3.5"
   },
