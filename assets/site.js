@@ -146,3 +146,193 @@ if (matchMedia("(hover: hover)").matches && !reduced.matches) {
     });
   });
 }
+
+// ── Two ways in: the Download and Linux terminal tabs ──
+// Without this script both panels show, one under the other.
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function choose(tab) {
+  for (const other of tabs) {
+    const on = other === tab;
+    other.setAttribute("aria-selected", String(on));
+    other.tabIndex = on ? 0 : -1;
+    document.getElementById(other.getAttribute("aria-controls")).hidden = !on;
+  }
+}
+if (tabs.length) {
+  tabs[0].parentElement.hidden = false;
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => choose(tab));
+    tab.addEventListener("keydown", (event) => {
+      const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+      if (!step) return;
+      const next = tabs[(i + step + tabs.length) % tabs.length];
+      choose(next);
+      next.focus();
+    });
+  });
+  // A Linux visitor sees the terminal first.
+  choose(/Linux/.test(navigator.userAgent) && !/Android/.test(navigator.userAgent) ? tabs[1] : tabs[0]);
+}
+
+// The copy button.
+document.querySelectorAll("[data-copy]").forEach((button) => {
+  if (!navigator.clipboard) return;
+  button.hidden = false;
+  button.addEventListener("click", async () => {
+    const text = document.getElementById(button.dataset.copy).textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = "Copied";
+    } catch {
+      button.textContent = "Select it";
+    }
+    setTimeout(() => { button.textContent = "Copy"; }, 1800);
+  });
+});
+
+// The download for this visitor's system. Phones and unknown systems keep "Choose your system".
+const LATEST = "https://github.com/MarahHQ/marah-launcher/releases/latest/download/";
+const forYou = document.querySelector("[data-for-you]");
+const ua = navigator.userAgent;
+const mine =
+  /Android|iPhone|iPad/.test(ua) ? null :
+  /Windows/.test(ua) ? ["Windows", "marah-launcher-windows-x86_64-setup.exe"] :
+  /Mac OS X|Macintosh/.test(ua) ? ["macOS", "marah-launcher-macos-universal.dmg"] :
+  /Linux|X11/.test(ua) ? ["Linux (AppImage)", "Marah-Launcher-x86_64.AppImage"] : null;
+if (forYou && mine) {
+  forYou.textContent = `Download for ${mine[0]}`;
+  forYou.href = LATEST + mine[1];
+  forYou.dataset.file = mine[1];
+}
+
+// ── The latest versions, read from GitHub ──
+// The page carries no version numbers, so it is never wrong without this. GitHub allows
+// 60 calls an hour per visitor; an hour's cache in the browser keeps it to two.
+const day = (iso) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const size = (bytes) => bytes >= 1e9 ? `${(bytes / 1e9).toFixed(1)} GB` : `${Math.round(bytes / 1e6)} MB`;
+async function latest(repo) {
+  const key = `marah-release-${repo}`;
+  try {
+    const kept = JSON.parse(localStorage.getItem(key) || "null");
+    if (kept && Date.now() - kept.at < 36e5) return kept.release;
+  } catch {}
+  const res = await fetch(`https://api.github.com/repos/MarahHQ/${repo}/releases/latest`, { headers: { Accept: "application/vnd.github+json" } });
+  if (!res.ok) throw new Error(res.status);
+  const body = await res.json();
+  const release = {
+    tag: body.tag_name,
+    date: body.published_at,
+    assets: Object.fromEntries((body.assets || []).map((a) => [a.name, a.size])),
+  };
+  try { localStorage.setItem(key, JSON.stringify({ at: Date.now(), release })); } catch {}
+  return release;
+}
+function say(which, text) {
+  document.querySelectorAll(`[data-release="${which}"]`).forEach((el) => { el.textContent = text; });
+}
+latest("marah-launcher").then((r) => {
+  say("launcher", `${r.tag} · ${day(r.date)}`);
+  document.querySelectorAll("[data-size]").forEach((el) => {
+    const bytes = r.assets[el.dataset.size];
+    if (bytes) el.textContent = size(bytes);
+  });
+  if (forYou && forYou.dataset.file && r.assets[forYou.dataset.file]) {
+    forYou.textContent += ` · ${size(r.assets[forYou.dataset.file])}`;
+  }
+}).catch(() => {});
+latest("marah-os").then((r) => {
+  // The ISO, whole or in parts; not the checksums.
+  const iso = Object.entries(r.assets).filter(([name]) => /\.iso(\.part-[a-z]+)?$/.test(name));
+  const total = iso.reduce((sum, [, bytes]) => sum + bytes, 0);
+  say("os", `${r.tag} · ${total ? `${size(total)} · ` : ""}${day(r.date)}`);
+}).catch(() => {});
+
+// ── The controller: a key, a click or a real controller lights what it does ──
+const pad = document.querySelector("[data-pad]");
+const padSay = document.querySelector("[data-pad-say]");
+const WORDS = {
+  move: "<strong>Move</strong>: the D-pad, the left stick or the arrow keys.",
+  select: "<strong>✕ Select</strong>: opens what has the focus. Enter on a keyboard.",
+  back: "<strong>○ Back</strong>: one screen back. Escape or Backspace.",
+  search: "<strong>△ Search</strong>: the Library, or the Catalog when you are in it. / on a keyboard.",
+  trailer: "<strong>□ Trailer</strong>: plays the shown game's trailer. T on a keyboard.",
+  menu: "<strong>Options</strong>: the shown game's menu. On Home, the system's emulator page.",
+  bar: "<strong>L1, R1</strong>: along the top bar, or to the section before or after. Tab on a keyboard.",
+  page: "<strong>L2, R2</strong>: a page up or down. Page Up and Page Down.",
+  notice: "<strong>Create</strong>: closes the newest notice. Delete on a keyboard.",
+  home: "<strong>PS, tap</strong>: back to Home. Hold it to close the game, or for the power menu.",
+  hold: "<strong>PS, hold</strong>: closes the running game. With none, the power menu.",
+};
+let lit = 0;
+function hit(act, button) {
+  if (!pad) return;
+  padSay.innerHTML = WORDS[act];
+  pad.querySelectorAll(".b.on").forEach((b) => b.classList.remove("on"));
+  document.querySelectorAll(".keys .on").forEach((k) => k.classList.remove("on"));
+  (button || pad.querySelector(`[data-act="${act === "hold" ? "home" : act}"]`)).classList.add("on");
+  const key = document.querySelector(`.keys [data-key="${act === "hold" ? "home" : act}"]`);
+  if (key) key.classList.add("on");
+  clearTimeout(lit);
+  lit = setTimeout(() => {
+    pad.querySelectorAll(".b.on").forEach((b) => b.classList.remove("on"));
+    if (key) key.classList.remove("on");
+  }, 700);
+}
+if (pad) {
+  pad.querySelectorAll("[data-act]").forEach((b) => b.addEventListener("click", () => hit(b.dataset.act, b)));
+  // Keys count only while the controller has the focus, so the page's own keys still work.
+  const KEYS = {
+    ArrowUp: "move", ArrowDown: "move", ArrowLeft: "move", ArrowRight: "move",
+    Enter: "select", Escape: "back", Backspace: "back", "/": "search", t: "trailer", T: "trailer",
+    ContextMenu: "menu", PageUp: "page", PageDown: "page", Delete: "notice", Tab: "bar",
+  };
+  const DPAD = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
+  pad.addEventListener("keydown", (event) => {
+    if (event.target !== pad) return; // A focused button answers Enter with its own click.
+    const act = KEYS[event.key];
+    if (!act) return;
+    if (act !== "bar") event.preventDefault(); // Tab still moves the focus on.
+    hit(act, DPAD[event.key] ? pad.querySelector(`.dp.${DPAD[event.key]}`) : null);
+  });
+
+  // A real controller, in the browser's standard layout: 0 ✕, 1 ○, 2 □, 3 △, 4 L1, 5 R1,
+  // 6 L2, 7 R2, 8 Create, 9 Options, 12 to 15 the D-pad, 16 PS. Read only while the section
+  // is on screen and a controller is there.
+  const PADS = { 0: "select", 1: "back", 2: "trailer", 3: "search", 4: "bar", 5: "bar", 6: "page", 7: "page",
+    8: "notice", 9: "menu", 12: "move", 13: "move", 14: "move", 15: "move", 16: "home" };
+  const PAD_BUTTON = { 4: ".l1", 5: ".r1", 6: ".l2", 7: ".r2", 12: ".dp.up", 13: ".dp.down", 14: ".dp.left", 15: ".dp.right" };
+  let onScreen = false, polling = false, was = [], psSince = 0, psHeld = false, stickWas = false;
+  function poll() {
+    const gp = [...(navigator.getGamepads ? navigator.getGamepads() : [])].find(Boolean);
+    if (!gp || !onScreen) { polling = false; pad.classList.remove("live"); return; }
+    pad.classList.add("live");
+    const now = gp.buttons.map((b) => b.pressed);
+    now.forEach((down, i) => {
+      if (i === 16) {
+        if (down && !was[i]) { psSince = performance.now(); psHeld = false; }
+        if (down && !psHeld && performance.now() - psSince >= 600) { psHeld = true; hit("hold"); }
+        if (!down && was[i] && !psHeld) hit("home");
+        return;
+      }
+      if (down && !was[i] && PADS[i]) hit(PADS[i], PAD_BUTTON[i] ? pad.querySelector(PAD_BUTTON[i]) : null);
+    });
+    const stick = Math.hypot(gp.axes[0] || 0, gp.axes[1] || 0) > 0.5;
+    if (stick && !stickWas) hit("move", pad.querySelector(".ls"));
+    stickWas = stick;
+    was = now;
+    requestAnimationFrame(poll);
+  }
+  function start() {
+    if (polling || !onScreen) return;
+    polling = true;
+    padSay.innerHTML = "A controller is here. <strong>Press a button.</strong>";
+    requestAnimationFrame(poll);
+  }
+  addEventListener("gamepadconnected", start);
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      if (onScreen && navigator.getGamepads && [...navigator.getGamepads()].some(Boolean)) start();
+    }).observe(pad);
+  }
+}
