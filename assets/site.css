@@ -193,9 +193,10 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 /* site.js fades the next picture in on this layer, over #screen, then swaps #screen under it. */
 .screen-stack > img.screen-next {
   position: absolute; top: 24px; left: 20px; width: calc(100% - 40px);
-  opacity: 0; transition: opacity .4s ease; pointer-events: none; box-shadow: none;
+  opacity: 0; pointer-events: none; box-shadow: none;
 }
-.screen-stack > img.screen-next.show { opacity: 1; }
+/* Only the fade in is animated. The layer hides at once, so the next fade starts from 0. */
+.screen-stack > img.screen-next.show { opacity: 1; transition: opacity .4s ease; }
 .screen-back { position: absolute; inset: 0 30px 40px 0; border: 2px solid var(--blue); border-radius: 16px; transform: rotate(-5deg); }
 .screen-stack figcaption { margin-top: 28px; }
 .experience-copy h2 { font-size: clamp(30px, 3.1vw, 46px); margin: 20px 0; }

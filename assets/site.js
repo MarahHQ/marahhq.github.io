@@ -35,6 +35,14 @@ if ("IntersectionObserver" in window) {
     { rootMargin: "0px 0px -8% 0px", threshold: 0 }
   );
   parts.forEach((part) => seen.observe(part));
+  // A link or button that gets keyboard focus is shown at once, even at the screen's edge.
+  document.addEventListener("focusin", (event) => {
+    for (let part = event.target.closest("[data-reveal], [data-stagger]"); part;
+      part = part.parentElement.closest("[data-reveal], [data-stagger]")) {
+      part.classList.add("in");
+      seen.unobserve(part);
+    }
+  });
 } else {
   parts.forEach((part) => part.classList.add("in"));
 }
@@ -97,6 +105,16 @@ async function show(button) {
     return;
   }
   clearTimeout(fadeDone);
+  if (layer.classList.contains("show")) {
+    // A click during a fade: the picture on the layer becomes the base, then the layer
+    // hides and the new picture fades in from 0.
+    screen.src = layer.src;
+    await screen.decode().catch(() => {});
+    if (mine !== turn) return;
+    layer.classList.remove("show");
+    await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+    if (mine !== turn) return;
+  }
   layer.src = src;
   layer.classList.add("show");
   // A timer, not transitionend: the timer fires even when the transition does not run.
