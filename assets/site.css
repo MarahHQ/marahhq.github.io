@@ -225,15 +225,45 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 .switcher button:active { transform: scale(.97); }
 .switcher button[aria-pressed="true"] { background: var(--ice); border-color: var(--ice); color: var(--bg); }
 
-/* Designed for play */
-.more { padding-block: 96px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 72px; }
+/* Themes */
+.more { padding-block: 96px; display: grid; grid-template-columns: 1fr 1.1fr; align-items: center; gap: 40px 72px; }
 .more h2, .os h2, .download h2 { font-size: clamp(34px, 4vw, 56px); margin: 16px 0 20px; }
 .more p:not(.eyebrow), .os p:not(.eyebrow), .download p:not(.eyebrow) { color: var(--muted); max-width: 560px; font-size: 17px; }
-.more-art {
-  display: grid; place-items: center; min-height: 340px; border-radius: 32px;
-  background: radial-gradient(ellipse, #173f63, var(--bg) 70%); border: 1px solid var(--line);
+.more-copy code { font-size: 15px; color: var(--text); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.chips li { padding: 6px 14px; border-radius: 999px; border: 1px solid #3a6d98; background: rgba(16, 35, 50, .7); font-size: 14px; font-weight: 600; }
+.theme-art { position: relative; padding: 0 0 150px 0; }
+.editor {
+  position: relative; z-index: 1; width: 78%; border-radius: 16px; overflow: hidden;
+  background: #07111b; border: 1px solid var(--line); box-shadow: 0 24px 50px rgba(0, 0, 0, .45);
 }
-.more-art img { width: 240px; filter: drop-shadow(0 0 30px var(--glow)); }
+.editor-bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: #0c1a28; border-bottom: 1px solid var(--line); }
+.editor-bar span { width: 10px; height: 10px; border-radius: 50%; background: #2a4560; }
+.editor-bar b { margin-left: 8px; font: 600 12.5px var(--font); color: var(--muted); }
+.editor pre { margin: 0; padding: 16px 18px; overflow-x: auto; }
+.editor code { font: 13.5px/1.75 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; color: #d9eef8; }
+.editor i { font-style: normal; color: #9cc0ff; }
+.editor s { text-decoration: none; color: #a6e3b8; }
+.editor u { text-decoration: none; color: #f0a5d8; }
+.editor em { font-style: normal; color: #5f7f99; }
+.sw { display: inline-block; width: 12px; height: 12px; margin-left: 6px; vertical-align: -1px; border-radius: 3px; background: var(--c); box-shadow: 0 0 10px var(--c); }
+.theme-shot {
+  position: absolute; z-index: 2; right: 0; bottom: 34px; width: 54%;
+  border: 2px solid var(--ice); border-radius: 14px; overflow: hidden; rotate: 2deg;
+  box-shadow: 0 0 25px rgba(130, 216, 245, .45), 0 24px 50px rgba(0, 0, 0, .5);
+}
+.theme-shot img { display: block; }
+.theme-art figcaption { position: absolute; left: 0; bottom: 0; text-align: left; }
+@media (prefers-reduced-motion: no-preference) {
+  .theme-shot { transition: rotate .5s ease, translate .5s ease; }
+  .theme-art:hover .theme-shot { rotate: 0deg; translate: 0 -6px; }
+}
+.session {
+  grid-column: 1 / -1; display: flex; align-items: center; gap: 20px; padding: 22px 26px; border-radius: 20px;
+  background: linear-gradient(110deg, #13293d, var(--panel)); border: 1px solid var(--line);
+}
+.session h3 { margin: 0 0 4px; font-size: 19px; }
+.session p { margin: 0 !important; max-width: none !important; font-size: 15.5px !important; }
 
 /* Two ways in */
 .get { padding-block: 88px 72px; }
@@ -511,7 +541,10 @@ kbd {
   .keys { display: grid; }
   .experience-copy { text-align: center; }
   .switcher { justify-content: center; }
-  .more-art { min-height: 260px; }
+  .theme-art { padding-bottom: 40px; }
+  .editor { width: 100%; }
+  .theme-shot { position: relative; width: 88%; margin: -40px 0 0 auto; bottom: auto; }
+  .theme-art figcaption { position: static; margin-top: 16px; }
 }
 
 /* Phone */
@@ -529,6 +562,7 @@ kbd {
   .grid li:last-child { grid-column: 1 / -1; }
   .experience { padding-block: 48px 64px; }
   .more { padding-block: 64px; }
+  .session { flex-direction: column; align-items: flex-start; }
   .footer-inner { flex-direction: column; text-align: center; }
   .os-cards, .keys { grid-template-columns: 1fr; }
   .way { padding: 22px; }
