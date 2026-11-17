@@ -1,3 +1,4 @@
+"use strict";
 // Small extras. The page works without this file: the nav stays open, one screenshot shows,
 // and every section is visible (the head script shows them if this file does not run).
 window.marahReady = true;
@@ -164,7 +165,7 @@ if (matchMedia("(hover: hover)").matches && !reduced.matches) {
 // ── Two ways in: the Download and Linux terminal tabs ──
 // Without this script both panels show, one under the other.
 const tabs = [...document.querySelectorAll('[role="tab"]')];
-function choose(tab) {
+function chooseTab(tab) {
   for (const other of tabs) {
     const on = other === tab;
     other.setAttribute("aria-selected", String(on));
@@ -175,17 +176,17 @@ function choose(tab) {
 if (tabs.length) {
   tabs[0].parentElement.hidden = false;
   tabs.forEach((tab, i) => {
-    tab.addEventListener("click", () => choose(tab));
+    tab.addEventListener("click", () => chooseTab(tab));
     tab.addEventListener("keydown", (event) => {
       const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
       if (!step) return;
       const next = tabs[(i + step + tabs.length) % tabs.length];
-      choose(next);
+      chooseTab(next);
       next.focus();
     });
   });
   // A Linux visitor sees the terminal first.
-  choose(/Linux/.test(navigator.userAgent) && !/Android/.test(navigator.userAgent) ? tabs[1] : tabs[0]);
+  chooseTab(/Linux/.test(navigator.userAgent) && !/Android/.test(navigator.userAgent) ? tabs[1] : tabs[0]);
 }
 
 // The copy buttons: a copy icon, and a tick for a moment once copied.
@@ -231,7 +232,7 @@ if (reposToggle && repos) {
   reposToggle.addEventListener("keydown", (event) => { if (event.key === " ") { event.preventDefault(); reposToggle.click(); } });
 
   const items = [...repos.querySelectorAll("[data-repo]")];
-  function choose(item) {
+  function openRepo(item) {
     for (const other of items) {
       const open = other === item && !item.classList.contains("open");
       other.classList.toggle("open", open);
@@ -239,10 +240,10 @@ if (reposToggle && repos) {
       other.querySelector(".collapse").inert = !open;
     }
   }
-  items.forEach((item) => item.querySelector(".repo-head").addEventListener("click", () => choose(item)));
+  items.forEach((item) => item.querySelector(".repo-head").addEventListener("click", () => openRepo(item)));
   // Only the first starts open.
   items.forEach((item) => item.classList.remove("open"));
-  choose(items[0]);
+  openRepo(items[0]);
 }
 
 // The download for this visitor's system. Phones and unknown systems keep "Choose your system".
