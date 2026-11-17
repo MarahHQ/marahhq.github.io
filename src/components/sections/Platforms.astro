@@ -1,0 +1,41 @@
+---
+// What it plays: one card per source of games.
+const platforms = [
+  { name: "PS5", with: "with KytyPS5" },
+  { name: "PS4", with: "with shadPS4" },
+  { name: "Switch", with: "with Lichii, on Linux" },
+  { name: "Steam", with: "your Steam games, on Linux" },
+  { name: "PC", with: "native, Wine or Proton" },
+  { name: "All games", with: "one list for every source" },
+];
+---
+
+<section
+  class="wrap flex items-center gap-9 py-10 max-lg:flex-col max-lg:items-stretch"
+  id="platforms"
+  aria-labelledby="platforms-title"
+>
+  <div class="w-[260px] flex-none max-lg:w-auto" data-reveal>
+    <h2 class="text-[26px]" id="platforms-title">
+      What it plays
+    </h2>
+    <p class="my-[1em] text-body text-muted">Each source of games is a plugin built into Marah Launcher.</p>
+    <a class="group/link text-body font-bold" href="#screens">
+      See the screens
+      <span
+        class="inline-block transition-transform duration-200 group-hover/link:translate-x-1 group-focus-visible/link:translate-x-1"
+        aria-hidden="true"
+      >
+        →
+      </span>
+    </a>
+  </div>
+  <ul class="grid flex-1 grid-cols-6 gap-3.5 max-lg:grid-cols-3 max-sm:grid-cols-2" data-stagger>
+    {platforms.map((p) => (
+      <li class="platform">
+        <strong class="text-[18px]">{p.name}</strong>
+        <span class="text-caption leading-[1.35] text-muted">{p.with}</span>
+      </li>
+    ))}
+  </ul>
+</section>

@@ -1,27 +1,29 @@
 // The site's checks, on the built dist/ (npm run build first; npm run check does both).
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { after, before, describe, it } from "node:test";
 import { ANDROID, chrome, open, serve } from "./browser.mjs";
 
 const page = readFileSync("dist/index.html", "utf8");
-const css = readdirSync("dist/assets").find((f) => /^site\.[0-9a-f]{8}\.css$/.test(f));
-const js = readdirSync("dist/assets").find((f) => /^site\.[0-9a-f]{8}\.js$/.test(f));
+// Astro puts the bundled stylesheet and script in dist/_astro/, with a hash in their names.
+const linked = (html, ext) => [...html.matchAll(new RegExp(`"/_astro/([\\w.-]+\\.[\\w-]{8}\\.${ext})"`, "g"))].map((m) => m[1]);
+const [css] = linked(page, "css");
+const [js] = linked(page, "js");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 describe("the build", () => {
   it("links the stylesheet and the script by their hashed names", () => {
-    assert.ok(css && js, "dist/assets has site.<hash>.css and site.<hash>.js");
-    assert.ok(page.includes(`assets/${css}`) && page.includes(`assets/${js}`));
-    assert.ok(readFileSync("dist/404.html", "utf8").includes(`/assets/${css}`));
+    assert.ok(css && js, "the page links /_astro/<name>.<hash>.css and .js");
+    assert.ok(existsSync(`dist/_astro/${css}`) && existsSync(`dist/_astro/${js}`));
+    assert.deepEqual(linked(readFileSync("dist/404.html", "utf8"), "css"), [css]);
   });
 
   it("has no component class that is also a Tailwind utility", () => {
     // A component named like a utility gets the utility's style too: `.outline` once drew a
     // second border, and `.collapse` hid the panels.
-    const source = readFileSync("src/site.css", "utf8");
+    const source = readFileSync("src/styles/site.css", "utf8");
     const components = new Set([...source.matchAll(/\.([a-z][a-z0-9-]*)(?=[\s,.:{>\[)])/g)].map((m) => m[1]));
-    const built = readFileSync(`dist/assets/${css}`, "utf8");
+    const built = readFileSync(`dist/_astro/${css}`, "utf8");
     const utilities = built.slice(built.indexOf("@layer utilities"));
     // A utility's own rule starts right after a brace: `}.outline{` or `}.outline:hover{`. A state
     // variant like `[&.on]:border-ice` compiles to `.\[\&\.on\]\:border-ice.on`, which is no clash.
@@ -89,7 +91,7 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     await browser.run(`document.querySelector('.menu').click()`);
     await sleep(500);
     assert.equal(await shown(), true);
-    assert.equal(await browser.run(`return document.activeElement.textContent`), "Get it", "the focus moves into the menu");
+    assert.equal(await browser.run(`return document.activeElement.textContent.trim()`), "Get it", "the focus moves into the menu");
     assert.equal(await browser.run(`return getComputedStyle(document.documentElement).overflow`), "hidden", "the page doesn't scroll behind it");
     await browser.run(`document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))`);
     await sleep(500);
