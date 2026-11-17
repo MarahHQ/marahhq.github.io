@@ -188,21 +188,48 @@ if (tabs.length) {
   choose(/Linux/.test(navigator.userAgent) && !/Android/.test(navigator.userAgent) ? tabs[1] : tabs[0]);
 }
 
-// The copy button.
+// The copy buttons: a copy icon, and a tick for a moment once copied.
 document.querySelectorAll("[data-copy]").forEach((button) => {
   if (!navigator.clipboard) return;
   button.hidden = false;
+  const label = button.getAttribute("aria-label");
+  let undo = 0;
   button.addEventListener("click", async () => {
     const text = document.getElementById(button.dataset.copy).textContent;
     try {
       await navigator.clipboard.writeText(text);
-      button.textContent = "Copied";
+      button.classList.add("done");
+      button.setAttribute("aria-label", "Copied");
     } catch {
-      button.textContent = "Select it";
+      button.setAttribute("aria-label", "Couldn't copy: select the text instead");
     }
-    setTimeout(() => { button.textContent = "Copy"; }, 1800);
+    clearTimeout(undo);
+    undo = setTimeout(() => { button.classList.remove("done"); button.setAttribute("aria-label", label); }, 1800);
   });
 });
+
+// The repositories card opens their panel in place. Without this script the panel shows.
+const reposToggle = document.querySelector(".repos-toggle");
+const repos = document.querySelector("#repos");
+if (reposToggle && repos) {
+  repos.hidden = true;
+  reposToggle.setAttribute("aria-expanded", "false");
+  reposToggle.setAttribute("role", "button");
+  reposToggle.addEventListener("click", (event) => {
+    event.preventDefault();
+    const open = repos.hidden;
+    repos.hidden = !open;
+    reposToggle.setAttribute("aria-expanded", String(open));
+    if (open) {
+      repos.classList.remove("opening");
+      void repos.offsetWidth;
+      repos.classList.add("opening");
+      repos.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "nearest" });
+    }
+  });
+  // Space on a link-turned-button opens it too.
+  reposToggle.addEventListener("keydown", (event) => { if (event.key === " ") { event.preventDefault(); reposToggle.click(); } });
+}
 
 // The download for this visitor's system. Phones and unknown systems keep "Choose your system".
 const LATEST = "https://github.com/MarahHQ/marah-launcher/releases/latest/download/";
