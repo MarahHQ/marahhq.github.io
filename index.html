@@ -13,8 +13,15 @@
 <meta property="og:url" content="https://marahhq.github.io/">
 <meta property="og:title" content="Marah Launcher: all your games, one launcher">
 <meta property="og:description" content="Games from emulators, PC folders and Steam in one library, played on the TV with a controller. Free software for Linux, macOS and Windows.">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://marahhq.github.io/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Marah Launcher: all your games, one launcher. The home screen, beside the logo.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/logo-static.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preload" href="assets/fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/site.css">
 <script>
   // The scroll reveal hides sections until site.js shows them. If site.js does not run, show everything.
@@ -37,10 +44,11 @@
       <span class="visually-hidden">Menu</span>
     </button>
     <nav id="nav" aria-label="Main">
-      <a href="#features">Features</a>
+      <a href="#get">Get it</a>
       <a href="#screens">Screenshots</a>
+      <a href="#pad">Controller</a>
       <a href="#os">Marah OS</a>
-      <a href="#download">Download</a>
+      <a href="#which">Which one?</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-right">
@@ -61,7 +69,7 @@
     <p>Marah Launcher is a game launcher for a TV and a controller. It puts your games from
     emulators, PC folders and Steam in one library, and you play them from the couch.</p>
     <div class="actions">
-      <a class="cta" href="#download">Download Marah Launcher</a>
+      <a class="cta" href="#get">Get Marah Launcher</a>
       <a class="outline" href="https://github.com/MarahHQ/marah-launcher">View on GitHub</a>
     </div>
   </div>
@@ -112,6 +120,56 @@
   </ul>
 </section>
 
+<section class="get wrap" id="get" aria-labelledby="get-title">
+  <div class="get-head" data-reveal>
+    <p class="eyebrow">Get it</p>
+    <h2 id="get-title">Two ways in.</h2>
+    <p>An app for the computer you have, or a whole PC that starts into your games.</p>
+  </div>
+  <div class="ways" data-stagger>
+    <article class="way" aria-labelledby="way-launcher">
+      <h3 id="way-launcher">Marah Launcher</h3>
+      <p class="way-lead">An app for Linux, macOS and Windows. Your desktop stays as it is.</p>
+      <div class="tabs" role="tablist" aria-label="How to get Marah Launcher" hidden>
+        <button type="button" role="tab" id="tab-download" aria-controls="panel-download" aria-selected="true">Download</button>
+        <button type="button" role="tab" id="tab-terminal" aria-controls="panel-terminal" aria-selected="false" tabindex="-1">Linux terminal</button>
+      </div>
+      <div class="panel" role="tabpanel" id="panel-download" aria-labelledby="tab-download">
+        <a class="cta" data-for-you href="#download">Choose your system</a>
+        <p class="hint"><a href="#download">Every system and package</a></p>
+      </div>
+      <div class="panel" role="tabpanel" id="panel-terminal" aria-labelledby="tab-terminal">
+        <div class="cmd">
+          <code id="install-cmd">curl -fsSL https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-linux-x86_64.tar.gz | tar xz &amp;&amp; ./marah-launcher-linux-x86_64/install.sh</code>
+          <button type="button" class="copy" data-copy="install-cmd" hidden>Copy</button>
+        </div>
+        <p class="hint">Installs for you only, with no sudo, in <code>~/.local/lib/marah-launcher</code>. <code>install.sh --uninstall</code> removes it.</p>
+      </div>
+      <ul class="ticks">
+        <li>Updates itself</li>
+        <li data-release="launcher">The latest release</li>
+      </ul>
+    </article>
+    <article class="way" aria-labelledby="way-os">
+      <h3 id="way-os">Marah OS</h3>
+      <p class="way-lead">The whole PC becomes the console. Try it from a USB stick first.</p>
+      <ol class="mini-steps">
+        <li><span>01</span>Download the image and write it to a USB stick</li>
+        <li><span>02</span>Start the PC from the stick</li>
+        <li><span>03</span>Play from the stick, or install it</li>
+      </ol>
+      <div class="actions">
+        <a class="cta" href="https://github.com/MarahHQ/marah-os/releases/latest">Get the USB stick image</a>
+        <a class="outline" href="#os">How it works</a>
+      </div>
+      <ul class="ticks">
+        <li>Updates itself, the whole system</li>
+        <li data-release="os">The latest release</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
 <section class="experience" id="screens" aria-labelledby="screens-title">
   <div class="wrap experience-inner">
     <figure class="screen-stack" data-reveal>
@@ -138,6 +196,65 @@
   </div>
 </section>
 
+<section class="pad wrap" id="pad" aria-labelledby="pad-title">
+  <div class="pad-copy" data-reveal>
+    <p class="eyebrow">Made for a controller</p>
+    <h2 id="pad-title">Press a button.<br><span class="accent-text">See what it does.</span></h2>
+    <p>Every screen works with a controller, a keyboard or a mouse. Try it here: plug in a
+    controller and press a button, or click the controller and press a key.</p>
+    <p class="pad-say" data-pad-say aria-live="polite">Waiting for a button.</p>
+  </div>
+  <div class="pad-stage" data-reveal style="--i: 1">
+    <div class="gamepad" data-pad tabindex="0" role="group" aria-label="A controller. Press a key or a controller button to see what it does in Marah Launcher.">
+      <svg viewBox="0 0 400 270" aria-hidden="true">
+        <defs>
+          <linearGradient id="pad-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22486b"/><stop offset=".55" stop-color="#132c43"/><stop offset="1" stop-color="#0c1d2d"/></linearGradient>
+          <linearGradient id="pad-touch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a3956"/><stop offset="1" stop-color="#10263a"/></linearGradient>
+          <radialGradient id="pad-cap" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#2b5579"/><stop offset="1" stop-color="#0b1928"/></radialGradient>
+        </defs>
+        <!-- The triggers, behind the body. -->
+        <g class="b l2" data-act="page"><rect class="k" x="50" y="12" width="64" height="26" rx="11" transform="rotate(-12 82 25)"/><text x="82" y="25" transform="rotate(-12 82 25)">L2</text></g>
+        <g class="b r2" data-act="page"><rect class="k" x="286" y="12" width="64" height="26" rx="11" transform="rotate(12 318 25)"/><text x="318" y="25" transform="rotate(12 318 25)">R2</text></g>
+        <path class="shell" d="M120 34C150 27 250 27 280 34C318 34 346 40 363 58C384 80 393 124 396 172C399 218 390 254 360 256C334 258 316 232 299 202C289 186 270 184 200 184S111 186 101 202C84 232 66 258 40 256C10 254 1 218 4 172C7 124 16 80 37 58C54 40 82 34 120 34Z"/>
+        <!-- The bumpers, on the shoulders. -->
+        <g class="b l1" data-act="bar"><rect class="k" x="48" y="36" width="72" height="13" rx="6.5" transform="rotate(-10 84 42)"/></g>
+        <g class="b r1" data-act="bar"><rect class="k" x="280" y="36" width="72" height="13" rx="6.5" transform="rotate(10 316 42)"/></g>
+        <!-- The touchpad and the light bar along it. -->
+        <rect class="touch" x="146" y="40" width="108" height="66" rx="12"/>
+        <path class="lightbar" d="M140 46V96M260 46V96"/>
+        <g class="b create" data-act="notice"><rect class="k" x="124" y="44" width="9" height="20" rx="4.5"/></g>
+        <g class="b options" data-act="menu"><rect class="k" x="267" y="44" width="9" height="20" rx="4.5"/></g>
+        <!-- The D-pad. -->
+        <g class="b dp up" data-act="move"><path class="k" d="M84 80h22v19l-11 10-11-10z"/></g>
+        <g class="b dp down" data-act="move"><path class="k" d="M84 138h22v-19l-11-10-11 10z"/></g>
+        <g class="b dp left" data-act="move"><path class="k" d="M66 98v22h19l10-11-10-11z"/></g>
+        <g class="b dp right" data-act="move"><path class="k" d="M124 98v22h-19l-10-11 10-11z"/></g>
+        <!-- The face buttons. -->
+        <g class="b fc tri" data-act="search"><circle class="k" cx="305" cy="82" r="13"/><path class="g" d="M305 75.5l6.5 11h-13z"/></g>
+        <g class="b fc cir" data-act="back"><circle class="k" cx="332" cy="109" r="13"/><circle class="g" cx="332" cy="109" r="6"/></g>
+        <g class="b fc crs" data-act="select"><circle class="k" cx="305" cy="136" r="13"/><path class="g" d="M300 131l10 10M310 131l-10 10"/></g>
+        <g class="b fc sq" data-act="trailer"><circle class="k" cx="278" cy="109" r="13"/><rect class="g" x="272.5" y="103.5" width="11" height="11" rx="1"/></g>
+        <!-- The sticks and the PS button. -->
+        <g class="b stick ls" data-act="move"><circle class="ring" cx="148" cy="150" r="24"/><circle class="k cap" cx="148" cy="150" r="17"/></g>
+        <g class="stick rs"><circle class="ring" cx="252" cy="150" r="24"/><circle class="cap" cx="252" cy="150" r="17"/></g>
+        <g class="b ps" data-act="home"><circle class="k" cx="200" cy="138" r="10"/><text x="200" y="138">PS</text></g>
+      </svg>
+    </div>
+  </div>
+  <dl class="keys" data-stagger>
+    <div data-key="move"><dt>D-pad, left stick <kbd>Arrows</kbd></dt><dd>Move</dd></div>
+    <div data-key="select"><dt>✕ <kbd>Enter</kbd></dt><dd>Select</dd></div>
+    <div data-key="back"><dt>○ <kbd>Esc</kbd></dt><dd>Back</dd></div>
+    <div data-key="search"><dt>△ <kbd>/</kbd></dt><dd>Search</dd></div>
+    <div data-key="trailer"><dt>□ <kbd>T</kbd></dt><dd>The game's trailer</dd></div>
+    <div data-key="menu"><dt>Options <kbd>Menu</kbd></dt><dd>The game's menu</dd></div>
+    <div data-key="bar"><dt>L1, R1 <kbd>Tab</kbd></dt><dd>Along the top bar, or to the next section</dd></div>
+    <div data-key="page"><dt>L2, R2 <kbd>Page Up/Down</kbd></dt><dd>A page up or down</dd></div>
+    <div data-key="notice"><dt>Create <kbd>Delete</kbd></dt><dd>Close the newest notice</dd></div>
+    <div data-key="home"><dt>PS</dt><dd>Tap: Home. Hold: close the game, or the power menu</dd></div>
+  </dl>
+</section>
+
 <section class="more wrap" aria-labelledby="more-title">
   <div data-reveal>
     <p class="eyebrow">Designed for play</p>
@@ -158,22 +275,86 @@
   </div>
 </section>
 
-<section class="os wrap" id="os" aria-labelledby="os-title">
-  <div class="os-copy" data-reveal>
-    <p class="eyebrow">Marah OS</p>
-    <h2 id="os-title">A PC that starts<br><span class="accent-text">straight into your games.</span></h2>
-    <p>Marah OS is a Fedora-based system, built with bootc. It starts straight into Marah Launcher,
-    with no desktop. Try it from a USB stick first.</p>
-    <div class="actions">
-      <a class="cta" href="https://github.com/MarahHQ/marah-os/releases/latest">Get the USB stick image</a>
-      <a class="outline" href="https://github.com/MarahHQ/marah-os">How it's built</a>
+<section class="os-band" id="os" aria-labelledby="os-title">
+  <div class="os wrap">
+    <div class="os-copy" data-reveal>
+      <p class="eyebrow">Marah OS</p>
+      <h2 id="os-title">Turn a spare PC<br><span class="accent-text">into a game console.</span></h2>
+      <p>Marah OS is a small Linux system, built on Fedora with bootc. Marah Launcher is the whole
+      screen: turn the PC on and your games are there, with no desktop and no password to type.</p>
+      <div class="actions">
+        <a class="cta" href="https://github.com/MarahHQ/marah-os/releases/latest">Get the USB stick image</a>
+        <a class="outline" href="#needs">What my PC needs <span aria-hidden="true">↓</span></a>
+      </div>
+      <p class="hint" data-release="os">The latest release</p>
     </div>
+    <ol class="steps" data-stagger>
+      <li><strong>Put it on a USB stick.</strong><span>Any stick of 4 GB or more. The release has the
+        image, sometimes in parts: download every part and join them, as
+        <a href="https://github.com/MarahHQ/marah-os#readme">the README shows</a>. Then write the ISO to the stick.</span></li>
+      <li><strong>Start the PC from the stick.</strong><span>Press the boot menu key as the PC starts
+        (often F12, F11, F8 or Esc) and pick the stick. Marah OS runs from it. Nothing on the PC changes.</span></li>
+      <li><strong>Try it, or install it.</strong><span>Play from the stick first if you like. To install,
+        pick a disk of 40 GB or more and wait a few minutes. From then on the PC starts straight into your games.</span></li>
+    </ol>
   </div>
-  <ol class="steps" data-stagger>
-    <li><strong>Write the image to a USB stick.</strong><span>The release has one ISO file for it.</span></li>
-    <li><strong>Start the PC from the stick.</strong><span>Marah OS runs from the stick. Nothing on the PC changes.</span></li>
-    <li><strong>Try it, or install it.</strong><span>The install erases the disk you pick.</span></li>
-  </ol>
+  <div class="wrap os-cards" data-stagger>
+    <article>
+      <h3>Everything from the sofa</h3>
+      <p>Internet, Sound and Bluetooth are in Settings → System, with the system's updates. You set
+      them up with the controller.</p>
+      <ul class="mock" aria-hidden="true">
+        <li><span>Internet</span><em>Connected</em></li>
+        <li><span>Sound</span><em>TV (HDMI)</em></li>
+        <li><span>Bluetooth</span><em>Controller</em></li>
+        <li><span>Marah OS updates</span><em>Up to date</em></li>
+      </ul>
+    </article>
+    <article>
+      <h3>Updates you never have to fear</h3>
+      <p>The system and Marah Launcher update together, as one image, in the background. An update
+      waits for the next start, so it never stops a game. If an update breaks something, the
+      version before it is still in the boot menu: hold Shift or Esc as the PC starts and pick it.</p>
+      <ul class="mock" aria-hidden="true">
+        <li class="on"><span>Marah OS</span><em>the newest</em></li>
+        <li><span>Marah OS</span><em>the one before</em></li>
+      </ul>
+    </article>
+    <article id="needs">
+      <h3>What your PC needs</h3>
+      <dl class="needs">
+        <div><dt>Processor</dt><dd>64-bit (x86-64). PS4 games need AVX2.</dd></div>
+        <div><dt>Graphics</dt><dd>Vulkan 1.3, for PS4 and PS5 games. NVIDIA's driver is set up by itself.</dd></div>
+        <div><dt>To play well</dt><dd>PS4: 8 threads, 8 GB of memory, a 4 GB graphics card. PS5: 12 threads, 16 GB, an 8 GB card.</dd></div>
+        <div><dt>Disk</dt><dd>40 GB or more, and internet for games and updates.</dd></div>
+      </dl>
+      <p class="fine">Marah Launcher checks your PC too: Settings → This PC says how each console's games should run.</p>
+    </article>
+    <article>
+      <h3>Keep what you have</h3>
+      <p>Installing on a whole disk erases it, so keep your games on another one. To keep another
+      system, or to use free space, pick <strong>Choose partitions instead</strong>: Fedora's installer
+      does the rest.</p>
+    </article>
+  </div>
+</section>
+
+<section class="which wrap" id="which" aria-labelledby="which-title">
+  <h2 id="which-title" data-reveal>Which one is for you?</h2>
+  <div class="table-wrap" data-reveal>
+  <table>
+    <thead><tr><th scope="col"><span class="visually-hidden">Question</span></th><th scope="col">Marah Launcher</th><th scope="col">Marah OS</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Runs on</th><td>Linux, macOS and Windows</td><td>A 64-bit PC (x86-64)</td></tr>
+      <tr><th scope="row">Your desktop and apps</th><td>Stay as they are</td><td>Gone from the disk you pick, or kept with your own partitions</td></tr>
+      <tr><th scope="row">Starts straight into your games</th><td>With the Marah Launcher session on Linux</td><td>Yes</td></tr>
+      <tr><th scope="row">Try before installing</th><td>It's an app: open it</td><td>From a USB stick</td></tr>
+      <tr><th scope="row">Updates itself</th><td>Yes</td><td>Yes, the whole system</td></tr>
+      <tr><th scope="row">You need</th><td>A 64-bit computer</td><td>A 64-bit PC and a USB stick of 4 GB</td></tr>
+    </tbody>
+    <tfoot><tr><td></td><td><a class="cta small" href="#get">Get the launcher</a></td><td><a class="cta small" href="https://github.com/MarahHQ/marah-os/releases/latest">Get Marah OS</a></td></tr></tfoot>
+  </table>
+  </div>
 </section>
 
 <section class="download" id="download" aria-labelledby="download-title">
@@ -181,11 +362,12 @@
     <p class="eyebrow">Ready, player one?</p>
     <h2 id="download-title">All your games.<br><span class="accent-text">One happy place.</span></h2>
     <p>Download the latest Marah Launcher for your system.</p>
+    <p class="hint" data-release="launcher">The latest release</p>
     <ul class="grid" data-stagger>
-      <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-windows-x86_64-setup.exe"><strong>Windows</strong><span>Installer, x86-64</span></a></li>
-      <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-macos-universal.dmg"><strong>macOS</strong><span>Apple Silicon and Intel</span></a></li>
-      <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/Marah-Launcher-x86_64.AppImage"><strong>Linux</strong><span>AppImage, x86-64</span></a></li>
-      <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-linux-x86_64.tar.gz"><strong>Linux</strong><span>Archive with install.sh, x86-64</span></a></li>
+      <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-windows-x86_64-setup.exe"><strong>Windows</strong><span>Installer, x86-64</span><small data-size="marah-launcher-windows-x86_64-setup.exe"></small></a></li>
+      <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-macos-universal.dmg"><strong>macOS</strong><span>Apple Silicon and Intel</span><small data-size="marah-launcher-macos-universal.dmg"></small></a></li>
+      <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/Marah-Launcher-x86_64.AppImage"><strong>Linux</strong><span>AppImage, x86-64</span><small data-size="Marah-Launcher-x86_64.AppImage"></small></a></li>
+      <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-linux-x86_64.tar.gz"><strong>Linux</strong><span>Archive with install.sh, x86-64</span><small data-size="marah-launcher-linux-x86_64.tar.gz"></small></a></li>
       <li><a class="card" href="https://marahhq.github.io/packages"><strong>Fedora, Debian, Ubuntu</strong><span>DNF and APT repositories</span></a></li>
     </ul>
     <p class="note">Every file, with its SHA-256: <a href="https://github.com/MarahHQ/marah-launcher/releases/latest">the latest release</a>.</p>
@@ -208,8 +390,24 @@
     <p>Not yet. Switch and Steam games work on Linux. PS5, PS4 and PC games work on Linux, macOS and Windows.</p>
   </details>
   <details>
+    <summary>Will every PS5, PS4 or Switch game run?</summary>
+    <p>Not yet. The emulators are young. Before you start a game, its page says how well it
+    should run on this PC, and Settings → This PC says the same for each console.</p>
+  </details>
+  <details>
+    <summary>Does it need the internet?</summary>
+    <p>To download the emulators, the Switch firmware, games and updates, yes. Games you have
+    already set up start without it.</p>
+  </details>
+  <details>
+    <summary>How do I update?</summary>
+    <p>Marah Launcher checks for its own updates in Settings → Updates. With the deb, rpm or Arch
+    package, your package manager updates it. On Marah OS, it comes with the system's update.</p>
+  </details>
+  <details>
     <summary>Where do I report a problem?</summary>
-    <p>Open an issue in <a href="https://github.com/MarahHQ/marah-launcher/issues">the Marah Launcher repository</a>.</p>
+    <p>Open an issue for <a href="https://github.com/MarahHQ/marah-launcher/issues">Marah Launcher</a>
+    or <a href="https://github.com/MarahHQ/marah-os/issues">Marah OS</a>. Say which game and which PC: it helps a lot.</p>
   </details>
   </div>
 </section>
