@@ -1,0 +1,90 @@
+---
+// The downloads, and the package repositories that open in place.
+import Chevron from "../ui/Chevron.astro";
+import RepoItem from "../ui/RepoItem.astro";
+
+// Each file has the same name in every release, so the link always gives the latest.
+const latest = "https://github.com/MarahHQ/marah-launcher/releases/latest/download/";
+const downloads = [
+  { name: "Windows", note: "Installer, x86-64", file: "marah-launcher-windows-x86_64-setup.exe" },
+  { name: "macOS", note: "Apple Silicon and Intel", file: "marah-launcher-macos-universal.dmg" },
+  { name: "Linux", note: "AppImage, x86-64", file: "Marah-Launcher-x86_64.AppImage" },
+  { name: "Linux", note: "Archive with install.sh, x86-64", file: "marah-launcher-linux-x86_64.tar.gz" },
+];
+
+// The packages repository's own commands (MarahHQ/packages).
+const dnf = `sudo curl -fsSLo /etc/yum.repos.d/marah.repo https://marahhq.github.io/packages/rpm/marah.repo
+sudo dnf install marah-launcher`;
+const apt = `sudo curl -fsSLo /usr/share/keyrings/marah.asc https://marahhq.github.io/packages/marah.asc
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/marah.asc] https://marahhq.github.io/packages/deb stable main" |
+  sudo tee /etc/apt/sources.list.d/marah.list
+sudo apt update && sudo apt install marah-launcher`;
+const pacman = "sudo pacman -U ./marah-launcher-*-x86_64.pkg.tar.zst";
+---
+
+<section
+  class="border-y border-line bg-[radial-gradient(ellipse_at_center,#16395a,#0d1926_65%)] py-22 text-center"
+  id="download"
+  aria-labelledby="download-title"
+>
+  <div class="wrap" data-reveal>
+    <p class="eyebrow">Ready, player one?</p>
+    <h2 class="mt-4 mb-5 text-section" id="download-title">
+      All your games.
+      <br />
+      <span class="accent-text">One happy place.</span>
+    </h2>
+    <p class="mx-auto my-[1em] max-w-[560px] text-lead text-muted">
+      Download the latest Marah Launcher for your system.
+    </p>
+    <p class="mx-auto mt-2 max-w-[560px] text-lead text-muted" data-release="launcher">
+      The latest release
+    </p>
+    <ul
+      class="mt-8 mb-5 grid grid-cols-5 gap-3.5 max-lg:grid-cols-3 max-sm:grid-cols-2 max-sm:[&>li:last-child]:col-span-full"
+      data-stagger
+    >
+      {downloads.map(({ name, note, file }) => (
+        <li>
+          <a class="card" href={`${latest}${file}`}>
+            <strong>{name}</strong>
+            <span>{note}</span>
+            <small data-size={file} />
+          </a>
+        </li>
+      ))}
+      <li>
+        <a class="card repos-toggle" href="#repos" aria-controls="repos">
+          <strong>Fedora, Debian, Ubuntu</strong>
+          <span>DNF and APT repositories</span>
+          <span class="chev-ring" aria-hidden="true">
+            <Chevron />
+          </span>
+        </a>
+      </li>
+    </ul>
+    <div class="fold repos-wrap open" id="repos" role="region" aria-label="Install from a package repository">
+      <div class="fold-inner">
+        <div class="mx-auto mt-1 grid max-w-[900px] grid-cols-[minmax(0,1fr)] gap-2.5 pt-1 pb-6 text-left">
+          <p class="mb-1.5 text-center text-body text-muted">
+            Install from a repository, and Marah Launcher updates with the rest of your system. The repositories'
+            metadata is signed with <a href="https://marahhq.github.io/packages/marah.asc">this key</a>.
+          </p>
+          <RepoItem id="dnf" name="Fedora" manager="DNF" commands={dnf} />
+          <RepoItem id="apt" name="Debian and Ubuntu" manager="APT" commands={apt} />
+          <RepoItem id="pacman" name="Arch Linux" manager="pacman" commands={pacman}>
+            <p class="mx-auto mt-0 mb-3 max-w-[560px] text-left text-lead text-muted [&_code]:text-[14.5px] [&_code]:whitespace-nowrap [&_code]:text-text">
+              There is no repository yet. Download the <code>.pkg.tar.zst</code> file from
+              <a href="https://github.com/MarahHQ/marah-launcher/releases/latest">the latest release</a>, then install
+              it:
+            </p>
+          </RepoItem>
+        </div>
+      </div>
+    </div>
+    <p class="mx-auto my-[1em] max-w-[560px] text-lead text-muted">
+      Every file, with its SHA-256:
+      <a href="https://github.com/MarahHQ/marah-launcher/releases/latest">the latest release</a>.
+    </p>
+  </div>
+</section>

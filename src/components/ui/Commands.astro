@@ -1,0 +1,16 @@
+---
+// Commands to paste into a terminal, as they are, with a copy button.
+import CopyButton from "./CopyButton.astro";
+
+interface Props {
+  id: string;
+  text: string;
+  class?: string;
+}
+const { id, text, class: extra = "" } = Astro.props;
+---
+
+<div class:list={["cmd", extra]}>
+  <pre><code id={id}>{text}</code></pre>
+  <CopyButton target={id} />
+</div>

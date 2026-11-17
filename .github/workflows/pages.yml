@@ -1,0 +1,63 @@
+# Builds the site, checks it in a browser, and publishes it to GitHub Pages from main. A pull
+# request gets the same build and checks, without the publish.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Astro sends usage data unless told not to.
+env:
+  ASTRO_TELEMETRY_DISABLED: 1
+
+# One publish at a time; a newer push doesn't cancel one that runs.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # The whole build takes about a minute: a run that hangs stops here, not after six hours.
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # node_modules as the lockfile has it, from the cache when the lockfile hasn't changed.
+      - id: modules
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-node24-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Check the formatting
+        run: npx prettier --check src/
+      # Astro builds dist/, then the checks run in headless Chrome (ubuntu-latest has Chrome).
+      - run: npm run check
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

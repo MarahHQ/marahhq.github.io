@@ -1,0 +1,111 @@
+---
+// Two ways in: the launcher (a download or a Linux command) and Marah OS.
+import CopyButton from "../ui/CopyButton.astro";
+---
+
+<section class="wrap pt-22 pb-18 max-sm:py-16" id="get" aria-labelledby="get-title">
+  <div class="text-center" data-reveal>
+    <p class="eyebrow">Get it</p>
+    <h2 class="mt-4 mb-3 text-section" id="get-title">
+      Two ways in.
+    </h2>
+    <p class="text-lead text-muted">An app for the computer you have, or a whole PC that starts into your games.</p>
+  </div>
+  <div class="mt-10 grid grid-cols-2 gap-6 max-md:grid-cols-1 max-md:gap-8" data-stagger>
+    <article
+      class="flex flex-col gap-4.5 rounded-3xl border border-line bg-[linear-gradient(160deg,#13293d,#102332)] p-8 max-sm:p-[22px]"
+      aria-labelledby="way-launcher"
+    >
+      <h3 class="text-[28px]" id="way-launcher">
+        Marah Launcher
+      </h3>
+      <p class="text-lead text-muted">An app for Linux, macOS and Windows. Your desktop stays as it is.</p>
+      <div
+        class="flex gap-1.5 self-start rounded-full border border-line bg-deep p-1"
+        role="tablist"
+        aria-label="How to get Marah Launcher"
+        hidden
+      >
+        <button
+          type="button"
+          class="tab"
+          role="tab"
+          id="tab-download"
+          aria-controls="panel-download"
+          aria-selected="true"
+        >
+          Download
+        </button>
+        <button
+          type="button"
+          class="tab"
+          role="tab"
+          id="tab-terminal"
+          aria-controls="panel-terminal"
+          aria-selected="false"
+          tabindex="-1"
+        >
+          Linux terminal
+        </button>
+      </div>
+      <div class="flex flex-col gap-2.5" role="tabpanel" id="panel-download" aria-labelledby="tab-download">
+        <a class="cta self-start" data-for-you href="#download">
+          Choose your system
+        </a>
+        <p class="hint">
+          <a href="#download">Every system and package</a>
+        </p>
+      </div>
+      <div class="flex flex-col gap-2.5" role="tabpanel" id="panel-terminal" aria-labelledby="tab-terminal">
+        <div class="cmd">
+          <code id="install-cmd">
+            curl -fsSL
+            https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-linux-x86_64.tar.gz | tar
+            xz &amp;&amp; ./marah-launcher-linux-x86_64/install.sh
+          </code>
+          <CopyButton target="install-cmd" label="Copy the command" />
+        </div>
+        <p class="hint">
+          Installs for you only, with no sudo, in <code>~/.local/lib/marah-launcher</code>.
+          <code>install.sh --uninstall</code> removes it.
+        </p>
+      </div>
+      <ul class="ticks mt-auto flex flex-wrap gap-x-5 gap-y-2 border-t border-line pt-2 text-small text-muted">
+        <li>Updates itself</li>
+        <li data-release="launcher">The latest release</li>
+      </ul>
+    </article>
+    <article
+      class="flex flex-col gap-4.5 rounded-3xl border border-line bg-[linear-gradient(160deg,#13293d,#102332)] p-8 max-sm:p-[22px]"
+      aria-labelledby="way-os"
+    >
+      <h3 class="text-[28px]" id="way-os">
+        Marah OS
+      </h3>
+      <p class="text-lead text-muted">The whole PC becomes the console. Try it from a USB stick first.</p>
+      <ol class="grid gap-2.5">
+        <li class="flex items-baseline gap-3.5 text-[16px]">
+          <span class="font-extrabold text-ice tabular-nums">01</span>Download the image and write it to a USB stick
+        </li>
+        <li class="flex items-baseline gap-3.5 text-[16px]">
+          <span class="font-extrabold text-ice tabular-nums">02</span>Start the PC from the stick
+        </li>
+        <li class="flex items-baseline gap-3.5 text-[16px]">
+          <span class="font-extrabold text-ice tabular-nums">03</span>Play from the stick, or install it
+        </li>
+      </ol>
+      <div class="flex flex-wrap gap-3.5">
+        <a class="cta" href="https://github.com/MarahHQ/marah-os/releases/latest">
+          Get the USB stick image
+        </a>
+        <a class="btn-outline" href="#os">
+          How it works
+        </a>
+      </div>
+      <ul class="ticks mt-auto flex flex-wrap gap-x-5 gap-y-2 border-t border-line pt-2 text-small text-muted">
+        <li>Updates itself, the whole system</li>
+        <li data-release="os">The latest release</li>
+      </ul>
+    </article>
+  </div>
+</section>

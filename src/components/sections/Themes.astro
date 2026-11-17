@@ -1,0 +1,102 @@
+---
+// Themes: a theme file beside the Home it draws, and the login session.
+---
+
+<section
+  class="wrap grid grid-cols-[1fr_1.1fr] items-center gap-x-18 gap-y-10 py-24 max-md:grid-cols-1 max-md:gap-8 max-sm:py-16"
+  id="themes"
+  aria-labelledby="more-title"
+>
+  <div data-reveal>
+    <p class="eyebrow">Themes</p>
+    <h2 class="mt-4 mb-5 text-section" id="more-title">
+      Swap the whole look.
+      <br />
+      <span class="accent-text">Keep your games.</span>
+    </h2>
+    <p class="my-[1em] max-w-[560px] text-lead text-muted [&_code]:text-body [&_code]:text-text">
+      A theme draws every screen: the layout, the colors, the fonts and the sounds. Marah Launcher comes with two,
+      Default and Classic, and you can write your own: Slint files and a <code>theme.toml</code> beside them. A theme is
+      data. It runs no code.
+    </p>
+    <ul class="mt-5 flex flex-wrap gap-2" aria-label="What a theme changes">
+      <li class="rounded-full border border-edge bg-[rgba(16,35,50,.7)] px-3.5 py-1.5 text-small font-semibold">
+        Layout
+      </li>
+      <li class="rounded-full border border-edge bg-[rgba(16,35,50,.7)] px-3.5 py-1.5 text-small font-semibold">
+        Colors
+      </li>
+      <li class="rounded-full border border-edge bg-[rgba(16,35,50,.7)] px-3.5 py-1.5 text-small font-semibold">
+        Fonts
+      </li>
+      <li class="rounded-full border border-edge bg-[rgba(16,35,50,.7)] px-3.5 py-1.5 text-small font-semibold">
+        Sounds
+      </li>
+      <li class="rounded-full border border-edge bg-[rgba(16,35,50,.7)] px-3.5 py-1.5 text-small font-semibold">Art</li>
+    </ul>
+    <div class="mt-7 flex flex-wrap gap-3.5">
+      <a class="btn-outline" href="https://github.com/MarahHQ/marah-launcher/blob/main/docs/themes.md">
+        Write a theme
+      </a>
+      <a class="btn-outline" href="https://github.com/MarahHQ/marah-launcher/blob/main/docs/user-guide.md#themes">
+        Read the user guide
+      </a>
+    </div>
+  </div>
+  <figure class="theme-art relative pb-[150px] max-md:pb-10" data-reveal style="--i: 1">
+    <div
+      class="editor relative z-1 w-[78%] overflow-hidden rounded-2xl border border-line bg-ink shadow-[0_24px_50px_rgba(0,0,0,.45)] max-md:w-full"
+      aria-hidden="true"
+    >
+      <div class="flex items-center gap-[7px] border-b border-line bg-[#0c1a28] px-3.5 py-[11px]">
+        <span class="size-2.5 rounded-full bg-[#2a4560]"></span>
+        <span class="size-2.5 rounded-full bg-[#2a4560]"></span>
+        <span class="size-2.5 rounded-full bg-[#2a4560]"></span>
+        <b class="ml-2 text-[12.5px] leading-[normal] font-semibold text-muted">themes/default/theme.toml</b>
+      </div>
+      <pre class="overflow-x-auto px-4.5 py-4"><code class="font-mono text-[15px] leading-[1.65] text-code"><i>id</i> = <s>"default"</s>
+<i>name</i> = <s>"Default"</s>
+
+<u>[theme.tokens]</u>
+<em># The logo's blues</em>
+<i>color-accent</i> = <s>"#4c8bdc"</s> <span class="sw" style="--c:#4c8bdc"></span>
+<i>color-accent-soft</i> = <s>"#82d8f5"</s> <span class="sw" style="--c:#82d8f5"></span>
+
+<u>[theme.assets.sounds]</u>
+<i>move</i> = <s>"sounds/move.wav"</s>
+<i>select</i> = <s>"sounds/select.wav"</s></code></pre>
+    </div>
+    <div class="theme-shot absolute right-0 bottom-[34px] z-2 w-[54%] overflow-hidden rounded-[14px] border-2 border-ice shadow-[0_0_25px_rgba(130,216,245,.45),0_24px_50px_rgba(0,0,0,.5)] max-md:relative max-md:bottom-auto max-md:mt-[-40px] max-md:ml-auto max-md:w-[88%]">
+      <img
+        src="assets/screen-home.webp"
+        alt="The home screen that the Default theme draws: the list of systems on the right, All games in focus"
+        width="1600"
+        height="900"
+        loading="lazy"
+        decoding="async"
+        class="block"
+      />
+    </div>
+    <figcaption class="absolute bottom-0 left-0 mt-3.5 text-left text-caption text-muted max-md:static max-md:mt-4">
+      A few lines of the Default theme, and the Home it draws.
+    </figcaption>
+  </figure>
+  <div
+    class="col-span-full flex items-center gap-5 rounded-[20px] border border-line bg-[linear-gradient(110deg,#13293d,#102332)] px-6.5 py-5.5 max-sm:flex-col max-sm:items-start"
+    data-reveal
+  >
+    <div class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <rect x="3" y="4" width="18" height="12" rx="2" />
+        <path d="M8 20h8M12 16v4" />
+      </svg>
+    </div>
+    <div>
+      <h3 class="mb-1 text-[19px]">The whole screen, with no desktop behind it</h3>
+      <p class="text-[15.5px] text-muted">
+        The deb, rpm and Arch packages add a Marah Launcher session to the login screen. Pick it, and the launcher is
+        all there is, as on a console.
+      </p>
+    </div>
+  </div>
+</section>
