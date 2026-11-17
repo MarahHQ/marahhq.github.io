@@ -265,38 +265,49 @@ figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); text-align:
 .way .actions { margin-top: 0; }
 
 /* The controller */
-.pad {
-  display: grid; grid-template-columns: 1fr 1.1fr; gap: 24px 64px; align-items: center;
-  padding-block: 96px 72px; border-top: 1px solid var(--line);
-}
-.pad-copy p:not(.eyebrow) { color: var(--muted); font-size: 17px; max-width: 520px; }
+.pad { padding-block: 96px 72px; border-top: 1px solid var(--line); }
+.pad-copy { text-align: center; }
+.pad-copy p:not(.eyebrow) { color: var(--muted); font-size: 17px; max-width: 640px; margin-inline: auto; }
+.pad-stage { margin-top: 24px; }
 .pad-say {
   min-height: 3.2em; padding: 14px 18px; border-radius: 14px; border: 1px solid var(--line);
   background: var(--panel); color: var(--text) !important; font-weight: 600;
 }
 .pad-say strong { color: var(--ice); }
-.gamepad { width: 100%; max-width: 560px; margin-inline: auto; border-radius: 24px; outline-offset: 8px; }
-.gamepad svg { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .45)) drop-shadow(0 0 28px rgba(76, 139, 220, .22)); }
-.gamepad .shell { fill: url(#pad-body); stroke: #3a6d98; stroke-width: 1.2; }
-.gamepad:focus-visible .shell, .gamepad.live .shell { stroke: var(--ice); stroke-width: 2; }
-.gamepad .touch { fill: url(#pad-touch); stroke: #2f5a80; stroke-width: 1; }
-.gamepad .lightbar { stroke: var(--ice); stroke-width: 3; stroke-linecap: round; opacity: .75; filter: drop-shadow(0 0 4px var(--ice)); }
-.gamepad .ring { fill: #08131e; stroke: #2a5174; stroke-width: 1; }
-.gamepad .cap { fill: url(#pad-cap); stroke: #3a6d98; stroke-width: 1; }
+.gamepad { width: 100%; max-width: 1120px; margin-inline: auto; border-radius: 24px; outline-offset: 8px; }
+.gamepad svg { display: block; width: 100%; height: auto; overflow: visible; }
+.gamepad .shell { fill: url(#pad-wing); stroke: #9fb4c6; stroke-width: 1; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .5)); }
+.gamepad .core { fill: url(#pad-core); }
+.gamepad:focus-visible .shell, .gamepad.live .shell { stroke: var(--ice); stroke-width: 2.5; }
+.gamepad .touch { fill: url(#pad-touch); stroke: #b5c4d1; stroke-width: 1; }
+.gamepad .lightbar { fill: none; stroke: var(--ice); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 5px var(--ice)); }
+.gamepad .ring { fill: #070d14; stroke: #2c3b4a; stroke-width: 1; }
+.gamepad .cap { fill: url(#pad-cap); stroke: #3d5063; stroke-width: 1; }
+.gamepad .mute { fill: #f0a35c; opacity: .8; }
 .gamepad .b { cursor: pointer; }
-.gamepad .b .k { fill: #0b1928; stroke: #3f74a1; stroke-width: 1.2; transition: fill .12s, stroke .12s; }
-.gamepad .b text { fill: var(--muted); font: 700 11px var(--font); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.gamepad .b .k { fill: #1c2733; stroke: #3d5063; stroke-width: 1; transition: fill .12s, stroke .12s; }
+.gamepad .l2 .k, .gamepad .r2 .k, .gamepad .l1 .k, .gamepad .r1 .k { fill: #172331; stroke: #2c3b4a; }
+.gamepad .b text { fill: #c9d6e2; font: 700 11px var(--font); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .gamepad .ps text { font-size: 7.5px; }
 .gamepad .g { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .12s; }
-.gamepad .tri .g { stroke: #7fe0c4; } .gamepad .cir .g { stroke: #ff9b9b; }
+.gamepad .tri .g { stroke: #7fe0c4; } .gamepad .cir .g { stroke: #ff8f8f; }
 .gamepad .crs .g { stroke: #9cc0ff; } .gamepad .sq .g { stroke: #f0a5d8; }
 .gamepad .b:hover .k { stroke: var(--ice); }
-.gamepad .b.on .k { fill: var(--ice); stroke: var(--ice); }
+.gamepad .b.on .k, .gamepad .b.on .k.cap { fill: var(--ice); stroke: var(--ice); }
 .gamepad .b.on text { fill: var(--bg); }
 .gamepad .b.on .g { stroke: var(--bg); }
-.gamepad .b .k.cap { fill: url(#pad-cap); stroke: #3a6d98; }
-.gamepad .stick.on .k.cap { fill: var(--ice); }
-.keys { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 16px 0 0; }
+/* The lines from each button to what it does. */
+.gamepad .call polyline { fill: none; stroke: #5f87ab; stroke-width: 1; stroke-dasharray: 3 3; transition: stroke .15s; }
+.gamepad .call circle { fill: #82d8f5; stroke: #0d1926; stroke-width: 1; }
+.gamepad .call { pointer-events: none; }
+.gamepad .call text { font: 15px var(--font); }
+.gamepad .call .cn { fill: var(--text); font-weight: 700; }
+.gamepad .call .cw { fill: var(--muted); font-size: 13.5px; }
+.gamepad .call .ck { fill: #7f9bb3; }
+.gamepad .call.on polyline { stroke: var(--ice); stroke-dasharray: none; stroke-width: 1.6; }
+.gamepad .call.on .cn { fill: var(--ice); }
+.gamepad .call.on .cw { fill: var(--text); }
+.keys { display: none; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 16px 0 0; }
 .keys div { padding: 12px 14px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); transition: border-color .15s, background-color .15s; }
 .keys div.on { border-color: var(--ice); background: #15324b; }
 .keys dt { font-weight: 700; font-size: 14px; }
@@ -474,7 +485,13 @@ kbd {
   .hero-copy p:not(.pill) { margin-inline: auto; }
   .hero .actions { justify-content: center; }
   .preview-frame { transform: none; }
-  .experience-inner, .more, .os, .ways, .pad { grid-template-columns: 1fr; gap: 32px; }
+  .experience-inner, .more, .os, .ways { grid-template-columns: 1fr; gap: 32px; }
+  /* The labels get too small: the list says it instead. */
+  .gamepad .calls { display: none; }
+  /* Without the labels, the controller fills the width: the picture is cut to it. */
+  .gamepad { overflow: hidden; }
+  .gamepad svg { width: 240%; max-width: none; margin: -21% 0 -16% -70%; }
+  .keys { display: grid; }
   .experience-copy { text-align: center; }
   .switcher { justify-content: center; }
   .more-art { min-height: 260px; }

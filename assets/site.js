@@ -270,13 +270,20 @@ function hit(act, button) {
   pad.querySelectorAll(".b.on").forEach((b) => b.classList.remove("on"));
   document.querySelectorAll(".keys .on").forEach((k) => k.classList.remove("on"));
   (button || pad.querySelector(`[data-act="${act === "hold" ? "home" : act}"]`)).classList.add("on");
-  const key = document.querySelector(`.keys [data-key="${act === "hold" ? "home" : act}"]`);
+  const which = act === "hold" ? "home" : act;
+  const key = document.querySelector(`.keys [data-key="${which}"]`);
   if (key) key.classList.add("on");
+  // The line to what the button does: the pressed button's own, else the first for the act.
+  pad.querySelectorAll(".call.on").forEach((c) => c.classList.remove("on"));
+  const pressed = button || pad.querySelector(`[data-act="${which}"]`);
+  const own = [...pressed.classList].map((c) => pad.querySelector(`.call[data-for="${c}"]`)).find(Boolean);
+  const call = own || pad.querySelector(`.call[data-call="${which}"]`);
+  if (call) call.classList.add("on");
   clearTimeout(lit);
   lit = setTimeout(() => {
-    pad.querySelectorAll(".b.on").forEach((b) => b.classList.remove("on"));
+    pad.querySelectorAll(".b.on, .call.on").forEach((b) => b.classList.remove("on"));
     if (key) key.classList.remove("on");
-  }, 700);
+  }, 900);
 }
 if (pad) {
   pad.querySelectorAll("[data-act]").forEach((b) => b.addEventListener("click", () => hit(b.dataset.act, b)));
