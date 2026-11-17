@@ -208,27 +208,41 @@ document.querySelectorAll("[data-copy]").forEach((button) => {
   });
 });
 
-// The repositories card opens their panel in place. Without this script the panel shows.
+// The repositories card opens their panel in place, and the panel is an accordion: one distro
+// open at a time. Both slide (the CSS animates each collapse's height). Without this script
+// everything shows, open.
 const reposToggle = document.querySelector(".repos-toggle");
 const repos = document.querySelector("#repos");
+function setOpen(collapse, open) {
+  collapse.classList.toggle("open", open);
+  collapse.inert = !open; // Closed parts take no focus.
+}
 if (reposToggle && repos) {
-  repos.hidden = true;
+  setOpen(repos, false);
   reposToggle.setAttribute("aria-expanded", "false");
   reposToggle.setAttribute("role", "button");
   reposToggle.addEventListener("click", (event) => {
     event.preventDefault();
-    const open = repos.hidden;
-    repos.hidden = !open;
+    const open = !repos.classList.contains("open");
+    setOpen(repos, open);
     reposToggle.setAttribute("aria-expanded", String(open));
-    if (open) {
-      repos.classList.remove("opening");
-      void repos.offsetWidth;
-      repos.classList.add("opening");
-      repos.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "nearest" });
-    }
+    if (open) setTimeout(() => repos.scrollIntoView({ behavior: reduced.matches ? "auto" : "smooth", block: "nearest" }), 200);
   });
-  // Space on a link-turned-button opens it too.
   reposToggle.addEventListener("keydown", (event) => { if (event.key === " ") { event.preventDefault(); reposToggle.click(); } });
+
+  const items = [...repos.querySelectorAll("[data-repo]")];
+  function choose(item) {
+    for (const other of items) {
+      const open = other === item && !item.classList.contains("open");
+      other.classList.toggle("open", open);
+      other.querySelector(".repo-head").setAttribute("aria-expanded", String(open));
+      other.querySelector(".collapse").inert = !open;
+    }
+  }
+  items.forEach((item) => item.querySelector(".repo-head").addEventListener("click", () => choose(item)));
+  // Only the first starts open.
+  items.forEach((item) => item.classList.remove("open"));
+  choose(items[0]);
 }
 
 // The download for this visitor's system. Phones and unknown systems keep "Choose your system".
