@@ -404,6 +404,8 @@ kbd {
 .which tfoot td { border-bottom: 0; padding-top: 24px; }
 .which tbody td:nth-child(3), .which thead th:nth-child(3) { background: rgba(130, 216, 245, .05); }
 .card small { color: var(--muted); font-size: 12.5px; }
+/* On a phone the table's buttons move under it: a column is too narrow for them. */
+.which-actions { display: none; }
 .download .hint { margin-top: 8px; }
 .steps { counter-reset: step; display: grid; gap: 16px; }
 .steps li {
@@ -609,7 +611,9 @@ kbd {
   .which table { min-width: 0; font-size: 14px; }
   .which th, .which td { padding: 12px 8px; }
   .which tbody th { width: 28%; }
-  .which tfoot .cta { padding: 10px 14px; }
+  .which tfoot { display: none; }
+  .which-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .which-actions .cta { padding: 13px 10px; font-size: 14px; white-space: nowrap; }
   .footer-links { justify-content: center; }
 }
 
