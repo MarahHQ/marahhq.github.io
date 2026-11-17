@@ -23,13 +23,21 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # The whole build takes about a minute: a run that hangs stops here, not after six hours.
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+      # node_modules as the lockfile has it, from the cache when the lockfile hasn't changed.
+      - id: modules
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-node24-${{ hashFiles('package-lock.json') }}
+      - if: steps.modules.outputs.cache-hit != 'true'
+        run: npm ci
       - name: Check the formatting
         run: npx prettier --check src/
       # Astro builds dist/, then the checks run in headless Chrome (ubuntu-latest has Chrome).
@@ -43,6 +51,7 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       pages: write
       id-token: write
