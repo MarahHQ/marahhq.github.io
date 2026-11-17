@@ -4,10 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0d1926">
+<meta name="color-scheme" content="dark">
 <title>Marah Launcher: all your games, one launcher</title>
 <meta name="description" content="Marah Launcher puts your games from emulators, PC folders and Steam in one library, played on the TV with a controller. Marah OS starts straight into it.">
+<link rel="canonical" href="https://marahhq.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Marah Launcher">
+<meta property="og:url" content="https://marahhq.github.io/">
+<meta property="og:title" content="Marah Launcher: all your games, one launcher">
+<meta property="og:description" content="Games from emulators, PC folders and Steam in one library, played on the TV with a controller. Free software for Linux, macOS and Windows.">
+<meta name="twitter:card" content="summary">
 <link rel="icon" href="assets/logo-static.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css">
+<script>
+  // The scroll reveal hides sections until site.js shows them. If site.js does not run, show everything.
+  document.documentElement.classList.add("reveal");
+  setTimeout(function () { if (!window.marahReady) document.documentElement.classList.remove("reveal"); }, 4000);
+</script>
+<script src="assets/site.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -15,7 +29,7 @@
 <header class="header">
   <div class="wrap nav">
     <a class="brand" href="#top">
-      <img src="assets/logo-static.svg" alt="" width="52" height="52">
+      <img src="assets/logo-static.svg" alt="" width="52" height="52" decoding="async">
       <span>Marah<br>Launcher</span>
     </a>
     <button class="menu" type="button" aria-expanded="false" aria-controls="nav" hidden>
@@ -53,17 +67,17 @@
   </div>
   <div class="mascot-wrap">
     <div class="mascot-glow" aria-hidden="true"></div>
-    <img class="mascot" src="assets/mascot.webp" alt="The Marah mascot: a smiling gamepad that winks and gives a thumbs up" width="720" height="720">
+    <img class="mascot" src="assets/mascot.webp" fetchpriority="high" alt="The Marah mascot: a smiling gamepad that winks and gives a thumbs up" width="720" height="720">
   </div>
   <figure class="preview">
     <div class="preview-frame">
-      <img src="assets/screen-home.webp" alt="The Marah Launcher home screen: a list of game sources on the right, with All games, Steam, PC, Nintendo Switch and PlayStation 5" width="1600" height="900">
+      <img src="assets/screen-home.webp" alt="The Marah Launcher home screen: a list of game sources on the right, with All games, Steam, PC, Nintendo Switch and PlayStation 5" width="1600" height="900" decoding="async">
     </div>
     <figcaption>The home screen, Default theme.</figcaption>
   </figure>
 </section>
 
-<section class="features wrap" id="features" aria-label="Features">
+<section class="features wrap" id="features" aria-label="Features" data-stagger>
   <article>
     <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></div>
     <div><h2>One library</h2><p>Games from emulators, PC folders and Steam, in one place.</p></div>
@@ -83,12 +97,12 @@
 </section>
 
 <section class="platforms wrap" id="platforms" aria-labelledby="platforms-title">
-  <div class="platform-intro">
+  <div class="platform-intro" data-reveal>
     <h2 id="platforms-title">What it plays</h2>
     <p>Each source of games is a plugin built into Marah Launcher.</p>
     <a href="#screens">See the screens <span aria-hidden="true">→</span></a>
   </div>
-  <ul class="platform-cards">
+  <ul class="platform-cards" data-stagger>
     <li><strong>PS5</strong><span>with KytyPS5</span></li>
     <li><strong>PS4</strong><span>with shadPS4</span></li>
     <li><strong>Switch</strong><span>with Lichii, on Linux</span></li>
@@ -100,12 +114,12 @@
 
 <section class="experience" id="screens" aria-labelledby="screens-title">
   <div class="wrap experience-inner">
-    <figure class="screen-stack">
+    <figure class="screen-stack" data-reveal>
       <div class="screen-back" aria-hidden="true"></div>
-      <img id="screen" src="assets/screen-home.webp" alt="The Marah Launcher home screen: a list of game sources on the right, with All games, Steam, PC, Nintendo Switch and PlayStation 5" width="1600" height="900">
+      <img id="screen" src="assets/screen-home.webp" alt="The Marah Launcher home screen: a list of game sources on the right, with All games, Steam, PC, Nintendo Switch and PlayStation 5" width="1600" height="900" loading="lazy" decoding="async">
       <figcaption>Default theme, with a real library.</figcaption>
     </figure>
-    <div class="experience-copy">
+    <div class="experience-copy" data-reveal style="--i: 1">
       <p class="pill">The experience</p>
       <h2 id="screens-title">A home for your games on the TV</h2>
       <p>Marah Launcher finds your games and shows their art and details. It downloads and updates
@@ -125,7 +139,7 @@
 </section>
 
 <section class="more wrap" aria-labelledby="more-title">
-  <div>
+  <div data-reveal>
     <p class="eyebrow">Designed for play</p>
     <h2 id="more-title">Everything in its place.<br><span class="accent-text">Nothing in your way.</span></h2>
     <p>Marah Launcher ships two themes, Default and Classic. You can add your own. A theme is data
@@ -136,16 +150,16 @@
       <a class="outline" href="https://github.com/MarahHQ/marah-launcher/blob/main/docs/themes.md">Write a theme</a>
     </div>
   </div>
-  <div class="more-art">
+  <div class="more-art" data-reveal style="--i: 1">
     <picture>
       <source srcset="assets/logo-static.svg" media="(prefers-reduced-motion: reduce)">
-      <img src="assets/logo.svg" alt="The Marah logo: a gamepad with a smile" width="240" height="240">
+      <img src="assets/logo.svg" alt="The Marah logo: a gamepad with a smile" width="240" height="240" loading="lazy" decoding="async">
     </picture>
   </div>
 </section>
 
 <section class="os wrap" id="os" aria-labelledby="os-title">
-  <div class="os-copy">
+  <div class="os-copy" data-reveal>
     <p class="eyebrow">Marah OS</p>
     <h2 id="os-title">A PC that starts<br><span class="accent-text">straight into your games.</span></h2>
     <p>Marah OS is a Fedora-based system, built with bootc. It starts straight into Marah Launcher,
@@ -155,7 +169,7 @@
       <a class="outline" href="https://github.com/MarahHQ/marah-os">How it's built</a>
     </div>
   </div>
-  <ol class="steps">
+  <ol class="steps" data-stagger>
     <li><strong>Write the image to a USB stick.</strong><span>The release has one ISO file for it.</span></li>
     <li><strong>Start the PC from the stick.</strong><span>Marah OS runs from the stick. Nothing on the PC changes.</span></li>
     <li><strong>Try it, or install it.</strong><span>The install erases the disk you pick.</span></li>
@@ -163,11 +177,11 @@
 </section>
 
 <section class="download" id="download" aria-labelledby="download-title">
-  <div class="wrap download-inner">
+  <div class="wrap download-inner" data-reveal>
     <p class="eyebrow">Ready, player one?</p>
     <h2 id="download-title">All your games.<br><span class="accent-text">One happy place.</span></h2>
     <p>Download the latest Marah Launcher for your system.</p>
-    <ul class="grid">
+    <ul class="grid" data-stagger>
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-windows-x86_64-setup.exe"><strong>Windows</strong><span>Installer, x86-64</span></a></li>
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/marah-launcher-macos-universal.dmg"><strong>macOS</strong><span>Apple Silicon and Intel</span></a></li>
       <li><a class="card" href="https://github.com/MarahHQ/marah-launcher/releases/latest/download/Marah-Launcher-x86_64.AppImage"><strong>Linux</strong><span>AppImage, x86-64</span></a></li>
@@ -179,7 +193,8 @@
 </section>
 
 <section class="faq wrap" id="faq" aria-labelledby="faq-title">
-  <h2 id="faq-title">Questions</h2>
+  <h2 id="faq-title" data-reveal>Questions</h2>
+  <div class="faq-list" data-stagger>
   <details>
     <summary>Is Marah Launcher free?</summary>
     <p>Yes. It is free software under the GNU GPL, version 3 or later.</p>
@@ -196,17 +211,19 @@
     <summary>Where do I report a problem?</summary>
     <p>Open an issue in <a href="https://github.com/MarahHQ/marah-launcher/issues">the Marah Launcher repository</a>.</p>
   </details>
+  </div>
 </section>
 </main>
 
 <footer class="footer">
   <div class="wrap footer-inner">
     <a class="brand" href="#top">
-      <img src="assets/logo-static.svg" alt="" width="44" height="44">
+      <img src="assets/logo-static.svg" alt="" width="44" height="44" loading="lazy" decoding="async">
       <span>Marah<br>Launcher</span>
     </a>
     <div class="footer-text">
       <p>All your games. One launcher. Inspired by Azrak.</p>
+      <p>Marah Launcher comes with no games. Play only games you are allowed to use.</p>
       <p>PlayStation, Nintendo Switch and Steam are trademarks of their owners.</p>
     </div>
     <ul class="footer-links">
@@ -216,6 +233,5 @@
     </ul>
   </div>
 </footer>
-<script src="assets/site.js"></script>
 </body>
 </html>
