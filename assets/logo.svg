@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc" version="1.1" id="svg9" sodipodi:docname="gamepad-m-smile-arctic.svg" inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)">
+  <sodipodi:namedview id="namedview9" pagecolor="#ffffff" bordercolor="#000000" borderopacity="0.25" inkscape:showpageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:deskcolor="#d1d1d1" inkscape:zoom="0.55104611" inkscape:cx="48.997715" inkscape:cy="21.776762" inkscape:window-width="1920" inkscape:window-height="1006" inkscape:window-x="0" inkscape:window-y="0" inkscape:window-maximized="1" inkscape:current-layer="g9"/>
+  <title id="title">Electric Blue Winking Gamepad</title>
+  <style>
+/* All paths and colors are preserved from the approved static logo. */
+.wink-motion { transform-box: view-box; transform-origin: 299px 214px; animation: wink 5.4s ease-in-out infinite; }
+.smile-motion { animation: smile 5.4s ease-in-out infinite; }
+.cheek-motion { animation: cheek 5.4s ease-in-out infinite; }
+.pad-pulse { animation: pulse 5.4s ease-in-out infinite; }
+@keyframes wink { 0%,37%,43%,100% { transform:scaleY(1); } 39.5% { transform:scaleY(.22); } 41% { transform:scaleY(.22); } }
+@keyframes smile { 0%,35%,48%,100% { transform:translateY(0); } 40% { transform:translateY(-3px); } }
+@keyframes cheek { 0%,34%,49%,100% { opacity:1; } 40% { opacity:.6; } 44% { opacity:1; } }
+@keyframes pulse { 0%,30%,65%,100% { opacity:.65; } 40% { opacity:1; } 52% { opacity:.78; } }
+@media (prefers-reduced-motion: reduce) { .wink-motion,.smile-motion,.cheek-motion,.pad-pulse { animation:none !important; } }
+</style><desc id="desc">Original rounded-square neon gamepad in arctic cyan and blue, with one open eye, one winking eye, a smile and cheek dimple.</desc>
+  <defs id="defs2">
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#102332" id="stop1"/>
+      <stop offset=".55" stop-color="#0d1926" id="stop2"/>
+      <stop offset="1" stop-color="#1d3750" id="stop3"/>
+    </linearGradient>
+    <linearGradient id="neon" x1="86.593554" y1="202.19279" x2="363.1646" y2="432.66868" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.1566267,0.86458317)">
+      <stop stop-color="#d6ffff" id="stop4"/>
+      <stop offset=".5" stop-color="#82d8f5" id="stop5"/>
+      <stop offset="1" stop-color="#4c8bdc" id="stop6"/>
+    </linearGradient>
+    <linearGradient id="white" x1="160.78863" y1="226.84907" x2="244.54828" y2="331.54864" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.2034433,0.83094897)">
+      <stop stop-color="#ffffff" id="stop7"/>
+      <stop offset="1" stop-color="#c5f4ff" id="stop8"/>
+    </linearGradient>
+    <filter id="outerGlow" x="-0.073552674" y="-0.10214089" width="1.1471053" height="1.2041507">
+      <feGaussianBlur stdDeviation="9" id="feGaussianBlur1"/>
+    </filter>
+    <filter id="innerGlow" x="-0.23039216" y="-1" width="1.4607843" height="3">
+      <feGaussianBlur stdDeviation="5" id="feGaussianBlur2"/>
+    </filter>
+    <clipPath id="squircle">
+      <path d="M256 0c-5.58 0-11.06.05-16.44.13L223.8.56l-7.65.33-14.82.87-14.16 1.18C64.67 14.82 14.82 64.67 2.94 187.16l-1.18 14.16-.86 14.82c-.13 2.51-.26 5.07-.33 7.65l-.44 15.77-.1 8.14L0 256c0 5.58.05 11.06.13 16.44l.44 15.77.33 7.65.87 14.82 1.18 14.16c11.88 122.5 61.72 172.34 184.22 184.22l14.16 1.18 14.82.87c2.51.13 5.07.26 7.65.33l15.77.44L256 512l16.44-.13 15.77-.44 7.65-.33 14.82-.87 14.16-1.18c122.5-11.88 172.34-61.72 184.22-184.22l1.18-14.16.87-14.82c.13-2.51.26-5.07.33-7.65l.44-15.77L512 256l-.13-16.44-.44-15.77-.33-7.65-.87-14.82-1.18-14.16C497.18 64.67 447.33 14.82 324.84 2.94l-14.16-1.18L295.86.9c-2.55-.12-5.1-.24-7.65-.33L272.44.13l-8.14-.1z" id="path2"/>
+    </clipPath>
+    <linearGradient inkscape:collect="always" xlink:href="#white" id="linearGradient9" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.2034433,0.83094897)" x1="160.78863" y1="226.84907" x2="244.54828" y2="331.54864"/>
+    <linearGradient inkscape:collect="always" xlink:href="#white" id="linearGradient10" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.2034433,0.83094897)" x1="160.78863" y1="226.84907" x2="244.54828" y2="331.54864"/>
+    <linearGradient inkscape:collect="always" xlink:href="#white" id="linearGradient11" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.2034433,0.83094897)" x1="160.78863" y1="226.84907" x2="244.54828" y2="331.54864"/>
+    <linearGradient inkscape:collect="always" xlink:href="#white" id="linearGradient12" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.2034433,0.83094897)" x1="160.78863" y1="226.84907" x2="244.54828" y2="331.54864"/>
+    <linearGradient inkscape:collect="always" xlink:href="#white" id="linearGradient13" gradientUnits="userSpaceOnUse" gradientTransform="scale(1.2034433,0.83094897)" x1="160.78863" y1="226.84907" x2="244.54828" y2="331.54864"/>
+  </defs>
+  <g id="g9">
+    <path d="M256 0c-5.58 0-11.06.05-16.44.13L223.8.56l-7.65.33-14.82.87-14.16 1.18C64.67 14.82 14.82 64.67 2.94 187.16l-1.18 14.16-.86 14.82c-.13 2.51-.26 5.07-.33 7.65l-.44 15.77-.1 8.14L0 256c0 5.58.05 11.06.13 16.44l.44 15.77.33 7.65.87 14.82 1.18 14.16c11.88 122.5 61.72 172.34 184.22 184.22l14.16 1.18 14.82.87c2.51.13 5.07.26 7.65.33l15.77.44L256 512l16.44-.13 15.77-.44 7.65-.33 14.82-.87 14.16-1.18c122.5-11.88 172.34-61.72 184.22-184.22l1.18-14.16.87-14.82c.13-2.51.26-5.07.33-7.65l.44-15.77L512 256l-.13-16.44-.44-15.77-.33-7.65-.87-14.82-1.18-14.16C497.18 64.67 447.33 14.82 324.84 2.94l-14.16-1.18L295.86.9c-2.55-.12-5.1-.24-7.65-.33L272.44.13l-8.14-.1z" fill="url(#bg)" id="path3"/>
+    <!-- Geometry is shared between the sharp outline and blurred glow. -->
+    <path id="pad" d="M256 99 H297 C369 99 410 131 433 194 C449 237 462 299 450 342 C441 372 416 390 392 382 C367 374 351 345 329 327 H256 H183 C161 345 145 374 120 382 C96 390 71 372 62 342 C50 299 63 237 79 194 C102 131 143 99 215 99 H256" fill="none" stroke="url(#neon)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" filter="url(#outerGlow)" opacity=".75" class="pad-pulse"/>
+    <path d="M256 99 H297 C369 99 410 131 433 194 C449 237 462 299 450 342 C441 372 416 390 392 382 C367 374 351 345 329 327 H256 H183 C161 345 145 374 120 382 C96 390 71 372 62 342 C50 299 63 237 79 194 C102 131 143 99 215 99 H256" fill="none" stroke="url(#neon)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" id="path4"/>
+    <g id="winking-face" stroke-linecap="round" stroke-linejoin="round">
+<!-- Shared silhouettes ensure that blur and crisp paths match exactly -->
+<g fill="none" stroke="url(#white)" filter="url(#innerGlow)" opacity=".65">
+<path d="M207 211 V235" stroke-width="21"/>
+<path d="M273 222 C280 211 290 203 299 203 C309 203 318 211 325 222 C319 219 310 215 299 215 C288 215 280 219 273 222 Z" fill="url(#white)" stroke="none" class="wink-motion"/>
+<path d="M205 268 C219 279 235 287 256 287 C277 287 293 279 307 268 C300 282 282 298 256 298 C230 298 212 282 205 268 Z" fill="url(#white)" stroke="none" class="smile-motion"/>
+</g>
+<path d="M207 211 V235" fill="none" stroke="url(#white)" stroke-width="21"/>
+<path d="M273 222 C280 211 290 203 299 203 C309 203 318 211 325 222 C319 219 310 215 299 215 C288 215 280 219 273 222 Z" fill="url(#white)" stroke="none" class="wink-motion"/>
+<path d="M205 268 C219 279 235 287 256 287 C277 287 293 279 307 268 C300 282 282 298 256 298 C230 298 212 282 205 268 Z" fill="url(#white)" stroke="none" class="smile-motion"/>
+<g fill="none" stroke="url(#neon)" class="cheek-motion">
+<path d="M329 243 L344 235" stroke-width="11" filter="url(#innerGlow)" opacity=".65"/>
+<path d="M333 263 L348 255" stroke-width="11" filter="url(#innerGlow)" opacity=".65"/>
+<path d="M329 243 L344 235" stroke-width="9"/>
+<path d="M333 263 L348 255" stroke-width="9"/>
+</g></g></g>
+</svg>
