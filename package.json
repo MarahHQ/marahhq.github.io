@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "node --test tests/site.test.mjs",
+    "test": "node --test --test-timeout=60000 --test-force-exit tests/site.test.mjs",
     "check": "npm run build && npm test",
     "format": "prettier --write src/"
   },
