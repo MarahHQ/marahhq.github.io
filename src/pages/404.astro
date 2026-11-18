@@ -1,6 +1,7 @@
 ---
 // The page for a missing address. Its paths start with "/": it is served at any depth.
 import "../styles/site.css";
+import ThemeHead from "../components/ThemeHead.astro";
 ---
 
 <!doctype html>
@@ -8,8 +9,7 @@ import "../styles/site.css";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0d1926" />
-    <meta name="color-scheme" content="dark" />
+    <ThemeHead />
     <meta name="robots" content="noindex" />
     <title>Page not found · Marah Launcher</title>
     <link rel="icon" href="/assets/logo-static.svg" type="image/svg+xml" />

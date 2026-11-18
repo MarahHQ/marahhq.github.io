@@ -286,15 +286,18 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
   });
 
   // The theme tests share the browser's storage and settings with the rest: each one puts them back.
-  async function fresh({ scheme = "dark", blockScript = false, theme = null } = {}) {
+  async function fresh({ scheme = "dark", blockScript = false, noScript = false, theme = null, path = "" } = {}) {
     await browser.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: scheme }] });
     await browser.send("Network.enable");
     await browser.send("Network.setBlockedURLs", { urls: blockScript ? ["*/_astro/*.js"] : [] });
     await browser.load(site.url);
     await browser.run(`localStorage.clear(); ${theme ? `localStorage.setItem("marah-theme", "${theme}")` : ""}`);
-    await browser.load(site.url);
+    // A visitor with JavaScript turned off: no script of the page runs, not even the head script.
+    await browser.send("Emulation.setScriptExecutionDisabled", { value: noScript });
+    await browser.load(site.url + path);
   }
   async function reset() {
+    await browser.send("Emulation.setScriptExecutionDisabled", { value: false });
     await browser.run(`localStorage.clear()`);
     await browser.send("Network.setBlockedURLs", { urls: [] });
     await browser.send("Emulation.setEmulatedMedia", { features: [] });
@@ -331,6 +334,9 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
       assert.equal(await theme(), "dark", "a change of the system's setting follows");
       await fresh({ scheme: "light", theme: "dark" });
       assert.equal(await theme(), "dark", "the visitor's dark wins over the system's light");
+      assert.equal(await background(), "#0d1926", "and the page is dark, not only its data-theme");
+      await fresh({ scheme: "dark", theme: "light" });
+      assert.equal(await background(), "#f2f6fa", "the visitor's light wins over the system's dark");
     } finally {
       await reset();
     }
@@ -345,6 +351,35 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
       assert.equal(await theme(), "light");
       assert.equal(await background(), "#f2f6fa");
       assert.equal(await browser.run(`return getComputedStyle(document.body).color`), "rgb(13, 25, 38)");
+    } finally {
+      await reset();
+    }
+  });
+
+  it("follows the system's setting with JavaScript off, and hides the theme switches", async () => {
+    try {
+      await fresh({ scheme: "light", noScript: true, theme: "dark" });
+      assert.equal(await theme(), undefined, "no script ran");
+      assert.equal(await background(), "#f2f6fa", "the system's light, as no script reads the choice");
+      const look = () =>
+        browser.run(`const css = (sel) => getComputedStyle(document.querySelector(sel));
+        return { body: getComputedStyle(document.body).color, scheme: getComputedStyle(document.documentElement).colorScheme,
+          cmd: css(".cmd").getPropertyValue("--color-bg").trim(), cta: css(".cta").borderTopColor,
+          pad: css(".gamepad").getPropertyValue("--pad-line").trim(),
+          switches: [...document.querySelectorAll("[data-theme-switch]")].map((b) => b.getClientRects().length) }`);
+      assert.deepEqual(await look(), {
+        body: "rgb(13, 25, 38)",
+        scheme: "light",
+        cmd: "#0d1926",
+        cta: "rgb(10, 101, 160)",
+        pad: "#0d1926",
+        switches: [0, 0],
+      });
+      await fresh({ scheme: "dark", noScript: true });
+      assert.equal(await background(), "#0d1926", "the system's dark");
+      assert.equal(await browser.run(`return getComputedStyle(document.documentElement).colorScheme`), "dark");
+      await fresh({ scheme: "light", noScript: true, path: "no-such-page" });
+      assert.equal(await background(), "#f2f6fa", "the 404 page too");
     } finally {
       await reset();
     }
@@ -477,5 +512,22 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
   it("shows the 404 page for a missing address", async () => {
     await browser.load(`${site.url}no-such-page`);
     assert.match(await browser.run(`return document.querySelector('h1').textContent`), /isn't here/);
+  });
+
+  it("shows the 404 page in the visitor's theme, else the system's", async () => {
+    try {
+      await fresh({ scheme: "dark", theme: "light", path: "no-such-page" });
+      assert.equal(await theme(), "light", "the visitor's light wins over the system's dark");
+      assert.equal(await background(), "#f2f6fa");
+      assert.equal(await browser.run(`return getComputedStyle(document.body).color`), "rgb(13, 25, 38)");
+      assert.equal(await browser.run(`return document.querySelector('meta[name="theme-color"]').content`), "#f2f6fa");
+      await fresh({ scheme: "light", path: "no-such-page" });
+      assert.equal(await theme(), "light", "no choice: the system's light");
+      await fresh({ scheme: "light", theme: "dark", path: "no-such-page" });
+      assert.equal(await theme(), "dark", "the visitor's dark wins over the system's light");
+      assert.equal(await background(), "#0d1926");
+    } finally {
+      await reset();
+    }
   });
 });

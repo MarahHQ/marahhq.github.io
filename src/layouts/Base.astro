@@ -4,6 +4,7 @@
 import "../styles/site.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import ThemeHead from "../components/ThemeHead.astro";
 ---
 
 <!doctype html>
@@ -11,9 +12,7 @@ import Footer from "../components/Footer.astro";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <!-- The browser bar's colour in each theme: the head script and site.js read data-dark and data-light. -->
-    <meta name="theme-color" content="#0d1926" data-dark="#0d1926" data-light="#f2f6fa" />
-    <meta name="color-scheme" content="dark light" />
+    <ThemeHead />
     <title>Marah Launcher: all your games, one launcher</title>
     <meta
       name="description"
@@ -41,20 +40,6 @@ import Footer from "../components/Footer.astro";
     <link rel="preload" href="assets/fonts/ubuntu-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="apple-touch-icon" href="assets/icon-180.png" />
     <script is:inline>
-      // Dark or light, before the first paint: the visitor's choice (site.js keeps it), else the
-      // system's setting. Without this script the page is dark.
-      (function () {
-        var theme = null;
-        try {
-          theme = localStorage.getItem("marah-theme");
-        } catch (e) {}
-        if (theme !== "light" && theme !== "dark") {
-          theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-        }
-        document.documentElement.dataset.theme = theme;
-        var bar = document.querySelector('meta[name="theme-color"]');
-        bar.content = bar.dataset[theme];
-      })();
       // The scroll reveal hides sections until site.js shows them. If site.js does not run, show everything.
       document.documentElement.classList.add("reveal");
       // The header is see-through at the top of the page, and a thin bar once the page scrolls.
