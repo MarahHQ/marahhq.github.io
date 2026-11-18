@@ -90,9 +90,17 @@
 }
 
 @layer base {
+  /* The page fills the whole screen (viewport-fit=cover), so a phone's notch, status bar and
+     home bar can cover it. These insets keep the content clear of them; 0 elsewhere. */
+  :root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+  }
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 96px;
+    scroll-padding-top: calc(96px + var(--safe-top));
     background: var(--color-page);
   }
   body {
@@ -217,6 +225,8 @@
 @utility wrap {
   width: min(1280px, 100% - 64px);
   margin-inline: auto;
+  /* A phone on its side: its notch covers a side, which only the inset clears. 0 elsewhere. */
+  padding-inline: var(--safe-left) var(--safe-right);
   @variant max-lg {
     width: min(1280px, 100% - 48px);
   }
@@ -394,12 +404,6 @@
   [data-theme="light"] .i-moon {
     display: inline;
   }
-  @media (width < 1201px) {
-    .nav-link {
-      padding: 8px 10px;
-    }
-  }
-
   /* The header's links: a line grows under the one you point at. */
   .nav-link {
     position: relative;
@@ -425,6 +429,20 @@
   .nav-link:hover::after,
   .nav-link:focus-visible::after {
     transform: scaleX(1);
+  }
+  /* After the rules above, or they would win: the links are closer on a narrower screen. */
+  @media (width < 1201px) {
+    #nav {
+      gap: 2px;
+    }
+    .nav-link {
+      font-size: 14px;
+      padding: 8px;
+    }
+    .nav-link::after {
+      left: 8px;
+      right: 8px;
+    }
   }
 
   /* An icon on a tile, as in the feature strip. */
@@ -784,8 +802,8 @@
   }
 
   /* The Home demo: the launcher's Home in a 16:9 frame. Sizes are in cqw, a hundredth of the
-     frame's width, so it scales as one picture. site.js sets --a and --b, the focused game's
-     colours, on the frame. On a phone the frame grows taller and the cards scroll. */
+     frame's width, so it scales as one picture. site.js sets --a, the focused game's
+     colour, on the frame. On a phone the frame grows taller and the cards scroll. */
   .demo {
     position: relative;
     container-type: inline-size;
@@ -833,6 +851,7 @@
   .demo-clock {
     font-size: 1.9cqw;
     font-weight: 500;
+    white-space: nowrap;
   }
   /* The download in the top bar: the game, the share done, and a bar. */
   .demo-download {
@@ -845,6 +864,12 @@
     background: rgba(255, 255, 255, 0.1);
     font-size: 1.3cqw;
     font-weight: 600;
+  }
+  /* A long title ends in "…" so the pill keeps one line. */
+  .demo-download > :first-child {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .demo-meter {
     display: block;
@@ -876,11 +901,16 @@
     text-transform: uppercase;
     color: var(--color-muted);
   }
+  /* Real titles can be long: two lines at most, above the row. */
   .demo-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
     margin-top: 0.6cqw;
-    font-size: 4.6cqw;
+    font-size: 3.6cqw;
     font-weight: 700;
-    line-height: 1.05;
+    line-height: 1.1;
     letter-spacing: -0.02em;
   }
   .demo-fact {
@@ -905,23 +935,14 @@
   .demo-row:focus-visible {
     outline: none;
   }
-  /* A cover, drawn from two colours as a poster: a sun, its glow, and two hills. Then the
-     system's badge and the game's name. */
+  /* A game's cover, with the system's badge on it. The cover keeps its middle at 3:4. */
   .demo-card {
     position: relative;
     flex: none;
     width: 12cqw;
     aspect-ratio: 3 / 4;
-    display: flex;
-    align-items: flex-end;
-    padding: 1cqw;
     border-radius: 1.2cqw;
-    background:
-      radial-gradient(circle at 66% 30%, var(--a) 0 15%, transparent 15.5%),
-      radial-gradient(circle at 66% 30%, color-mix(in srgb, var(--a) 45%, transparent), transparent 48%),
-      radial-gradient(ellipse 140% 50% at 15% 108%, #0b1020 0 55%, transparent 56%),
-      radial-gradient(ellipse 120% 45% at 95% 100%, color-mix(in srgb, var(--b) 60%, #000) 0 55%, transparent 56%),
-      linear-gradient(170deg, var(--b), #0b1020 92%);
+    background: #0b1020;
     box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.45);
     scroll-snap-align: center;
     cursor: pointer;
@@ -960,11 +981,13 @@
     font-weight: 700;
     text-transform: uppercase;
   }
-  .demo-name {
-    font-size: 1.35cqw;
-    font-weight: 700;
-    line-height: 1.15;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  .demo-cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
   }
   .demo-hints {
     position: absolute;
@@ -1013,7 +1036,7 @@
       font-size: 2.2cqw;
     }
     .demo-title {
-      font-size: 6.5cqw;
+      font-size: 5.4cqw;
     }
     .demo-fact {
       font-size: 2.5cqw;
@@ -1025,7 +1048,6 @@
     }
     .demo-card {
       width: 19cqw;
-      padding: 1.6cqw;
       border-radius: 1.8cqw;
     }
     .demo-badge {
@@ -1034,9 +1056,6 @@
       padding: 0.2cqw 1cqw;
       border-radius: 0.9cqw;
       font-size: 1.6cqw;
-    }
-    .demo-name {
-      font-size: 2.2cqw;
     }
     .demo-hints {
       bottom: 2.5cqw;
@@ -1075,6 +1094,7 @@
       font-size: 3.2cqw;
     }
     .demo-title {
+      -webkit-line-clamp: 3;
       font-size: 8.5cqw;
     }
     .demo-fact {
@@ -1087,7 +1107,6 @@
     }
     .demo-card {
       width: 30cqw;
-      padding: 2.5cqw;
       border-radius: 3cqw;
     }
     .demo-card[aria-selected="true"] {
@@ -1099,9 +1118,6 @@
       padding: 0.3cqw 1.6cqw;
       border-radius: 1.4cqw;
       font-size: 2.4cqw;
-    }
-    .demo-name {
-      font-size: 3.4cqw;
     }
     .demo-hints {
       display: none;
@@ -1608,6 +1624,8 @@
   /* The header's blur sits on a layer behind it: a backdrop-filter on the header itself would
      hold the menu's fixed panel inside the header's box. */
   .site-header {
+    /* Below a phone's status bar or notch; the header's background still fills behind it. */
+    padding-top: var(--safe-top);
     border-bottom: 1px solid var(--color-line);
     transition:
       border-color 0.3s ease,
@@ -1675,7 +1693,7 @@
       align-items: stretch;
       flex-wrap: nowrap;
       gap: 4px;
-      padding: 22px 18px calc(24px + env(safe-area-inset-bottom));
+      padding: calc(22px + var(--safe-top)) calc(18px + var(--safe-right)) calc(24px + var(--safe-bottom)) 18px;
       overflow-y: auto;
       background: linear-gradient(180deg, var(--color-panel-hi), var(--color-night) 60%);
       border-left: 1px solid var(--color-line);
@@ -1706,8 +1724,8 @@
       display: grid;
       place-items: center;
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: calc(16px + var(--safe-top));
+      right: calc(16px + var(--safe-right));
       width: 40px;
       height: 40px;
       border-radius: 12px;
