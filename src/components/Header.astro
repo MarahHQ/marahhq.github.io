@@ -7,7 +7,7 @@ import ThemeIcons from "./ui/ThemeIcons.astro";
 <header class="site-header sticky top-0 z-10">
   <!-- In the header, under the menu panel: the header is its own layer. -->
   <div class="nav-scrim" aria-hidden="true"></div>
-  <div class="wrap flex min-h-20 items-center justify-between gap-6 transition-[min-height] max-lg:gap-3 duration-300 ease-out in-[.hdr-scrolled]:min-h-14 max-md:flex-wrap max-sm:min-h-17 max-sm:in-[.hdr-scrolled]:min-h-13">
+  <div class="wrap flex min-h-20 items-center justify-between gap-6 transition-[min-height] max-lg:gap-3 duration-300 ease-out in-[.hdr-scrolled]:min-h-14 max-md:flex-wrap max-md:in-[.js]:flex-nowrap max-sm:min-h-17 max-sm:in-[.hdr-scrolled]:min-h-13">
     <a
       class="flex items-center gap-3 font-display text-[20px] leading-[1.05] font-extrabold tracking-[-.03em] text-text no-underline transition-[font-size] duration-300 ease-out in-[.hdr-scrolled]:text-[15px] max-sm:text-[17px] max-sm:in-[.hdr-scrolled]:text-[14px]"
       href="#top"
@@ -20,10 +20,9 @@ import ThemeIcons from "./ui/ThemeIcons.astro";
         height="52"
         decoding="async"
       />
-      <span>
-        Marah
-        <br />
-        Launcher
+      <!-- One line. A phone, and a screen where the links are in the bar but crowded, have room for "Marah" only. -->
+      <span class="whitespace-nowrap">
+        Marah<span class="max-sm:sr-only md:max-[1280px]:sr-only"> Launcher</span>
       </span>
     </a>
     <button class="menu" type="button" aria-expanded="false" aria-controls="nav" hidden>

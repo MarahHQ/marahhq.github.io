@@ -1,17 +1,70 @@
 ---
 // A small, live Home: game cards to move through with the arrow keys, the mouse or a finger,
-// and a download whose progress shows in the top bar, as the launcher's does. The games are
-// made up, so no game's art is copied; the picture behind them is the real Home's. site.js runs
-// it. Its block in Screenshots.astro stays hidden without the script.
+// and a download whose progress shows in the top bar, as the launcher's does. The games are real
+// ones from a library that Marah Launcher manages: their titles, folder sizes and official cover
+// art, here to show the launcher. The picture behind them is the real Home's. site.js runs it.
+// Its block in Screenshots.astro stays hidden without the script.
 
-// `art` is two colours for the cover. `state` is "ready", or "get" for a game that downloads.
+// `cover` is in public/assets/demo/, 360 px wide. `tint` is a colour from the cover, for the
+// picture behind. `state` is "ready", or "get" for a game that downloads.
 const games = [
-  { title: "Lantern Valley", system: "Switch", size: "3.1 GB", art: ["#f2a65a", "#1f6f78"], state: "ready" },
-  { title: "Moonlit Drift", system: "PS5", size: "18.6 GB", art: ["#a78bfa", "#1e3a8a"], state: "ready" },
-  { title: "Tidewalker", system: "PS4", size: "22.0 GB", art: ["#5eead4", "#0f4c75"], state: "get" },
-  { title: "Copper Knights", system: "PC", size: "7.4 GB", art: ["#fb923c", "#4a2511"], state: "ready" },
-  { title: "Neon Orchard", system: "Steam", size: "1.2 GB", art: ["#f472b6", "#3b0764"], state: "ready" },
-  { title: "Skyward Post", system: "Switch", size: "5.5 GB", art: ["#93c5fd", "#334155"], state: "get" },
+  {
+    title: "Mario Kart World",
+    system: "Switch",
+    size: "23.2 GB",
+    cover: "mario-kart-world",
+    tint: "#e40716",
+    state: "ready",
+  },
+  {
+    title: "Hollow Knight: Silksong",
+    system: "PS5",
+    size: "8.4 GB",
+    cover: "hollow-knight-silksong",
+    tint: "#a81a1d",
+    state: "ready",
+  },
+  {
+    title: "Teenage Mutant Ninja Turtles: Shredder's Revenge",
+    system: "PS4",
+    size: "983 MB",
+    cover: "tmnt-shredders-revenge",
+    tint: "#f1ca65",
+    state: "ready",
+  },
+  { title: "World of Goo 2", system: "PC", size: "937 MB", cover: "world-of-goo-2", tint: "#ac517c", state: "ready" },
+  {
+    title: "Sonic Racing: CrossWorlds",
+    system: "PS5",
+    size: "14.2 GB",
+    cover: "sonic-racing-crossworlds",
+    tint: "#3b6fd8",
+    state: "ready",
+  },
+  {
+    title: "Hot Wheels Monster Trucks: Stunt Mayhem",
+    system: "PS4",
+    size: "9.2 GB",
+    cover: "hot-wheels-monster-trucks",
+    tint: "#ddad59",
+    state: "get",
+  },
+  {
+    title: "Donkey Kong Bananza",
+    system: "Switch",
+    size: "8.9 GB",
+    cover: "donkey-kong-bananza",
+    tint: "#e40f1b",
+    state: "ready",
+  },
+  {
+    title: "Command & Conquer: Red Alert 2",
+    system: "PC",
+    size: "5.1 GB",
+    cover: "red-alert-2",
+    tint: "#c95534",
+    state: "get",
+  },
 ];
 ---
 
@@ -67,12 +120,21 @@ const games = [
         data-system={game.system}
         data-size={game.size}
         data-state={game.state}
-        style={`--a: ${game.art[0]}; --b: ${game.art[1]}`}
+        style={`--a: ${game.tint}`}
       >
+        <img
+          class="demo-cover"
+          src={`assets/demo/${game.cover}.webp`}
+          alt=""
+          width="360"
+          height="540"
+          loading="lazy"
+          decoding="async"
+        />
         <span class="demo-badge" aria-hidden="true">
           {game.system}
         </span>
-        <span class="demo-name">{game.title}</span>
+        <span class="visually-hidden">{game.title}</span>
         <span class="visually-hidden" data-demo-say />
       </li>
     ))}

@@ -150,6 +150,62 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     assert.notEqual(down.border, "rgba(0, 0, 0, 0)");
   });
 
+  it("fits the header's bar on a phone, at the top and as the thin bar, under a notch", async () => {
+    // A phone's notch or status bar: 47 px at the top. Chrome without the override still gets
+    // the insets through the page's own --safe-* properties.
+    const notch = await browser.send("Emulation.setSafeAreaInsetsOverride", { insets: { top: 47, left: 0, right: 0, bottom: 34 } });
+    try {
+      for (const [width, height] of [[390, 844], [360, 780], [320, 640]]) {
+        await browser.send("Emulation.setUserAgentOverride", { userAgent: ANDROID });
+        await browser.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 3, mobile: true });
+        await browser.send("Page.navigate", { url: site.url });
+        await sleep(1500);
+        if (notch.error) await browser.run(`document.documentElement.style.setProperty("--safe-top", "47px")`);
+        for (const scrolled of [false, true]) {
+          if (scrolled) await browser.run(`document.querySelector("[data-demo]").scrollIntoView({ block: "center", behavior: "instant" })`);
+          await sleep(500);
+          const bar = await browser.run(`const h = document.querySelector(".site-header"), brand = h.querySelector("a");
+            // The lines of the brand's text that shows; a part only for screen readers doesn't count.
+            const texts = document.createTreeWalker(brand, NodeFilter.SHOW_TEXT), lines = new Set();
+            while (texts.nextNode()) {
+              if (getComputedStyle(texts.currentNode.parentElement).position === "absolute") continue;
+              const range = document.createRange(); range.selectNodeContents(texts.currentNode);
+              [...range.getClientRects()].filter((r) => r.width > 0).forEach((r) => lines.add(Math.round(r.top + r.height / 2)));
+            }
+            // The bar's parts that show: the brand, the buttons. The folded menu is a panel of its own.
+            const parts = [...h.querySelector(".wrap").children].filter((e) => e.id !== "nav" && e.getBoundingClientRect().width > 0).map((e) => e.getBoundingClientRect());
+            const box = h.getBoundingClientRect();
+            return { scrolled: document.documentElement.classList.contains("hdr-scrolled"), lines: lines.size, name: brand.textContent.replace(/\\s+/g, " ").trim(),
+              oneRow: Math.max(...parts.map((r) => r.top)) < Math.min(...parts.map((r) => r.bottom)),
+              inside: parts.every((r) => r.top >= box.top + 47 && r.bottom <= box.bottom && r.left >= 0 && r.right <= innerWidth),
+              headerTop: Math.round(box.top) }`);
+          assert.deepEqual(bar, { scrolled, lines: 1, name: "Marah Launcher", oneRow: true, inside: true, headerTop: 0 }, `${width} px, ${scrolled ? "scrolled" : "at the top"}`);
+        }
+      }
+      await browser.run(`document.querySelector(".menu").click()`);
+      await sleep(500);
+      const menu = await browser.run(`const n = document.querySelector("#nav"), c = n.querySelector(".nav-close");
+        return [n.querySelector(".nav-title").getBoundingClientRect().top >= 47, c.getBoundingClientRect().top >= 47]`);
+      assert.deepEqual(menu, [true, true], "the menu's title and close button sit below the notch");
+    } finally {
+      if (!notch.error) await browser.send("Emulation.setSafeAreaInsetsOverride", { insets: {} });
+    }
+  });
+
+  it("keeps the header's links on one row from a tablet to a desktop", async () => {
+    for (const width of [961, 1100, 1201, 1280, 1440]) {
+      await browser.load(site.url, { width });
+      for (const scrolled of [false, true]) {
+        if (scrolled) await browser.run(`scrollTo({ top: 1500, behavior: "instant" })`);
+        await sleep(500);
+        const rows = await browser.run(`const h = document.querySelector(".site-header");
+          const parts = [...h.querySelectorAll(".wrap > a, #nav > .nav-link, .wrap > div > *")].filter((e) => e.getBoundingClientRect().width > 0).map((e) => e.getBoundingClientRect());
+          return [Math.max(...parts.map((r) => r.top)) < Math.min(...parts.map((r) => r.bottom)), parts.every((r) => r.bottom <= h.getBoundingClientRect().bottom)]`);
+        assert.deepEqual(rows, [true, true], `${width} px, ${scrolled ? "scrolled" : "at the top"}`);
+      }
+    }
+  });
+
   it("copies the example game file", async () => {
     await browser.load(site.url);
     const text = await browser.run(`document.querySelector('[data-copy=add-game-json]').click();
@@ -297,23 +353,32 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     const state = () => browser.run(`const cards = [...document.querySelectorAll(".demo-card")];
       return [cards.findIndex((c) => c.getAttribute("aria-selected") === "true"), document.querySelector("[data-demo-title]").textContent,
         document.querySelector("[data-demo-row]").getAttribute("aria-activedescendant")]`);
-    assert.deepEqual(await state(), [0, "Lantern Valley", "demo-game-0"]);
+    assert.deepEqual(await state(), [0, "Mario Kart World", "demo-game-0"]);
     const key = (name) => browser.run(`const row = document.querySelector("[data-demo-row]"); row.focus({ preventScroll: true });
       const event = new KeyboardEvent("keydown", { key: "${name}", bubbles: true, cancelable: true }); row.dispatchEvent(event);
       return event.defaultPrevented`);
     const before = await browser.run(`return scrollY`);
     assert.equal(await key("ArrowRight"), true, "the arrow doesn't scroll the page");
-    assert.deepEqual(await state(), [1, "Moonlit Drift", "demo-game-1"]);
+    assert.deepEqual(await state(), [1, "Hollow Knight: Silksong", "demo-game-1"]);
     await key("End");
-    assert.equal((await state())[0], 5);
+    assert.equal((await state())[0], 7);
     await key("ArrowRight");
-    assert.equal((await state())[0], 5, "it stops at the last card");
+    assert.equal((await state())[0], 7, "it stops at the last card");
     assert.equal(await browser.run(`return scrollY`), before, "the page stayed put");
     await browser.run(`document.querySelector("#demo-game-0").dispatchEvent(new PointerEvent("pointerover", { pointerType: "mouse", bubbles: true }))`);
     assert.equal((await state())[0], 0, "the mouse moves the focus");
     await browser.run(`document.querySelector("#demo-game-3").click()`);
     assert.equal((await state())[0], 3, "a tap moves the focus");
-    assert.match(await browser.run(`return document.querySelector("#demo-game-3").textContent.replace(/\\s+/g, " ")`), /Copper Knights , PC, 7\.4 GB, installed/);
+    assert.match(await browser.run(`return document.querySelector("#demo-game-3").textContent.replace(/\\s+/g, " ")`), /World of Goo 2 , PC, 937 MB, installed/);
+  });
+
+  it("shows each game's cover in the Home demo", async () => {
+    await browser.load(site.url);
+    const covers = await browser.run(`document.querySelector("[data-demo]").scrollIntoView({ block: "center", behavior: "instant" });
+      const images = [...document.querySelectorAll(".demo-card img")];
+      await Promise.all(images.map((i) => i.decode().catch(() => {})));
+      return images.map((i) => i.naturalWidth)`);
+    assert.deepEqual(covers, Array(8).fill(360));
   });
 
   it("shows the demo's download in its top bar while it is on screen", async () => {
@@ -324,7 +389,7 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     await sleep(2600);
     const [hidden, first] = await pill();
     assert.equal(hidden, false);
-    assert.match(first, /^Tidewalker · \d+%$/);
+    assert.match(first, /^Hot Wheels Monster Trucks: Stunt Mayhem · \d+%$/);
     await sleep(1100);
     const [, later] = await pill();
     assert.ok(parseInt(later.split("· ")[1]) > parseInt(first.split("· ")[1]), `${first} → ${later}`);

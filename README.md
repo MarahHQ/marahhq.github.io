@@ -27,8 +27,8 @@ npm run format    # Prettier, which also sorts the Tailwind classes
   - `sections/`: one file per section of the page, from `Hero` to `Faq`. Lists such as the
     platforms, the downloads, the keys and the questions are data at the top of their file.
   - `ui/`: the parts the page repeats: `CopyButton`, `Commands`, `RepoItem`, `Chevron` and
-    `ThemeIcons`. `HomeDemo` is the small live Home under the screenshots: made-up games, with
-    the real Home's picture behind them.
+    `ThemeIcons`. `HomeDemo` is the small live Home under the screenshots: real games from a
+    library that Marah Launcher manages, with the real Home's picture behind them.
   - `Header.astro` and `Footer.astro`.
 - `src/styles/site.css`: Tailwind's entry.
   - **The theme:** the logo's colours, the fonts (Ubuntu and Ubuntu Mono), the text sizes and the
@@ -70,6 +70,8 @@ npm run format    # Prettier, which also sorts the Tailwind classes
   - `assets/mascot.webp`: the mascot.
   - `assets/screen-*.webp`: screenshots of Marah Launcher, from `docs/screenshots/` in the
     launcher repository.
+  - `assets/demo/*.webp`: the Home demo's covers, the games' official art, 360 px wide, as the
+    launcher downloads it for each game. They are here to show the launcher.
 - `tests/`: the checks, with Node's own test runner and headless Chrome. No test packages.
 
 ## Rules that keep it working
