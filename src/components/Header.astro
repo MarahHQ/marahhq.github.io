@@ -1,17 +1,19 @@
 ---
-// The header: the logo, the links (a slide-in menu on a tablet or a phone), GitHub and Download.
+// The header: the logo, the links (a slide-in menu on a tablet or a phone), the dark or light
+// switch, GitHub and Download. On a phone the switch is in the menu.
+import ThemeIcons from "./ui/ThemeIcons.astro";
 ---
 
 <header class="site-header sticky top-0 z-10">
   <!-- In the header, under the menu panel: the header is its own layer. -->
   <div class="nav-scrim" aria-hidden="true"></div>
-  <div class="wrap flex min-h-20 items-center justify-between gap-6 transition-[min-height] duration-300 ease-out in-[.hdr-scrolled]:min-h-14 max-md:flex-wrap max-sm:min-h-17 max-sm:in-[.hdr-scrolled]:min-h-13">
+  <div class="wrap flex min-h-20 items-center justify-between gap-6 transition-[min-height] max-lg:gap-3 duration-300 ease-out in-[.hdr-scrolled]:min-h-14 max-md:flex-wrap max-sm:min-h-17 max-sm:in-[.hdr-scrolled]:min-h-13">
     <a
       class="flex items-center gap-3 font-display text-[20px] leading-[1.05] font-extrabold tracking-[-.03em] text-text no-underline transition-[font-size] duration-300 ease-out in-[.hdr-scrolled]:text-[15px] max-sm:text-[17px] max-sm:in-[.hdr-scrolled]:text-[14px]"
       href="#top"
     >
       <img
-        class="size-13 drop-shadow-[0_0_10px_rgba(130,216,245,.35)] transition-[width,height] duration-300 ease-out in-[.hdr-scrolled]:size-8 max-sm:size-10 max-sm:in-[.hdr-scrolled]:size-8"
+        class="size-13 drop-shadow-[0_0_10px_rgba(130,216,245,.35)] light:[filter:drop-shadow(0_0_1px_#0d1926)_drop-shadow(0_2px_4px_rgba(13,25,38,.35))] transition-[width,height] duration-300 ease-out in-[.hdr-scrolled]:size-8 max-sm:size-10 max-sm:in-[.hdr-scrolled]:size-8"
         src="assets/logo-mark.svg"
         alt=""
         width="52"
@@ -59,6 +61,10 @@
         FAQ
       </a>
       <div class="nav-extra">
+        <button class="btn-outline" type="button" data-theme-switch hidden>
+          <ThemeIcons />
+          <span data-theme-label>Switch to light theme</span>
+        </button>
         <a class="cta" href="#download">
           Download Marah Launcher
         </a>
@@ -73,9 +79,19 @@
         </a>
       </div>
     </nav>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-4 max-lg:gap-2">
+      <button
+        class="theme-switch max-sm:hidden"
+        type="button"
+        data-theme-switch
+        aria-label="Switch to light theme"
+        title="Switch to light theme"
+        hidden
+      >
+        <ThemeIcons />
+      </button>
       <a
-        class="grid size-11 place-items-center rounded-full bg-line text-text transition-[background-color,translate,width,height] duration-200 in-[.hdr-scrolled]:size-9 hover:-translate-y-0.5 hover:bg-[#26486a] focus-visible:-translate-y-0.5 focus-visible:bg-[#26486a] max-sm:hidden"
+        class="grid size-11 place-items-center rounded-full bg-line text-text transition-[background-color,translate,width,height] duration-200 in-[.hdr-scrolled]:size-9 hover:-translate-y-0.5 hover:bg-line-hi focus-visible:-translate-y-0.5 focus-visible:bg-line-hi max-sm:hidden"
         href="https://github.com/MarahHQ"
       >
         <svg aria-hidden="true" viewBox="0 0 16 16" width="22" height="22">
