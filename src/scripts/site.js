@@ -40,6 +40,8 @@ function headerState() {
   const top = scrollY < 8;
   root.classList.toggle("hdr-top", top);
   root.classList.toggle("hdr-scrolled", !top);
+  // Back to top shows once the page is a screen down.
+  root.classList.toggle("far-down", scrollY > innerHeight);
 }
 addEventListener("scroll", () => (headerFrame ||= requestAnimationFrame(headerState)), { passive: true });
 headerState();
@@ -777,3 +779,11 @@ if (pad) {
     }).observe(pad);
   }
 }
+
+// Back to top: to the top of the page, smoothly unless the visitor asks for less motion, and
+// the focus to the start of the page for a keyboard.
+document.querySelector("[data-back-to-top]")?.addEventListener("click", (event) => {
+  event.preventDefault();
+  scrollTo({ top: 0, behavior: reduced.matches ? "auto" : "smooth" });
+  document.querySelector(".site-header a")?.focus({ preventScroll: true });
+});

@@ -1960,3 +1960,45 @@
     }
   }
 }
+
+/* Back to top: a round button in the bottom corner, clear of a phone's home bar. It shows once
+   the page is a screen down (`far-down`, set by the script). */
+@layer components {
+  .back-to-top {
+    position: fixed;
+    right: calc(20px + var(--safe-right));
+    bottom: calc(20px + var(--safe-bottom));
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    background: var(--color-line);
+    color: var(--color-text);
+    border: 1px solid var(--color-line-hi);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 12px;
+    transition:
+      opacity 0.25s ease,
+      translate 0.25s ease,
+      visibility 0.25s,
+      background-color 0.2s ease;
+  }
+  .far-down .back-to-top {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+  .back-to-top:hover,
+  .back-to-top:focus-visible {
+    background: var(--color-line-hi);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .back-to-top {
+      transition: none;
+    }
+  }
+}

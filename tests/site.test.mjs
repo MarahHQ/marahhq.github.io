@@ -54,6 +54,16 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
   before(async () => { site = await serve("dist"); browser = await open(); });
   after(() => { browser?.close(); site?.close(); });
 
+  it("shows Back to top a screen down, and it takes the page to the top", async () => {
+    await browser.load(site.url, { width: 390, ua: ANDROID });
+    const shown = () => browser.run(`return getComputedStyle(document.querySelector('[data-back-to-top]')).visibility`);
+    assert.equal(await shown(), "hidden", "hidden at the top");
+    await browser.run(`scrollTo(0, innerHeight * 2); await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))`);
+    assert.equal(await shown(), "visible", "shown a screen down");
+    await browser.run(`document.querySelector('[data-back-to-top]').click(); await new Promise((r) => setTimeout(r, 50))`);
+    assert.equal(await browser.run(`return scrollY`), 0, "at the top (reduced motion: no animation)");
+  });
+
   it("switches the launcher's tabs on a phone", async () => {
     await browser.load(site.url, { width: 390, ua: ANDROID });
     const shown = () => browser.run(`return [...document.querySelectorAll('[role=tab]')].map((t) => !document.getElementById(t.getAttribute('aria-controls')).hidden)`);
