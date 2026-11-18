@@ -245,6 +245,164 @@ if (pcSwitcher) {
   choosePc(pcButtons[0]);
 }
 
+// ── The Home demo ──
+// Cards to move through: the arrow keys while the row has the focus, the mouse, or a tap. The
+// focused card grows, and its colours tint the picture behind. The games that are not installed
+// download one after another, with the progress in the top bar, while the demo is on screen.
+const demo = document.querySelector("[data-demo]");
+if (demo) {
+  const row = demo.querySelector("[data-demo-row]");
+  const cards = [...row.querySelectorAll(".demo-card")];
+  const part = (name) => demo.querySelector(`[data-demo-${name}]`);
+  const toGet = cards.filter((card) => card.dataset.state === "get");
+  let current = 0;
+  let getting = null; // The card that downloads, and its share done, from 0 to 1.
+  let done = 0;
+
+  function fact(card) {
+    if (card === getting) return `Downloading · ${Math.floor(done * 100)}%`;
+    return card.dataset.state === "get" ? "Not installed · ✕ downloads it" : "On this PC · Should run well";
+  }
+  // Each card's name, for a screen reader, is its title and these words.
+  function sayState(card) {
+    const state = card === getting ? "downloading" : card.dataset.state === "get" ? "not installed" : "installed";
+    card.querySelector("[data-demo-say]").textContent = `, ${card.dataset.system}, ${card.dataset.size}, ${state}`;
+  }
+  function showInfo() {
+    const card = cards[current];
+    part("system").textContent = `${card.dataset.system} · ${card.dataset.size}`;
+    part("title").textContent = card.dataset.title;
+    part("fact").textContent = fact(card);
+  }
+  function select(i) {
+    current = Math.max(0, Math.min(cards.length - 1, i));
+    const card = cards[current];
+    cards.forEach((other) => other.setAttribute("aria-selected", String(other === card)));
+    row.setAttribute("aria-activedescendant", card.id);
+    demo.style.setProperty("--a", card.style.getPropertyValue("--a"));
+    // The focused card to the middle of the row. Only the row scrolls, never the page; on a
+    // desktop all the cards fit, so it stays put. The row is the cards' offset parent.
+    const middle = card.offsetLeft - (row.clientWidth - card.offsetWidth) / 2;
+    row.scrollTo({ left: middle, behavior: reduced.matches ? "auto" : "smooth" });
+    showInfo();
+  }
+  // ✕ on a card: an installed game "starts" (the Play hint lights); another one downloads.
+  function press() {
+    const card = cards[current];
+    if (card.dataset.state === "get") {
+      if (!getting) startDownload(card);
+      return;
+    }
+    const play = part("play");
+    play.classList.add("on");
+    part("news").textContent = `${card.dataset.title} would start now.`;
+    setTimeout(() => play.classList.remove("on"), 700);
+  }
+
+  row.addEventListener("keydown", (event) => {
+    const to = { ArrowLeft: current - 1, ArrowRight: current + 1, Home: 0, End: cards.length - 1 }[event.key];
+    if (to !== undefined) select(to);
+    else if (event.key === "Enter" || event.key === " ") press();
+    else return;
+    event.preventDefault(); // The arrows and Space would scroll the page.
+  });
+  row.addEventListener("pointerover", (event) => {
+    const card = event.target.closest(".demo-card");
+    if (event.pointerType === "mouse" && card) select(cards.indexOf(card));
+  });
+  // A click or a tap on the focused card presses ✕; on another card, it moves the focus there.
+  row.addEventListener("click", (event) => {
+    const card = event.target.closest(".demo-card");
+    if (!card) return;
+    const i = cards.indexOf(card);
+    if (i === current) press();
+    else select(i);
+  });
+
+  // The download: a step every 200 ms (a second with reduced motion), only while it shows.
+  let onScreen = false;
+  let timer = 0;
+  const meter = part("meter");
+  const pill = part("download");
+  function startDownload(card) {
+    if (getting) return; // One download at a time.
+    getting = card;
+    done = 0;
+    sayState(card);
+    pill.hidden = false;
+    tick();
+  }
+  function tick() {
+    clearTimeout(timer);
+    if (!getting) return;
+    part("download-text").textContent = `${getting.dataset.title} · ${Math.floor(done * 100)}%`;
+    meter.style.setProperty("--done", String(done));
+    if (cards[current] === getting) showInfo();
+    if (done >= 1) return finish();
+    if (!onScreen || document.hidden) return; // Goes on when the demo shows again.
+    const slow = reduced.matches;
+    timer = setTimeout(
+      () => {
+        done = Math.min(1, done + (slow ? 0.125 : 0.025));
+        tick();
+      },
+      slow ? 1000 : 200,
+    );
+  }
+  function finish() {
+    const card = getting;
+    card.dataset.state = "ready";
+    getting = null;
+    sayState(card);
+    part("download-text").textContent = `${card.dataset.title} · Installed`;
+    part("news").textContent = `${card.dataset.title} is installed.`;
+    showInfo();
+    // The next game after a pause; once all are in, they start over, so the demo stays alive.
+    timer = setTimeout(() => {
+      pill.hidden = true;
+      let next = toGet.find((other) => other.dataset.state === "get");
+      if (!next) {
+        toGet.forEach((other) => {
+          other.dataset.state = "get";
+          sayState(other);
+        });
+        next = toGet[0];
+        showInfo();
+      }
+      if (onScreen) startDownload(next);
+      else queued = next;
+    }, 3000);
+  }
+  let queued = toGet[0];
+  function resume() {
+    if (!onScreen || document.hidden) return;
+    if (getting) tick();
+    else if (queued) {
+      const next = queued;
+      queued = null;
+      timer = setTimeout(() => startDownload(next), 1200);
+    }
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      resume();
+    }).observe(demo);
+  }
+  document.addEventListener("visibilitychange", resume);
+
+  // The clock, in the visitor's own time, as the launcher shows the PC's.
+  const clock = part("clock");
+  const showTime = () =>
+    (clock.textContent = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+  showTime();
+  setInterval(showTime, 30_000);
+
+  cards.forEach(sayState);
+  select(0);
+  demo.closest("[data-demo-wrap]").hidden = false;
+}
+
 // The download cards: a soft light follows the pointer. One read and one write per frame.
 if (matchMedia("(hover: hover)").matches && !reduced.matches) {
   document.querySelectorAll(".card").forEach((card) => {
