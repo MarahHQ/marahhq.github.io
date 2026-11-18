@@ -159,6 +159,139 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     assert.ok(file.starts.length && file.art.cover.startsWith("launcher_art/"));
   });
 
+  // The theme tests share the browser's storage and settings with the rest: each one puts them back.
+  async function fresh({ scheme = "dark", blockScript = false, theme = null } = {}) {
+    await browser.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: scheme }] });
+    await browser.send("Network.enable");
+    await browser.send("Network.setBlockedURLs", { urls: blockScript ? ["*/_astro/*.js"] : [] });
+    await browser.load(site.url);
+    await browser.run(`localStorage.clear(); ${theme ? `localStorage.setItem("marah-theme", "${theme}")` : ""}`);
+    await browser.load(site.url);
+  }
+  async function reset() {
+    await browser.run(`localStorage.clear()`);
+    await browser.send("Network.setBlockedURLs", { urls: [] });
+    await browser.send("Emulation.setEmulatedMedia", { features: [] });
+  }
+  const theme = () => browser.run(`return document.documentElement.dataset.theme`);
+  const background = () => browser.run(`return getComputedStyle(document.documentElement).getPropertyValue("--color-bg").trim()`);
+
+  it("switches to the light theme and keeps the choice", async () => {
+    try {
+      await fresh();
+      assert.equal(await theme(), "dark");
+      const label = () => browser.run(`return document.querySelector(".theme-switch").getAttribute("aria-label")`);
+      assert.equal(await label(), "Switch to light theme");
+      await browser.run(`document.querySelector(".theme-switch").click()`);
+      assert.equal(await theme(), "light");
+      assert.equal(await label(), "Switch to dark theme");
+      assert.equal(await browser.run(`return localStorage.getItem("marah-theme")`), "light");
+      assert.equal(await browser.run(`return document.querySelector('meta[name="theme-color"]').content`), "#f2f6fa");
+      await browser.load(site.url);
+      assert.equal(await theme(), "light", "kept after a reload");
+      await browser.run(`document.querySelector("[data-theme-label]").closest("button").click()`);
+      assert.equal(await theme(), "dark", "the menu's switch works too");
+    } finally {
+      await reset();
+    }
+  });
+
+  it("follows the system's setting until the visitor chooses", async () => {
+    try {
+      await fresh({ scheme: "light" });
+      assert.equal(await theme(), "light", "no choice: the system's light");
+      await browser.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "dark" }] });
+      await sleep(100);
+      assert.equal(await theme(), "dark", "a change of the system's setting follows");
+      await fresh({ scheme: "light", theme: "dark" });
+      assert.equal(await theme(), "dark", "the visitor's dark wins over the system's light");
+    } finally {
+      await reset();
+    }
+  });
+
+  it("sets the theme before the first paint, without site.js", async () => {
+    try {
+      // With the bundled script blocked, only the head script can set the theme, and it runs
+      // before the body exists.
+      await fresh({ blockScript: true, theme: "light" });
+      assert.equal(await browser.run(`return window.marahReady === undefined`), true, "site.js didn't run");
+      assert.equal(await theme(), "light");
+      assert.equal(await background(), "#f2f6fa");
+      assert.equal(await browser.run(`return getComputedStyle(document.body).color`), "rgb(13, 25, 38)");
+    } finally {
+      await reset();
+    }
+  });
+
+  it("keeps text and buttons readable in both themes (WCAG AA)", async () => {
+    try {
+      const pairs = [
+        ["text", "bg"], ["text", "panel"], ["text", "deep"], ["text", "night"],
+        ["muted", "bg"], ["muted", "panel"], ["muted", "panel-hi"], ["muted", "deep"], ["muted", "night"],
+        ["ice", "bg"], ["ice", "panel"], ["ice", "deep"], ["ice", "night"], ["text", "panel-lit"],
+        ["bg", "ice"], ["bg", "ice-hi"], ["bg", "sky"], // the buttons' text on their gradient
+      ];
+      for (const scheme of ["dark", "light"]) {
+        await fresh({ theme: scheme });
+        const low = await browser.run(`const css = getComputedStyle(document.documentElement);
+          // The minified CSS may write #ffffff as #fff.
+          const long = (hex) => (hex.length === 4 ? "#" + [...hex.slice(1)].map((c) => c + c).join("") : hex);
+          const lum = (short) => { const hex = long(short); const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+            .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+          const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+          const token = (name) => css.getPropertyValue("--color-" + name).trim();
+          return ${JSON.stringify(pairs)}.map(([f, b]) => [f + " on " + b, token(f), token(b), ratio(token(f), token(b))]).filter((p) => !(p[3] >= 4.5))`);
+        assert.deepEqual(low, [], `${scheme}: pairs under 4.5:1`);
+      }
+    } finally {
+      await reset();
+    }
+  });
+
+  it("answers Will it run? with the launcher's three sources", async () => {
+    await browser.load(site.url);
+    const cards = await browser.run(`return [...document.querySelectorAll("#will-it-run [data-run]")].map((c) => c.dataset.run)`);
+    assert.deepEqual(cards, ["community", "protondb", "this-pc"]);
+    const shown = () => browser.run(`return [...document.querySelectorAll("[data-pc-panel]")].filter((p) => !p.hidden)
+      .map((p) => [p.dataset.pcPanel, [...p.querySelectorAll(".verdict")].map((v) => v.textContent.replace(/\\s+/g, " ").trim())])`);
+    assert.deepEqual(await shown(), [["gaming", ["PS4 Should run well", "PS5 Should run well"]]]);
+    await browser.run(`document.querySelector('[data-pc="laptop"]').click()`);
+    assert.deepEqual(await shown(), [["laptop", ["PS4 May run slowly · Integrated GPU", "PS5 May run slowly · Integrated GPU"]]]);
+    await browser.run(`document.querySelector('[data-pc="older"]').click()`);
+    assert.deepEqual(await shown(), [["older", ["PS4 Won't start · No AVX2 in the processor", "PS5 May run slowly · 4 GB GPU"]]]);
+    assert.match(await browser.run(`return document.querySelector('[data-pc-panel="older"] .hint').textContent`),
+      /This PC can't run PS4 games: No AVX2 in the processor/);
+  });
+
+  it("shows the Marah OS release's checksums", async () => {
+    const digest = (c) => "sha256:" + c.repeat(64);
+    const release = { tag: "v9.9.9", date: "2026-01-01T00:00:00Z",
+      assets: { "marah-os-x86_64-9.9.9.iso.part-aa": 2e9, "marah-os-x86_64-9.9.9.iso.part-ab": 1e9, "marah-os-x86_64-9.9.9.iso.sha256": 92 },
+      digests: { "marah-os-x86_64-9.9.9.iso.part-aa": digest("a"), "marah-os-x86_64-9.9.9.iso.part-ab": digest("b"), "marah-os-x86_64-9.9.9.iso.sha256": digest("c") } };
+    try {
+      await browser.load(site.url);
+      await browser.run(`localStorage.setItem("marah-release-marah-os", ${JSON.stringify(JSON.stringify({ at: Date.now(), release }))})`);
+      await browser.load(site.url);
+      const sums = await browser.run(`const box = document.querySelector("#check-iso");
+        return { link: box.querySelector("[data-os-sum-link]").href, names: [...box.querySelectorAll("[data-os-file]")].map((e) => e.textContent),
+          shown: !box.querySelector("[data-os-sums]").hidden, hashes: [...box.querySelectorAll(".sum-hash")].map((e) => e.textContent) }`);
+      assert.equal(sums.link, "https://github.com/MarahHQ/marah-os/releases/download/v9.9.9/marah-os-x86_64-9.9.9.iso.sha256");
+      assert.deepEqual(sums.names, ["marah-os-x86_64-9.9.9.iso.sha256", "marah-os-x86_64-9.9.9.iso.sha256", "marah-os-x86_64-9.9.9.iso"]);
+      assert.equal(sums.shown, true);
+      assert.deepEqual(sums.hashes, ["a".repeat(64), "b".repeat(64)], "the parts' hashes, not the .sha256 file's own");
+    } finally {
+      await reset();
+    }
+  });
+
+  it("links the release page when GitHub can't be read", async () => {
+    await browser.load(site.url);
+    const box = await browser.run(`const box = document.querySelector("#check-iso");
+      return [box.querySelector("[data-os-sum-link]").href, box.querySelector("[data-os-sums]").hidden]`);
+    assert.deepEqual(box, ["https://github.com/MarahHQ/marah-os/releases/latest", true]);
+  });
+
   it("shows the 404 page for a missing address", async () => {
     await browser.load(`${site.url}no-such-page`);
     assert.match(await browser.run(`return document.querySelector('h1').textContent`), /isn't here/);

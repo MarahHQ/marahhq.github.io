@@ -44,6 +44,47 @@ function headerState() {
 addEventListener("scroll", () => (headerFrame ||= requestAnimationFrame(headerState)), { passive: true });
 headerState();
 
+// Dark or light. The head script already set the theme before the first paint; this keeps the
+// switches in step, keeps the visitor's choice, and follows the system's setting until there is one.
+const THEME_KEY = "marah-theme";
+const systemLight = matchMedia("(prefers-color-scheme: light)");
+const themeSwitches = document.querySelectorAll("[data-theme-switch]");
+const themeBar = document.querySelector('meta[name="theme-color"]');
+function chosenTheme() {
+  try {
+    const theme = localStorage.getItem(THEME_KEY);
+    return theme === "light" || theme === "dark" ? theme : null;
+  } catch {
+    return null;
+  }
+}
+function setTheme(theme) {
+  root.dataset.theme = theme;
+  themeBar.content = themeBar.dataset[theme];
+  // Each switch says the theme it switches to: a label on the round one, words on the menu's.
+  const label = `Switch to ${theme === "light" ? "dark" : "light"} theme`;
+  themeSwitches.forEach((button) => {
+    const words = button.querySelector("[data-theme-label]");
+    if (words) words.textContent = label;
+    else {
+      button.setAttribute("aria-label", label);
+      button.title = label;
+    }
+  });
+}
+themeSwitches.forEach((button) => {
+  button.hidden = false;
+  button.addEventListener("click", () => {
+    const theme = root.dataset.theme === "light" ? "dark" : "light";
+    setTheme(theme);
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {} // A browser that keeps nothing still switches, for this visit.
+  });
+});
+systemLight.addEventListener("change", () => chosenTheme() || setTheme(systemLight.matches ? "light" : "dark"));
+setTheme(chosenTheme() || (systemLight.matches ? "light" : "dark"));
+
 // The questions: each answer slides open and shut on its own. They start closed.
 document.querySelectorAll("[data-qa]").forEach((item) => {
   const head = item.querySelector(".qa-head");
@@ -188,6 +229,22 @@ const stack = screen.closest(".screen-stack");
 switcher.hidden = false;
 buttons.forEach((button) => button.addEventListener("click", () => show(button)));
 
+// Will it run: the example PCs, one at a time. Without this script all three show.
+const pcSwitcher = document.querySelector("[data-pc-switcher]");
+if (pcSwitcher) {
+  const pcButtons = [...pcSwitcher.querySelectorAll("[data-pc]")];
+  const choosePc = (chosen) => {
+    for (const button of pcButtons) {
+      const on = button === chosen;
+      button.setAttribute("aria-pressed", String(on));
+      document.querySelector(`[data-pc-panel="${button.dataset.pc}"]`).hidden = !on;
+    }
+  };
+  pcButtons.forEach((button) => button.addEventListener("click", () => choosePc(button)));
+  pcSwitcher.hidden = false;
+  choosePc(pcButtons[0]);
+}
+
 // The download cards: a soft light follows the pointer. One read and one write per frame.
 if (matchMedia("(hover: hover)").matches && !reduced.matches) {
   document.querySelectorAll(".card").forEach((card) => {
@@ -329,7 +386,8 @@ async function latest(repo) {
   const key = `marah-release-${repo}`;
   try {
     const kept = JSON.parse(localStorage.getItem(key) || "null");
-    if (kept && Date.now() - kept.at < 36e5) return kept.release;
+    // A release kept before the page read the digests is read again.
+    if (kept && kept.release.digests && Date.now() - kept.at < 36e5) return kept.release;
   } catch {}
   const res = await fetch(`https://api.github.com/repos/MarahHQ/${repo}/releases/latest`, {
     headers: { Accept: "application/vnd.github+json" },
@@ -340,6 +398,8 @@ async function latest(repo) {
     tag: body.tag_name,
     date: body.published_at,
     assets: Object.fromEntries((body.assets || []).map((a) => [a.name, a.size])),
+    // GitHub's own SHA-256 of each file, "sha256:<hex>", where it has one.
+    digests: Object.fromEntries((body.assets || []).filter((a) => a.digest).map((a) => [a.name, a.digest])),
   };
   try {
     localStorage.setItem(key, JSON.stringify({ at: Date.now(), release }));
@@ -369,8 +429,47 @@ latest("marah-os")
     const iso = Object.entries(r.assets).filter(([name]) => /\.iso(\.part-[a-z]+)?$/.test(name));
     const total = iso.reduce((sum, [, bytes]) => sum + bytes, 0);
     say("os", `${r.tag} · ${total ? `${size(total)} · ` : ""}${day(r.date)}`);
+    showOsSums(r, iso);
   })
   .catch(() => {});
+
+// Marah OS's checksums: the file names in the commands, the link to the ISO's .sha256 file, and
+// the SHA-256 GitHub has for the ISO, or for each of its parts. The joined ISO is not on the
+// release, so its SHA-256 is only in the .sha256 file.
+function showOsSums(r, iso) {
+  const sum = Object.keys(r.assets).find((name) => /\.iso\.sha256$/.test(name));
+  const isoName = sum ? sum.slice(0, -".sha256".length) : iso.find(([name]) => /\.iso$/.test(name))?.[0];
+  if (isoName) document.querySelectorAll('[data-os-file="iso"]').forEach((el) => (el.textContent = isoName));
+  if (sum) {
+    document.querySelectorAll('[data-os-file="sum"]').forEach((el) => (el.textContent = sum));
+    const link = document.querySelector("[data-os-sum-link]");
+    link.href = `https://github.com/MarahHQ/marah-os/releases/download/${encodeURIComponent(r.tag)}/${sum}`;
+    link.textContent = sum;
+  }
+  const hashed = iso
+    .map(([name]) => [name, r.digests[name]])
+    .filter(([, digest]) => /^sha256:[0-9a-f]{64}$/.test(digest));
+  const box = document.querySelector("[data-os-sums]");
+  if (!box || !hashed.length) return;
+  const whole = hashed.length === 1 && hashed[0][0] === isoName;
+  box.querySelector("p").textContent = whole
+    ? "The ISO's SHA-256, as GitHub has it:"
+    : "Each part's SHA-256, as GitHub has it:";
+  box.querySelector("ul").replaceChildren(
+    ...hashed.map(([name, digest]) => {
+      const item = document.createElement("li");
+      const label = document.createElement("span");
+      label.className = "text-caption text-muted";
+      label.textContent = name;
+      const hash = document.createElement("code");
+      hash.className = "sum-hash";
+      hash.textContent = digest.slice("sha256:".length);
+      item.append(label, hash);
+      return item;
+    }),
+  );
+  box.hidden = false;
+}
 
 // ── The controller: a key, a click or a real controller lights what it does ──
 const pad = document.querySelector("[data-pad]");

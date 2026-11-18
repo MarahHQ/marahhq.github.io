@@ -21,15 +21,20 @@ npm run format    # Prettier, which also sorts the Tailwind classes
 
 - `src/pages/`: the pages. `index.astro` lists the sections in order; `404.astro` is the page for
   a missing address. Its paths start with `/`, because it is served at any depth.
-- `src/layouts/Base.astro`: the frame of a page: the head, the header, `main` and the footer.
+- `src/layouts/Base.astro`: the frame of a page: the head, the header, `main` and the footer. Its
+  head script sets the theme, dark or light, before the first paint.
 - `src/components/`:
   - `sections/`: one file per section of the page, from `Hero` to `Faq`. Lists such as the
     platforms, the downloads, the keys and the questions are data at the top of their file.
-  - `ui/`: the parts the page repeats: `CopyButton`, `Commands`, `RepoItem` and `Chevron`.
+  - `ui/`: the parts the page repeats: `CopyButton`, `Commands`, `RepoItem`, `Chevron` and
+    `ThemeIcons`.
   - `Header.astro` and `Footer.astro`.
 - `src/styles/site.css`: Tailwind's entry.
   - **The theme:** the logo's colours, the fonts (Ubuntu and Ubuntu Mono), the text sizes and the
-    three widths. The page is
+    three widths.
+  - **The light theme:** the same colour tokens with light values, under `[data-theme="light"]`,
+    and a `light:` variant. Commands and code stay dark. Each text colour is at least 4.5:1 on each
+    surface in both themes, and a test checks it. The page is
     written for a desktop first: `max-lg:` is up to 1200 px, `max-md:` up to 960 px, `max-sm:` up
     to 600 px.
   - **The base styles.**
@@ -39,8 +44,11 @@ npm run format    # Prettier, which also sorts the Tailwind classes
 - `src/scripts/site.js`: the page's live parts. The page reads in full without it.
   - The menu, the scroll reveal, the screenshot switcher and the light on the download cards.
   - The tabs, the copy buttons, the download for the visitor's system, and the package panel.
+  - Dark or light: the visitor's choice, kept in the browser, else the system's setting.
+  - The example PCs of "Will it run?".
   - The latest version, date and sizes of Marah Launcher and Marah OS, read from GitHub's API and
-    kept for an hour in the browser. The HTML has no version numbers, so it is never out of date.
+    kept for an hour in the browser, and the SHA-256 that GitHub has for each part of the Marah OS
+    ISO. The HTML has no version numbers, so it is never out of date.
   - The controller: a key, a click or a real controller lights what each button does.
   - All motion stops when the visitor asks for reduced motion.
 - `astro.config.mjs`: the build. Astro bundles the stylesheet and the script into `dist/_astro/`
@@ -76,5 +84,7 @@ npm run format    # Prettier, which also sorts the Tailwind classes
 The facts on the page come from the launcher and OS repositories. Change them there first:
 
 - the keys: `docs/user-guide.md`;
-- what a PC needs: each emulator's `plugin.toml` (`[requires]`);
+- what a PC needs: each emulator's `plugin.toml` (`[requires]`), also the data at the top of
+  `WillItRun.astro`;
+- the words for how a game runs: `crates/core/src/view.rs` and `crates/core/src/hardware.rs`;
 - the OS steps: the Marah OS README.
