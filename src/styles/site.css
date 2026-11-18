@@ -983,6 +983,69 @@
   .demo-hints .on {
     color: var(--color-ice);
   }
+  /* The keyboard focus is on the row, whose cards are only drawn: the frame shows it. */
+  .demo:has(.demo-row:focus-visible) {
+    outline: 3px solid var(--color-ice);
+    outline-offset: 5px;
+  }
+  /* A tablet, or a phone on its side: a taller frame, so the cards and their words can be
+     larger, and the row scrolls. */
+  @media (601px <= width < 961px) {
+    .demo {
+      aspect-ratio: 4 / 3;
+    }
+    .demo-icons svg {
+      width: 2.6cqw;
+      height: 2.6cqw;
+    }
+    .demo-clock {
+      font-size: 2.8cqw;
+    }
+    .demo-download {
+      min-width: 30cqw;
+      font-size: 2.2cqw;
+    }
+    .demo-info {
+      top: 15cqw;
+      right: 8cqw;
+    }
+    .demo-system {
+      font-size: 2.2cqw;
+    }
+    .demo-title {
+      font-size: 6.5cqw;
+    }
+    .demo-fact {
+      font-size: 2.5cqw;
+    }
+    .demo-row {
+      bottom: 8cqw;
+      gap: 2.5cqw;
+      padding: 6cqw 5cqw 3cqw;
+    }
+    .demo-card {
+      width: 19cqw;
+      padding: 1.6cqw;
+      border-radius: 1.8cqw;
+    }
+    .demo-badge {
+      top: 1.3cqw;
+      right: 1.3cqw;
+      padding: 0.2cqw 1cqw;
+      border-radius: 0.9cqw;
+      font-size: 1.6cqw;
+    }
+    .demo-name {
+      font-size: 2.2cqw;
+    }
+    .demo-hints {
+      bottom: 2.5cqw;
+      font-size: 2cqw;
+    }
+    .demo-hints kbd {
+      font-size: 1.8cqw;
+    }
+  }
   @media (width < 601px) {
     .demo {
       aspect-ratio: auto;
