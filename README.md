@@ -21,8 +21,7 @@ npm run format    # Prettier, which also sorts the Tailwind classes
 
 - `src/pages/`: the pages. `index.astro` lists the sections in order; `404.astro` is the page for
   a missing address. Its paths start with `/`, because it is served at any depth.
-- `src/layouts/Base.astro`: the frame of a page: the head, the header, `main` and the footer. Its
-  head script sets the theme, dark or light, before the first paint.
+- `src/layouts/Base.astro`: the frame of a page: the head, the header, `main` and the footer.
 - `src/components/`:
   - `sections/`: one file per section of the page, from `Hero` to `Faq`. Lists such as the
     platforms, the downloads, the keys and the questions are data at the top of their file.
@@ -30,11 +29,16 @@ npm run format    # Prettier, which also sorts the Tailwind classes
     `ThemeIcons`. `HomeDemo` is the small live Home under the screenshots: real games from a
     library that Marah Launcher manages, with the real Home's picture behind them.
   - `Header.astro` and `Footer.astro`.
+  - `ThemeHead.astro`: in the head of both pages. Its script sets the theme, dark or light, before
+    the first paint: the visitor's choice, else the system's setting.
 - `src/styles/site.css`: Tailwind's entry.
   - **The theme:** the logo's colours, the fonts (Ubuntu and Ubuntu Mono), the text sizes and the
     three widths.
-  - **The light theme:** the same colour tokens with light values, under `[data-theme="light"]`,
-    and a `light:` variant. Commands and code stay dark. Each text colour is at least 4.5:1 on each
+  - **The light theme:** the same colour tokens with light values, through a `light` variant:
+    `light:` in the markup, `@variant light` in the CSS. It applies under `[data-theme="light"]`,
+    and also with JavaScript off when the system's setting is light. Write each light rule
+    through it, never with `[data-theme="light"]` alone, or the no-JavaScript case loses it. The
+    theme switches stay hidden with JavaScript off. Commands and code stay dark. Each text colour is at least 4.5:1 on each
     surface in both themes, and a test checks it. The page is
     written for a desktop first: `max-lg:` is up to 1200 px, `max-md:` up to 960 px, `max-sm:` up
     to 600 px.

@@ -176,48 +176,64 @@
   }
 }
 
-/* The light theme: the same tokens, on paper. The head script in Base.astro sets data-theme on
-   <html> before the first paint: the visitor's choice, else the system's setting. Each text colour
-   here is at least 4.5:1 on each surface, and the borders 3:1 (WCAG AA; a test checks it). */
-@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+/* The light theme: the same tokens, on paper. The head script (ThemeHead.astro) sets data-theme
+   on <html> before the first paint: the visitor's choice, else the system's setting. Without
+   JavaScript there is no data-theme, and the system's setting chooses through the media query.
+   Every light rule goes through this variant, so both cases get each one. :is() keeps the
+   specificity of a [data-theme="light"] ancestor. Each text colour here is at least 4.5:1 on each
+   surface, and the borders 3:1 (WCAG AA; a test checks it). */
+@custom-variant light {
+  &:is([data-theme="light"], [data-theme="light"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: light) {
+    &:is(html:not([data-theme]), html:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
 @layer base {
   :root {
     color-scheme: dark;
   }
-  :root[data-theme="light"] {
-    color-scheme: light;
-    --color-bg: #f2f6fa;
-    --color-night: #e8eff5;
-    --color-page: #f6f9fc;
-    --color-panel: #ffffff;
-    --color-panel-hi: #f3f8fc;
-    --color-deep: #e6eef5;
-    --color-line: #cddbe6;
-    --color-edge: #6a8aa4;
-    --color-ice: #0a65a0;
-    --color-blue: #2a5fbf;
-    --color-text: #0d1926;
-    --color-muted: #3d5266;
-    --color-haze: #d3e7f6;
-    --color-ice-hi: #136fae;
-    --color-sky: #2a5fbf;
-    --color-line-hi: #c3d7e7;
-    --color-panel-lit: #dbecf8;
+  :root {
+    @variant light {
+      color-scheme: light;
+      --color-bg: #f2f6fa;
+      --color-night: #e8eff5;
+      --color-page: #f6f9fc;
+      --color-panel: #ffffff;
+      --color-panel-hi: #f3f8fc;
+      --color-deep: #e6eef5;
+      --color-line: #cddbe6;
+      --color-edge: #6a8aa4;
+      --color-ice: #0a65a0;
+      --color-blue: #2a5fbf;
+      --color-text: #0d1926;
+      --color-muted: #3d5266;
+      --color-haze: #d3e7f6;
+      --color-ice-hi: #136fae;
+      --color-sky: #2a5fbf;
+      --color-line-hi: #c3d7e7;
+      --color-panel-lit: #dbecf8;
+    }
   }
   /* Commands, code and the Home demo stay dark in the light theme, as a terminal, an editor or
      the launcher would be. */
-  [data-theme="light"] :is(.cmd, .editor, .demo) {
-    --color-bg: #0d1926;
-    --color-ink: #07111b;
-    --color-line: #1d3750;
-    --color-edge: #3a6d98;
-    --color-ice: #82d8f5;
-    --color-text: #eef6fb;
-    --color-muted: #b4c7d6;
-    --color-code: #d9eef8;
-    --color-deep: #0b1724;
-    --color-panel: #102332;
-    color: var(--color-text);
+  :is(.cmd, .editor, .demo) {
+    @variant light {
+      --color-bg: #0d1926;
+      --color-ink: #07111b;
+      --color-line: #1d3750;
+      --color-edge: #3a6d98;
+      --color-ice: #82d8f5;
+      --color-text: #eef6fb;
+      --color-muted: #b4c7d6;
+      --color-code: #d9eef8;
+      --color-deep: #0b1724;
+      --color-panel: #102332;
+      color: var(--color-text);
+    }
   }
 }
 
@@ -257,7 +273,7 @@
   @supports (background-clip: text) or (-webkit-background-clip: text) {
     background: linear-gradient(100deg, #a6e6fa, var(--color-ice) 45%, #6fa8ef);
     -webkit-background-clip: text;
-    [data-theme="light"] & {
+    @variant light {
       background-image: linear-gradient(100deg, var(--color-ice-hi), var(--color-ice) 45%, var(--color-sky));
     }
     background-clip: text;
@@ -397,12 +413,18 @@
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-  .i-moon,
-  [data-theme="light"] .i-sun {
+  .i-moon {
     display: none;
   }
-  [data-theme="light"] .i-moon {
-    display: inline;
+  .i-sun {
+    @variant light {
+      display: none;
+    }
+  }
+  .i-moon {
+    @variant light {
+      display: inline;
+    }
   }
   /* The header's links: a line grows under the one you point at. */
   .nav-link {
@@ -1161,10 +1183,12 @@
     --pad-core: var(--color-ink);
     --pad-on-core: var(--color-muted);
   }
-  [data-theme="light"] .gamepad {
-    --pad-line: var(--color-text);
-    --pad-core: var(--color-text);
-    --pad-on-core: var(--color-panel);
+  .gamepad {
+    @variant light {
+      --pad-line: var(--color-text);
+      --pad-core: var(--color-text);
+      --pad-on-core: var(--color-panel);
+    }
   }
   .gamepad svg {
     display: block;
@@ -1307,6 +1331,10 @@
   .gamepad .call .ck {
     fill: var(--color-muted);
     fill-opacity: 0.75;
+    /* At 0.75 the light theme's muted falls under 4.5:1 on the haze; 0.9 keeps it over 5:1. */
+    @variant light {
+      fill-opacity: 0.9;
+    }
   }
   .gamepad .call.on polyline {
     stroke: var(--color-ice);
@@ -1773,28 +1801,38 @@
 
 @layer components {
   /* The light theme's own versions of the colours above that are not tokens. */
-  [data-theme="light"] {
-    .cta {
+  .cta {
+    @variant light {
       border-color: var(--color-ice);
       box-shadow: 0 6px 18px rgba(10, 101, 160, 0.25);
     }
-    .btn-outline {
+  }
+  .btn-outline {
+    @variant light {
       border-color: var(--color-edge);
       background: rgba(255, 255, 255, 0.6);
     }
-    .btn-outline:hover,
-    .btn-outline:focus-visible {
+  }
+  .btn-outline:hover,
+  .btn-outline:focus-visible {
+    @variant light {
       border-color: var(--color-ice);
     }
-    .platform {
+  }
+  .platform {
+    @variant light {
       background:
         linear-gradient(var(--color-panel), var(--color-panel-hi)) padding-box,
         linear-gradient(125deg, var(--color-ice), var(--color-blue)) border-box;
     }
-    .repo:hover {
+  }
+  .repo:hover {
+    @variant light {
       border-color: var(--color-edge);
     }
-    &.hdr-scrolled .site-header {
+  }
+  .hdr-scrolled .site-header {
+    @variant light {
       box-shadow: 0 10px 30px rgba(13, 25, 38, 0.12);
     }
   }

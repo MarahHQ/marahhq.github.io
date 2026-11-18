@@ -49,7 +49,7 @@ headerState();
 const THEME_KEY = "marah-theme";
 const systemLight = matchMedia("(prefers-color-scheme: light)");
 const themeSwitches = document.querySelectorAll("[data-theme-switch]");
-const themeBar = document.querySelector('meta[name="theme-color"]');
+const themeBars = document.querySelectorAll('meta[name="theme-color"]');
 function chosenTheme() {
   try {
     const theme = localStorage.getItem(THEME_KEY);
@@ -60,7 +60,7 @@ function chosenTheme() {
 }
 function setTheme(theme) {
   root.dataset.theme = theme;
-  themeBar.content = themeBar.dataset[theme];
+  themeBars.forEach((bar) => (bar.content = bar.dataset[theme]));
   // Each switch says the theme it switches to: a label on the round one, words on the menu's.
   const label = `Switch to ${theme === "light" ? "dark" : "light"} theme`;
   themeSwitches.forEach((button) => {
