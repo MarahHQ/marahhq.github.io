@@ -196,8 +196,9 @@
     --color-line-hi: #c3d7e7;
     --color-panel-lit: #dbecf8;
   }
-  /* Commands and code stay dark in the light theme, as a terminal or an editor would be. */
-  [data-theme="light"] :is(.cmd, .editor) {
+  /* Commands, code and the Home demo stay dark in the light theme, as a terminal, an editor or
+     the launcher would be. */
+  [data-theme="light"] :is(.cmd, .editor, .demo) {
     --color-bg: #0d1926;
     --color-ink: #07111b;
     --color-line: #1d3750;
@@ -206,6 +207,8 @@
     --color-text: #eef6fb;
     --color-muted: #b4c7d6;
     --color-code: #d9eef8;
+    --color-deep: #0b1724;
+    --color-panel: #102332;
     color: var(--color-text);
   }
 }
@@ -778,6 +781,268 @@
   /* The Home of the themes section, tilted until you point at it. */
   .theme-shot {
     rotate: 2deg;
+  }
+
+  /* The Home demo: the launcher's Home in a 16:9 frame. Sizes are in cqw, a hundredth of the
+     frame's width, so it scales as one picture. site.js sets --a and --b, the focused game's
+     colours, on the frame. On a phone the frame grows taller and the cards scroll. */
+  .demo {
+    position: relative;
+    container-type: inline-size;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 2px solid var(--color-ice);
+    border-radius: 18px;
+    background: #070b14;
+    box-shadow: var(--shadow-glow);
+    color: var(--color-text);
+  }
+  .demo-bg {
+    position: absolute;
+    inset: -4%;
+    background:
+      radial-gradient(ellipse at 75% 30%, color-mix(in srgb, var(--a, #4c8bdc) 45%, transparent), transparent 60%),
+      linear-gradient(90deg, rgba(7, 11, 20, 0.92) 25%, rgba(7, 11, 20, 0.35)),
+      url("/assets/screen-home.webp") 50% 0 / 260% auto;
+    filter: blur(12px) saturate(1.1);
+    transition: background 0.5s ease;
+  }
+  .demo-bar {
+    position: absolute;
+    top: 3.5cqw;
+    right: 4cqw;
+    left: 4cqw;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2.4cqw;
+  }
+  .demo-icons {
+    display: flex;
+    gap: 2.2cqw;
+  }
+  .demo-icons svg {
+    width: 1.7cqw;
+    height: 1.7cqw;
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .demo-clock {
+    font-size: 1.9cqw;
+    font-weight: 500;
+  }
+  /* The download in the top bar: the game, the share done, and a bar. */
+  .demo-download {
+    display: grid;
+    gap: 0.5cqw;
+    min-width: 17cqw;
+    margin-right: auto;
+    padding: 0.8cqw 1.4cqw;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 1.3cqw;
+    font-weight: 600;
+  }
+  .demo-meter {
+    display: block;
+    height: 0.35cqw;
+    min-height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+  }
+  .demo-meter > span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--color-ice);
+    transform-origin: left;
+    transform: scaleX(var(--done, 0));
+    transition: transform 0.2s linear;
+  }
+  .demo-info {
+    position: absolute;
+    top: 13cqw;
+    left: 5cqw;
+    right: 40cqw;
+  }
+  .demo-system {
+    font-size: 1.4cqw;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .demo-title {
+    margin-top: 0.6cqw;
+    font-size: 4.6cqw;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .demo-fact {
+    margin-top: 1.2cqw;
+    font-size: 1.6cqw;
+    color: var(--color-ice);
+  }
+  .demo-row {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6.5cqw;
+    display: flex;
+    gap: 1.8cqw;
+    padding: 4.5cqw 5cqw 2.5cqw;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+  .demo-row::-webkit-scrollbar {
+    display: none;
+  }
+  .demo-row:focus-visible {
+    outline: none;
+  }
+  /* A cover, drawn from two colours as a poster: a sun, its glow, and two hills. Then the
+     system's badge and the game's name. */
+  .demo-card {
+    position: relative;
+    flex: none;
+    width: 12cqw;
+    aspect-ratio: 3 / 4;
+    display: flex;
+    align-items: flex-end;
+    padding: 1cqw;
+    border-radius: 1.2cqw;
+    background:
+      radial-gradient(circle at 66% 30%, var(--a) 0 15%, transparent 15.5%),
+      radial-gradient(circle at 66% 30%, color-mix(in srgb, var(--a) 45%, transparent), transparent 48%),
+      radial-gradient(ellipse 140% 50% at 15% 108%, #0b1020 0 55%, transparent 56%),
+      radial-gradient(ellipse 120% 45% at 95% 100%, color-mix(in srgb, var(--b) 60%, #000) 0 55%, transparent 56%),
+      linear-gradient(170deg, var(--b), #0b1020 92%);
+    box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.45);
+    scroll-snap-align: center;
+    cursor: pointer;
+    transform-origin: bottom center;
+    transition:
+      scale 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.25s ease,
+      opacity 0.25s ease;
+    opacity: 0.78;
+  }
+  .demo-card[aria-selected="true"] {
+    scale: 1.18;
+    opacity: 1;
+    z-index: 1;
+    box-shadow:
+      0 0 0 0.3cqw #fff,
+      0 0 2.5cqw rgba(130, 216, 245, 0.55);
+  }
+  /* The focus ring is the selected card's, brighter, while the row has the keyboard focus. */
+  .demo-row:focus-visible .demo-card[aria-selected="true"] {
+    box-shadow:
+      0 0 0 0.35cqw var(--color-ice),
+      0 0 3cqw rgba(130, 216, 245, 0.8);
+  }
+  .demo-card[data-state="get"] {
+    filter: grayscale(0.6);
+  }
+  .demo-badge {
+    position: absolute;
+    top: 0.8cqw;
+    right: 0.8cqw;
+    padding: 0.1cqw 0.7cqw;
+    border-radius: 0.6cqw;
+    background: rgba(7, 11, 20, 0.7);
+    font-size: 0.95cqw;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .demo-name {
+    font-size: 1.35cqw;
+    font-weight: 700;
+    line-height: 1.15;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  }
+  .demo-hints {
+    position: absolute;
+    right: 4cqw;
+    bottom: 2.2cqw;
+    display: flex;
+    gap: 2cqw;
+    padding: 0.6cqw 1.6cqw;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 1.25cqw;
+  }
+  .demo-hints kbd {
+    font-size: 1.1cqw;
+  }
+  .demo-hints .on {
+    color: var(--color-ice);
+  }
+  @media (width < 601px) {
+    .demo {
+      aspect-ratio: auto;
+      height: 118cqw;
+    }
+    .demo-bar {
+      top: 5cqw;
+      gap: 4cqw;
+    }
+    .demo-icons {
+      display: none;
+    }
+    .demo-clock {
+      font-size: 4cqw;
+    }
+    .demo-download {
+      min-width: 52cqw;
+      padding: 2cqw 4cqw;
+      gap: 1.5cqw;
+      font-size: 3.4cqw;
+    }
+    .demo-info {
+      top: 22cqw;
+      right: 5cqw;
+    }
+    .demo-system {
+      font-size: 3.2cqw;
+    }
+    .demo-title {
+      font-size: 8.5cqw;
+    }
+    .demo-fact {
+      font-size: 3.8cqw;
+    }
+    .demo-row {
+      bottom: 3cqw;
+      gap: 4cqw;
+      padding: 8cqw 6cqw 5cqw;
+    }
+    .demo-card {
+      width: 30cqw;
+      padding: 2.5cqw;
+      border-radius: 3cqw;
+    }
+    .demo-card[aria-selected="true"] {
+      scale: 1.1;
+    }
+    .demo-badge {
+      top: 2cqw;
+      right: 2cqw;
+      padding: 0.3cqw 1.6cqw;
+      border-radius: 1.4cqw;
+      font-size: 2.4cqw;
+    }
+    .demo-name {
+      font-size: 3.4cqw;
+    }
+    .demo-hints {
+      display: none;
+    }
   }
 
   /* The theme file, coloured as an editor would. */

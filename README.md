@@ -27,7 +27,8 @@ npm run format    # Prettier, which also sorts the Tailwind classes
   - `sections/`: one file per section of the page, from `Hero` to `Faq`. Lists such as the
     platforms, the downloads, the keys and the questions are data at the top of their file.
   - `ui/`: the parts the page repeats: `CopyButton`, `Commands`, `RepoItem`, `Chevron` and
-    `ThemeIcons`.
+    `ThemeIcons`. `HomeDemo` is the small live Home under the screenshots: made-up games, with
+    the real Home's picture behind them.
   - `Header.astro` and `Footer.astro`.
 - `src/styles/site.css`: Tailwind's entry.
   - **The theme:** the logo's colours, the fonts (Ubuntu and Ubuntu Mono), the text sizes and the
@@ -46,6 +47,8 @@ npm run format    # Prettier, which also sorts the Tailwind classes
   - The tabs, the copy buttons, the download for the visitor's system, and the package panel.
   - Dark or light: the visitor's choice, kept in the browser, else the system's setting.
   - The example PCs of "Will it run?".
+  - The Home demo: the arrow keys, the mouse or a tap move between the cards, and a pretend
+    download shows in its top bar while the demo is on screen.
   - The latest version, date and sizes of Marah Launcher and Marah OS, read from GitHub's API and
     kept for an hour in the browser, and the SHA-256 that GitHub has for each part of the Marah OS
     ISO. The HTML has no version numbers, so it is never out of date.

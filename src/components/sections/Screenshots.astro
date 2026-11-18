@@ -1,5 +1,6 @@
 ---
-// The screenshots, and the buttons that switch them.
+// The screenshots, the buttons that switch them, and a small live Home to try.
+import HomeDemo from "../ui/HomeDemo.astro";
 ---
 
 <section
@@ -74,5 +75,18 @@
         </button>
       </div>
     </div>
+  </div>
+  <div class="wrap mt-20 max-sm:mt-14" data-demo-wrap hidden data-reveal>
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-3 max-md:justify-center max-md:text-center">
+      <div>
+        <p class="eyebrow">Try it here</p>
+        <h3 class="mt-2 text-[clamp(24px,2.4vw,32px)]">Move through Home</h3>
+      </div>
+      <p class="hint max-w-[460px]">
+        Click the games, then use the arrow keys, or tap them on a phone. The games are made up; the download is
+        pretend.
+      </p>
+    </div>
+    <HomeDemo />
   </div>
 </section>

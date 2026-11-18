@@ -292,6 +292,53 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     assert.deepEqual(box, ["https://github.com/MarahHQ/marah-os/releases/latest", true]);
   });
 
+  it("moves through the Home demo with the keys, the mouse and a tap", async () => {
+    await browser.load(site.url);
+    const state = () => browser.run(`const cards = [...document.querySelectorAll(".demo-card")];
+      return [cards.findIndex((c) => c.getAttribute("aria-selected") === "true"), document.querySelector("[data-demo-title]").textContent,
+        document.querySelector("[data-demo-row]").getAttribute("aria-activedescendant")]`);
+    assert.deepEqual(await state(), [0, "Lantern Valley", "demo-game-0"]);
+    const key = (name) => browser.run(`const row = document.querySelector("[data-demo-row]"); row.focus({ preventScroll: true });
+      const event = new KeyboardEvent("keydown", { key: "${name}", bubbles: true, cancelable: true }); row.dispatchEvent(event);
+      return event.defaultPrevented`);
+    const before = await browser.run(`return scrollY`);
+    assert.equal(await key("ArrowRight"), true, "the arrow doesn't scroll the page");
+    assert.deepEqual(await state(), [1, "Moonlit Drift", "demo-game-1"]);
+    await key("End");
+    assert.equal((await state())[0], 5);
+    await key("ArrowRight");
+    assert.equal((await state())[0], 5, "it stops at the last card");
+    assert.equal(await browser.run(`return scrollY`), before, "the page stayed put");
+    await browser.run(`document.querySelector("#demo-game-0").dispatchEvent(new PointerEvent("pointerover", { pointerType: "mouse", bubbles: true }))`);
+    assert.equal((await state())[0], 0, "the mouse moves the focus");
+    await browser.run(`document.querySelector("#demo-game-3").click()`);
+    assert.equal((await state())[0], 3, "a tap moves the focus");
+    assert.match(await browser.run(`return document.querySelector("#demo-game-3").textContent.replace(/\\s+/g, " ")`), /Copper Knights , PC, 7\.4 GB, installed/);
+  });
+
+  it("shows the demo's download in its top bar while it is on screen", async () => {
+    await browser.load(site.url);
+    const pill = () => browser.run(`const p = document.querySelector("[data-demo-download]"); return [p.hidden, p.textContent.trim()]`);
+    assert.equal((await pill())[0], true, "nothing downloads off screen");
+    await browser.run(`document.querySelector("[data-demo]").scrollIntoView({ block: "center", behavior: "instant" })`);
+    await sleep(2600);
+    const [hidden, first] = await pill();
+    assert.equal(hidden, false);
+    assert.match(first, /^Tidewalker · \d+%$/);
+    await sleep(1100);
+    const [, later] = await pill();
+    assert.ok(parseInt(later.split("· ")[1]) > parseInt(first.split("· ")[1]), `${first} → ${later}`);
+  });
+
+  it("keeps the Home demo hidden without site.js", async () => {
+    try {
+      await fresh({ blockScript: true });
+      assert.equal(await browser.run(`return document.querySelector("[data-demo-wrap]").hidden`), true);
+    } finally {
+      await reset();
+    }
+  });
+
   it("shows the 404 page for a missing address", async () => {
     await browser.load(`${site.url}no-such-page`);
     assert.match(await browser.run(`return document.querySelector('h1').textContent`), /isn't here/);
