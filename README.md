@@ -85,6 +85,10 @@ npm run format    # Prettier, which also sorts the Tailwind classes
   `src/`, so never build a name in the script.
 - **The controller's SVG** has `<!-- prettier-ignore -->`: Prettier would re-wrap its labels, and
   spaces inside SVG text show.
+- **The controller's parts** each have a `data-part` (`cross`, `l2`, `dpad-up`, `ls`, `touchpad`
+  and the rest), and site.js finds them by it. Each line's `data-for` names its part. The drawing is
+  line art after a seeklogo drawing, with its brand logo taken out; a test checks that no shape
+  sits where the logo was.
 
 The facts on the page come from the launcher and OS repositories. Change them there first:
 
