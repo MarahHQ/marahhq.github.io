@@ -1152,156 +1152,126 @@
     box-shadow: 0 0 10px var(--c);
   }
 
-  /* The controller drawing. Its parts are SVG, styled by class; site.js lights .b and .call. */
+  /* The controller drawing: line art in the theme's colours. Its parts are SVG, styled by class;
+     site.js lights .b and .call. --pad-line draws the lines, --pad-body fills the shell and the
+     keys, --pad-core fills the dark middle, and --pad-on-core draws what sits on it. */
+  .gamepad {
+    --pad-line: var(--color-muted);
+    --pad-body: var(--color-panel);
+    --pad-core: var(--color-ink);
+    --pad-on-core: var(--color-muted);
+  }
+  [data-theme="light"] .gamepad {
+    --pad-line: var(--color-text);
+    --pad-core: var(--color-text);
+    --pad-on-core: var(--color-panel);
+  }
   .gamepad svg {
     display: block;
     width: 100%;
     height: auto;
     overflow: visible;
   }
+  .gamepad .body {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .gamepad .shell,
+  .gamepad .trim {
+    fill: var(--pad-body);
+    stroke: var(--pad-line);
+    stroke-width: 2.6;
+  }
   .gamepad .shell {
-    fill: url(#pad-wing);
-    stroke: #a3b6c7;
-    stroke-width: 1;
-    filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.55));
+    filter: drop-shadow(0 18px 24px color-mix(in srgb, var(--color-ink) 40%, transparent));
   }
-  .gamepad .core {
-    fill: url(#pad-core);
-    stroke: #2e3e4f;
-    stroke-width: 1;
+  .gamepad .trim {
+    stroke-width: 2;
   }
-  .gamepad .core-edge {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.5);
-    stroke-width: 1;
+  .gamepad .fill {
+    fill: var(--pad-body);
   }
   .gamepad:focus-visible .shell,
   .gamepad.live .shell {
     stroke: var(--color-ice);
-    stroke-width: 2.5;
   }
-  .gamepad .touch {
-    fill: url(#pad-touch);
-    stroke: #b0c0ce;
-    stroke-width: 1;
+  .gamepad .pad-face {
+    fill: var(--pad-body);
+    stroke: var(--pad-line);
+    stroke-width: 2;
   }
-  .gamepad .touch-hi {
-    stroke: #fff;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    opacity: 0.9;
+  .gamepad .core {
+    fill: var(--pad-core);
+    stroke: var(--pad-line);
+    stroke-width: 1.2;
   }
-  .gamepad .lightbar {
-    fill: none;
-    stroke: var(--color-ice);
-    stroke-width: 3;
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 5px var(--color-ice));
-  }
-  .gamepad .well {
-    fill: url(#pad-well);
+  .gamepad .speaker,
+  .gamepad .mute {
+    fill: var(--pad-on-core);
   }
   .gamepad .stick-ring {
-    fill: #060b11;
-    stroke: #2c3b4a;
-    stroke-width: 1;
+    fill: var(--pad-on-core);
   }
   .gamepad .cap {
-    fill: url(#pad-cap);
-    stroke: #3d5063;
-    stroke-width: 0.8;
-  }
-  .gamepad .dish {
-    fill: url(#pad-dish);
-    stroke: rgba(255, 255, 255, 0.08);
-    stroke-width: 0.8;
-    pointer-events: none;
-  }
-  .gamepad .mute {
-    fill: #f0a35c;
-    opacity: 0.85;
-  }
-  .gamepad .speaker circle {
-    fill: #050a10;
+    fill: var(--pad-body);
+    stroke: var(--pad-core);
+    stroke-width: 5.5;
   }
   .gamepad .b {
     cursor: pointer;
   }
   .gamepad .b .k {
-    fill: url(#pad-key);
-    stroke: #0c131a;
-    stroke-width: 1;
+    fill: var(--pad-body);
+    stroke: var(--pad-line);
+    stroke-width: 2;
     transition:
       fill 0.12s,
       stroke 0.12s;
   }
-  .gamepad .b .k.trig {
-    fill: url(#pad-trigger);
-    stroke: #0c131a;
-  }
+  .gamepad .b .k.trig,
   .gamepad .b .k.bump {
-    fill: #2a3846;
-    stroke: #0c131a;
+    fill: var(--pad-core);
+    stroke-width: 2.6;
+  }
+  .gamepad .b .k.cap {
+    stroke: var(--pad-core);
+    stroke-width: 5.5;
   }
   .gamepad .b .k.dk {
-    fill: url(#pad-dkey);
-    stroke: #9fb1c1;
+    stroke: none;
   }
-  .gamepad .edge {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.25);
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    pointer-events: none;
+  .gamepad [data-part="home"] .k {
+    fill: var(--pad-core);
+    stroke: var(--pad-on-core);
   }
-  .gamepad .hi {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.18);
-    stroke-width: 1.2;
-    stroke-linecap: round;
-    pointer-events: none;
-  }
-  .gamepad .b text {
-    fill: #c9d6e2;
-    font: 700 11px var(--font-sans);
-    text-anchor: middle;
-    dominant-baseline: central;
-    pointer-events: none;
-  }
-  .gamepad .ps text {
-    font-size: 7.5px;
+  .gamepad .ink {
+    fill: var(--pad-line);
+    fill-rule: evenodd;
+    transition: fill 0.12s;
   }
   .gamepad .g {
     fill: none;
+    stroke: var(--pad-line);
     stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
     transition: stroke 0.12s;
   }
-  .gamepad .tri .g {
-    stroke: #7fe0c4;
-  }
-  .gamepad .cir .g {
-    stroke: #ff8f8f;
-  }
-  .gamepad .crs .g {
-    stroke: #9cc0ff;
-  }
-  .gamepad .sq .g {
-    stroke: #f0a5d8;
+  .gamepad [data-part="create"] .g,
+  .gamepad [data-part="options"] .g {
+    stroke-width: 1;
   }
   .gamepad .b:hover .k {
     stroke: var(--color-ice);
   }
   .gamepad .b.on .k,
   .gamepad .b.on .k.cap,
-  .gamepad .b.on .k.dk,
   .gamepad .b.on .k.trig,
   .gamepad .b.on .k.bump {
     fill: var(--color-ice);
+  }
+  .gamepad .b.on .k:not(.cap, .dk) {
     stroke: var(--color-ice);
   }
-  .gamepad .b.on text {
+  .gamepad .b.on .ink {
     fill: var(--color-bg);
   }
   .gamepad .b.on .g {
@@ -1313,7 +1283,7 @@
   }
   .gamepad .call polyline {
     fill: none;
-    stroke: #5f87ab;
+    stroke: var(--color-edge);
     stroke-width: 1;
     stroke-dasharray: 3 3;
     transition: stroke 0.15s;
@@ -1335,7 +1305,8 @@
     font-size: 13.5px;
   }
   .gamepad .call .ck {
-    fill: #7f9bb3;
+    fill: var(--color-muted);
+    fill-opacity: 0.75;
   }
   .gamepad .call.on polyline {
     stroke: var(--color-ice);
@@ -1358,9 +1329,9 @@
       display: none;
     }
     .gamepad svg {
-      width: 240%;
+      width: 230%;
       max-width: none;
-      margin: -21% 0 -16% -70%;
+      margin: -15% 0 -19% -65%;
     }
   }
   .keys > div.on {
@@ -1822,12 +1793,6 @@
     }
     .repo:hover {
       border-color: var(--color-edge);
-    }
-    .gamepad .call .ck {
-      fill: #56708a;
-    }
-    .gamepad .call polyline {
-      stroke: var(--color-edge);
     }
     &.hdr-scrolled .site-header {
       box-shadow: 0 10px 30px rgba(13, 25, 38, 0.12);

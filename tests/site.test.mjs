@@ -31,6 +31,22 @@ describe("the build", () => {
     const clashes = [...components].filter((name) => !ownUtilities.has(name) && new RegExp(`[{}]\\.${name}[{:,]`).test(utilities));
     assert.deepEqual(clashes, []);
   });
+
+  it("has a part on the controller for each button the script lights, and no brand names", () => {
+    // site.js finds a part by data-part and an act by data-act: each must be in the drawing.
+    const script = readFileSync("src/scripts/site.js", "utf8");
+    const block = (name) => script.slice(script.indexOf(`const ${name} = {`), script.indexOf("};", script.indexOf(`const ${name} = {`)));
+    const values = (name) => [...block(name).matchAll(/:\s*"([\w-]+)"/g)].map((m) => m[1]);
+    const parts = [...values("PAD_BUTTON"), ...values("DPAD").map((d) => `dpad-${d}`), ...[...script.matchAll(/data-part="(\w[\w-]*)"/g)].map((m) => m[1])];
+    const acts = [...values("KEYS"), ...values("PADS"), "home"];
+    assert.ok(parts.length >= 9 && acts.length >= 10, "the script's lists were read");
+    const start = page.indexOf("<svg", page.indexOf("data-pad"));
+    const svg = page.slice(start, page.indexOf("</svg>", start));
+    for (const part of parts) assert.match(svg, new RegExp(`class="b" data-act="\\w+" data-part="${part}"`), `the part ${part}`);
+    for (const act of new Set(acts)) assert.match(svg, new RegExp(`data-act="${act}"`), `the act ${act}`);
+    for (const [, part] of svg.matchAll(/data-for="([\w-]+)"/g)) assert.match(svg, new RegExp(`data-part="${part}(-\\w+)?"`), `the line for ${part}`);
+    assert.doesNotMatch(svg, /PS5|PlayStation|Sony|inkscape|sodipodi/i);
+  });
 });
 
 describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" }, () => {
@@ -76,11 +92,65 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     await browser.load(site.url);
     const lit = await browser.run(`const p = document.querySelector('[data-pad]'); p.focus();
       p.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
-      return [[...p.querySelectorAll('.b.on')].map((b) => b.getAttribute('class')), [...p.querySelectorAll('.call.on')].map((c) => c.dataset.for),
+      return [[...p.querySelectorAll('.b.on')].map((b) => b.dataset.part), [...p.querySelectorAll('.call.on')].map((c) => c.dataset.for),
         document.querySelector('[data-pad-say]').textContent]`);
-    assert.deepEqual(lit[0], ["b fc crs on"]);
-    assert.deepEqual(lit[1], ["crs"]);
+    assert.deepEqual(lit[0], ["cross"]);
+    assert.deepEqual(lit[1], ["cross"]);
     assert.match(lit[2], /Select/);
+  });
+
+  it("lights each part and its line for a real controller's buttons", async () => {
+    await browser.load(site.url);
+    // A pretend controller in the standard layout: one button down at a time, then the left stick.
+    const lit = await browser.run(`const p = document.querySelector('[data-pad]'); p.scrollIntoView({ block: 'center' });
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      let down = -1, axes = [0, 0];
+      navigator.getGamepads = () => [{ buttons: Array.from({ length: 17 }, (_, i) => ({ pressed: i === down })), axes }];
+      await wait(200);
+      dispatchEvent(new Event('gamepadconnected'));
+      const seen = () => [...p.querySelectorAll('.b.on')].map((b) => b.dataset.part).join() + ' ' + [...p.querySelectorAll('.call.on')].map((c) => c.dataset.for).join();
+      const out = {};
+      for (const i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 14, 15, 16]) {
+        down = i; await wait(60); down = -1; await wait(60); out[i] = seen();
+      }
+      axes = [1, 0]; await wait(60); out.stick = seen();
+      return out`);
+    assert.deepEqual(lit, {
+      0: "cross cross", 1: "circle circle", 2: "square square", 3: "triangle triangle", 4: "l1 l1", 5: "r1 r1",
+      6: "l2 l2", 7: "r2 r2", 8: "create create", 9: "options options", 12: "dpad-up dpad", 13: "dpad-down dpad",
+      14: "dpad-left dpad", 15: "dpad-right dpad", 16: "home home", stick: "ls ls",
+    });
+  });
+
+  it("points each of the controller's lines at its own part", async () => {
+    await browser.load(site.url);
+    // The lines don't take the pointer, so the element under each line's dot is the drawing's.
+    const under = await browser.run(`const p = document.querySelector('[data-pad]'); p.scrollIntoView({ block: 'center' });
+      const svg = p.querySelector('svg');
+      return [...p.querySelectorAll('.call')].map((c) => {
+        const dot = c.querySelector('circle');
+        const at = new DOMPoint(dot.cx.baseVal.value, dot.cy.baseVal.value).matrixTransform(svg.getScreenCTM());
+        const part = document.elementFromPoint(at.x, at.y)?.closest('[data-part]')?.dataset.part ?? 'nothing';
+        return c.dataset.for + ' ' + part.replace(/^dpad-.*/, 'dpad');
+      })`);
+    assert.ok(under.length >= 13, under.join());
+    for (const pair of under) assert.equal(pair.split(" ")[1], pair.split(" ")[0], `the line for ${pair}`);
+  });
+
+  it("has no brand mark in the controller's middle", async () => {
+    await browser.load(site.url);
+    // The drawing's source had a brand logo between the speaker and the mute button. Only the
+    // home button may sit there now: any other shape in that gap is a leftover.
+    const there = await browser.run(`const p = document.querySelector('[data-pad]');
+      const dots = p.querySelector('.speaker').getBBox(), mute = p.querySelector('.mute').getBBox();
+      const gap = { x: dots.x, y: dots.y + dots.height, right: dots.x + dots.width, bottom: mute.y };
+      return [...p.querySelectorAll('.body :is(path, circle, rect, polygon, ellipse, use, text, image)')].filter((e) => {
+        const b = e.getBBox();
+        const meets = b.x < gap.right && b.x + b.width > gap.x && b.y < gap.bottom && b.y + b.height > gap.y;
+        const around = b.x <= gap.x && b.x + b.width >= gap.right && b.y <= gap.y && b.y + b.height >= gap.bottom;
+        return meets && !around;
+      }).map((e) => e.closest('[data-part]')?.dataset.part ?? e.getAttribute('class'))`);
+    assert.deepEqual(there, ["home"]);
   });
 
   it("opens and closes the menu on a phone", async () => {

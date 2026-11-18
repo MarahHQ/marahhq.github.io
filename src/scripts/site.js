@@ -655,11 +655,11 @@ function hit(act, button) {
   const which = act === "hold" ? "home" : act;
   const key = document.querySelector(`.keys [data-key="${which}"]`);
   if (key) key.classList.add("on");
-  // The line to what the button does: the pressed button's own, else the first for the act.
+  // The line to what the button does: the pressed part's own (the D-pad has one for its four
+  // keys), else the first for the act.
   pad.querySelectorAll(".call.on").forEach((c) => c.classList.remove("on"));
-  const pressed = button || pad.querySelector(`[data-act="${which}"]`);
-  const own = [...pressed.classList].map((c) => pad.querySelector(`.call[data-for="${c}"]`)).find(Boolean);
-  const call = own || pad.querySelector(`.call[data-call="${which}"]`);
+  const part = (button || pad.querySelector(`[data-act="${which}"]`)).dataset.part.replace(/^dpad-.*/, "dpad");
+  const call = pad.querySelector(`.call[data-for="${part}"]`) || pad.querySelector(`.call[data-call="${which}"]`);
   if (call) call.classList.add("on");
   clearTimeout(lit);
   lit = setTimeout(() => {
@@ -693,7 +693,7 @@ if (pad) {
     const act = KEYS[event.key];
     if (!act) return;
     if (act !== "bar") event.preventDefault(); // Tab still moves the focus on.
-    hit(act, DPAD[event.key] ? pad.querySelector(`.dp.${DPAD[event.key]}`) : null);
+    hit(act, DPAD[event.key] ? pad.querySelector(`[data-part="dpad-${DPAD[event.key]}"]`) : null);
   });
 
   // A real controller, in the browser's standard layout: 0 ✕, 1 ○, 2 □, 3 △, 4 L1, 5 R1,
@@ -717,14 +717,14 @@ if (pad) {
     16: "home",
   };
   const PAD_BUTTON = {
-    4: ".l1",
-    5: ".r1",
-    6: ".l2",
-    7: ".r2",
-    12: ".dp.up",
-    13: ".dp.down",
-    14: ".dp.left",
-    15: ".dp.right",
+    4: "l1",
+    5: "r1",
+    6: "l2",
+    7: "r2",
+    12: "dpad-up",
+    13: "dpad-down",
+    14: "dpad-left",
+    15: "dpad-right",
   };
   let onScreen = false,
     polling = false,
@@ -754,10 +754,11 @@ if (pad) {
         if (!down && was[i] && !psHeld) hit("home");
         return;
       }
-      if (down && !was[i] && PADS[i]) hit(PADS[i], PAD_BUTTON[i] ? pad.querySelector(PAD_BUTTON[i]) : null);
+      if (down && !was[i] && PADS[i])
+        hit(PADS[i], PAD_BUTTON[i] ? pad.querySelector(`[data-part="${PAD_BUTTON[i]}"]`) : null);
     });
     const stick = Math.hypot(gp.axes[0] || 0, gp.axes[1] || 0) > 0.5;
-    if (stick && !stickWas) hit("move", pad.querySelector(".ls"));
+    if (stick && !stickWas) hit("move", pad.querySelector('[data-part="ls"]'));
     stickWas = stick;
     was = now;
     requestAnimationFrame(poll);
