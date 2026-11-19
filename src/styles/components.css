@@ -218,61 +218,6 @@
     opacity: 1;
   }
 
-  /* A download card: a soft light follows the pointer (DownloadSection sets --mx and --my). */
-  .card {
-    position: relative;
-    overflow: hidden;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 20px 16px;
-    border-radius: 18px;
-    text-decoration: none;
-    color: var(--foreground);
-    background: var(--card);
-    border: 1px solid var(--border);
-    transition:
-      border-color 0.2s,
-      transform 0.2s ease;
-  }
-  .card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    background: radial-gradient(
-      240px circle at var(--mx, 50%) var(--my, 50%),
-      rgba(130, 216, 245, 0.16),
-      transparent 70%
-    );
-  }
-  .card > * {
-    position: relative;
-  }
-  .card:hover,
-  .card:focus-visible {
-    border-color: var(--primary);
-    transform: translateY(-4px);
-  }
-  .card:hover::before,
-  .card:focus-visible::before {
-    opacity: 1;
-  }
-  .card strong {
-    font-size: 17px;
-  }
-  .card span {
-    color: var(--muted-foreground);
-    font-size: 14px;
-  }
-  .card small {
-    color: var(--muted-foreground);
-    font-size: 12.5px;
-  }
-
   /* A command to copy: monospace on ink, with a copy button that turns into a tick. */
   .cmd {
     display: flex;
@@ -1068,23 +1013,6 @@
     background: var(--muted);
   }
 
-  /* A fold animates its height: the grid row goes from 0fr to 1fr. */
-  .fold {
-    display: grid;
-    grid-template-rows: 0fr;
-    opacity: 0;
-    transition:
-      grid-template-rows 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-      opacity 0.3s ease;
-  }
-  .fold.open {
-    grid-template-rows: 1fr;
-    opacity: 1;
-  }
-  .fold-inner {
-    min-height: 0;
-    overflow: hidden;
-  }
   .chev {
     width: 18px;
     height: 18px;
@@ -1094,36 +1022,6 @@
     stroke-linecap: round;
     stroke-linejoin: round;
     transition: rotate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .repos-toggle {
-    padding-right: 56px;
-  }
-  .chev-ring {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    translate: 0 -50%;
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--edge);
-    background: var(--muted);
-    transition:
-      background-color 0.2s,
-      border-color 0.2s;
-  }
-  .repos-toggle[aria-expanded="true"] {
-    border-color: var(--primary);
-  }
-  .repos-toggle[aria-expanded="true"] .chev-ring {
-    background: var(--primary);
-    border-color: var(--primary);
-  }
-  .repos-toggle[aria-expanded="true"] .chev {
-    stroke: var(--background);
-    rotate: 180deg;
   }
   .repo {
     min-width: 0;

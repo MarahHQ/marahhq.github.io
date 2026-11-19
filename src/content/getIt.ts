@@ -1,5 +1,7 @@
-// Get it: two ways in, the launcher (a download or a Linux command) and Marah OS. HTML where a
-// line holds code.
+import { links } from "./site";
+
+// Get it: two ways in, the launcher (a download, a Linux command or a package) and Marah OS. HTML
+// where a line holds code or a link.
 export const getIt = {
   eyebrow: "Get it",
   title: "Two ways in.",
@@ -8,8 +10,10 @@ export const getIt = {
     title: "Marah Launcher",
     lead: "An app for Linux, macOS and Windows. Your desktop stays as it is.",
     tabsLabel: "How to get Marah Launcher",
-    chooseLabel: "Choose your system",
-    everyLabel: "Every system and package",
+    filesLabel: "Every system",
+    sumsHint: `Every file, with its SHA-256: <a href="${links.launcherLatest}">the latest release</a>.`,
+    packagesHint:
+      'Install from a repository, and Marah Launcher updates with the rest of your system. The repositories\' metadata is signed with <a href="https://marahhq.github.io/packages/marah.asc">this key</a>.',
     terminalHint:
       "Installs for you only, with no sudo, in <code>~/.local/lib/marah-launcher</code>. <code>install.sh --uninstall</code> removes it.",
     ticks: ["Updates itself"],
