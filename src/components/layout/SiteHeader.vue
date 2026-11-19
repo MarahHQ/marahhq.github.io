@@ -4,17 +4,18 @@
 // without it they stay in the header. The menu also holds the switch, GitHub and Download, so the
 // header hides them while the menu is there.
 import { onMounted, onUnmounted, ref } from "vue";
-import DownloadIcon from "@/components/icons/DownloadIcon.vue";
-import GitHubIcon from "@/components/icons/GitHubIcon.vue";
-import ThemeSwitch from "./ThemeSwitch.vue";
-import { Button } from "@/components/ui/button";
+import SiteActions from "./SiteActions.vue";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { links } from "@/content/site";
 import { navLinks } from "@/content/nav";
 import { useHydrated } from "@/composables/useHydrated";
 
 const hydrated = useHydrated();
 const menuOpen = ref(false);
+
+// The header's icon buttons are a size smaller once the page scrolls. With JavaScript, the menu
+// holds them below 961 px; without it, a phone hides them.
+const headerButton =
+  "transition-[transform,border-color,width,height] duration-200 in-[.hdr-scrolled]:size-9 max-md:in-[.js]:hidden max-sm:hidden";
 
 // The focus goes to the first link as the menu opens, not to its close button.
 function focusFirstLink(event: Event) {
@@ -83,29 +84,7 @@ onUnmounted(() => wide?.removeEventListener("change", closeWhenWide));
             </a>
           </nav>
           <div class="nav-extra">
-            <ThemeSwitch in-menu />
-            <Button
-              as="a"
-              size="icon"
-              href="#get"
-              aria-label="Download Marah Launcher"
-              title="Download Marah Launcher"
-              @click="menuOpen = false"
-            >
-              <DownloadIcon />
-            </Button>
-            <Button
-              as="a"
-              variant="outline"
-              size="icon"
-              :href="links.org"
-              target="_blank"
-              rel="noopener"
-              aria-label="MarahHQ on GitHub"
-              title="MarahHQ on GitHub"
-            >
-              <GitHubIcon />
-            </Button>
+            <SiteActions @download="menuOpen = false" />
           </div>
         </SheetContent>
       </Sheet>
@@ -113,17 +92,7 @@ onUnmounted(() => wide?.removeEventListener("change", closeWhenWide));
         <a v-for="link in navLinks" :key="link.href" class="nav-link" :href="link.href">{{ link.label }}</a>
       </nav>
       <div class="flex items-center gap-4 max-lg:gap-2">
-        <ThemeSwitch />
-        <a
-          class="grid size-11 place-items-center rounded-full bg-border text-foreground transition-[background-color,translate,width,height] duration-200 hover:-translate-y-0.5 hover:bg-border-hi focus-visible:-translate-y-0.5 focus-visible:bg-border-hi in-[.hdr-scrolled]:size-9 max-md:in-[.js]:hidden max-sm:hidden"
-          :href="links.org"
-          target="_blank"
-          rel="noopener"
-        >
-          <GitHubIcon :size="22" />
-          <span class="sr-only">MarahHQ on GitHub</span>
-        </a>
-        <Button as="a" size="small" class="max-md:in-[.js]:hidden max-sm:hidden" href="#get">Download</Button>
+        <SiteActions :button-class="headerButton" />
       </div>
     </div>
   </header>

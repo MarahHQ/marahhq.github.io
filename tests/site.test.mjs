@@ -527,7 +527,7 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     await browser.click(".menu");
     await sleep(500);
     const found = await browser.run(`const all = (sel) => [...document.querySelectorAll(sel)];
-      return { download: all('.site-header .wrap > div > a[data-slot=button], #menu a[aria-label="Download Marah Launcher"]').map((a) => a.getAttribute("href")),
+      return { download: all('a[aria-label="Download Marah Launcher"]').map((a) => a.getAttribute("href")),
         github: all('a[href^="https://github.com/MarahHQ"]').filter((a) => /GitHub/.test(a.textContent + a.getAttribute("aria-label")))
           .map((a) => [a.target, a.rel]) }`);
     assert.deepEqual(found.download, ["#get", "#get"], "the header's and the menu's Download");
@@ -569,9 +569,10 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     try {
       await fresh();
       assert.equal(await theme(), "dark");
-      const label = () => browser.run(`return document.querySelector(".theme-switch").getAttribute("aria-label")`);
+      const label = () =>
+        browser.run(`return document.querySelector(".site-header [data-theme-switch]").getAttribute("aria-label")`);
       assert.equal(await label(), "Switch to light theme");
-      await browser.run(`document.querySelector(".theme-switch").click()`);
+      await browser.run(`document.querySelector(".site-header [data-theme-switch]").click()`);
       assert.equal(await theme(), "light");
       assert.equal(await label(), "Switch to dark theme");
       assert.equal(await browser.run(`return localStorage.getItem("marah-theme")`), "light");
@@ -590,7 +591,7 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
         count: 3,
         oneRow: true,
         noWords: true,
-        labels: ["Switch to dark theme", "Download Marah Launcher", "MarahHQ on GitHub"],
+        labels: ["Switch to dark theme", "MarahHQ on GitHub", "Download Marah Launcher"],
       });
       const menuLabel = () =>
         browser.run(`return document.querySelector("#menu [data-theme-switch]").getAttribute("aria-label")`);
