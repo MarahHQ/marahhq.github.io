@@ -1340,10 +1340,9 @@
   .hdr-scrolled .site-header {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   }
-  /* The thin bar's contents are smaller too: the links and the Download button. In the folded
-     menu (#nav on a tablet or a phone) the links keep their own size. */
-  .site-header .nav-link,
-  .site-header .cta.small {
+  /* The thin bar's links are smaller too. In the folded menu (#nav on a tablet or a phone) the
+     links keep their own size. */
+  .site-header .nav-link {
     transition:
       font-size 0.3s ease,
       padding 0.3s ease,
@@ -1352,10 +1351,6 @@
   .hdr-scrolled .site-header .nav-link {
     font-size: 14px;
     padding: 6px 12px;
-  }
-  .hdr-scrolled .site-header .cta.small {
-    font-size: 14px;
-    padding: 7px 16px;
   }
 
   /* On a tablet or a phone, with the script, the header's links fold into the menu (a Sheet
