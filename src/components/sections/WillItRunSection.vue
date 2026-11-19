@@ -117,8 +117,10 @@ const chosen = ref(examples[0]?.id);
             <ul class="grid gap-1.5">
               <li v-for="row in pc.rows" :key="row.name" class="verdict" :data-level="row.level">
                 <span class="font-bold">{{ row.name }}</span>
+                <!-- The space before the words keeps them clear of the level's mark (::before). -->
                 <span class="verdict-text"
-                  >{{ row.headline }}<span v-if="row.why" class="text-muted-foreground"> · {{ row.why }}</span></span
+                  >{{ ` ${row.headline}`
+                  }}<span v-if="row.why" class="text-muted-foreground"> · {{ row.why }}</span></span
                 >
               </li>
             </ul>

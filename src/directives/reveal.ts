@@ -8,7 +8,7 @@ const SELECTOR = "[data-reveal], [data-stagger]";
 let observer: IntersectionObserver | null = null;
 
 function show(part: Element) {
-  part.classList.add("in");
+  part.setAttribute("data-in", "");
   observer?.unobserve(part);
 }
 

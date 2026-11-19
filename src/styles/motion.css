@@ -93,13 +93,13 @@
       translate: 0 -6px;
     }
 
-    /* Scroll reveal. The head script adds .reveal; v-reveal adds .in when a part comes into view. */
-    .reveal [data-reveal]:not(.in),
-    .reveal [data-stagger]:not(.in) > * {
+    /* Scroll reveal. The head script adds .reveal; v-reveal adds data-in when a part comes into view (an attribute, not a class: Vue rewrites the class of a part whose class is bound). */
+    .reveal [data-reveal]:not([data-in]),
+    .reveal [data-stagger]:not([data-in]) > * {
       opacity: 0;
     }
-    .reveal [data-reveal].in,
-    .reveal [data-stagger].in > * {
+    .reveal [data-reveal][data-in],
+    .reveal [data-stagger][data-in] > * {
       animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
       animation-delay: calc(var(--i, 0) * 90ms);
     }

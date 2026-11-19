@@ -5,4 +5,5 @@ import App from "./App.vue";
 import { routes } from "./routes";
 import "./style.css";
 
-export const createApp = ViteSSG(App, { routes }, undefined, { hydration: true });
+// Hydrate the prerendered HTML in a build; `npm run dev` serves no HTML to hydrate.
+export const createApp = ViteSSG(App, { routes }, undefined, { hydration: import.meta.env.PROD });
