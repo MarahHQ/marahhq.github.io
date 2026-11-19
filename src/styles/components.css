@@ -72,6 +72,12 @@
   .btn-outline.small {
     padding: 10px 20px;
   }
+  .cta.round,
+  .btn-outline.round {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+  }
 
   /* The header: its links, and the menu button that folds them on a tablet or a phone. Not
      utilities: the script folds the links, so their display must stay a component's. */
@@ -89,33 +95,6 @@
     padding: 9px 11px;
     border-radius: 12px;
     line-height: 0;
-  }
-  /* The dark or light switch: a round button in the header, a row in the folded menu. It shows
-     the theme it switches to. */
-  .theme-switch {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border: 0;
-    border-radius: 999px;
-    background: var(--border);
-    color: var(--foreground);
-    transition:
-      background-color 0.2s,
-      translate 0.2s,
-      width 0.2s,
-      height 0.2s;
-  }
-  .theme-switch:hover,
-  .theme-switch:focus-visible {
-    translate: 0 -2px;
-    background: var(--border-hi);
-  }
-  .hdr-scrolled .theme-switch {
-    width: 36px;
-    height: 36px;
   }
   .i-sun,
   .i-moon {
@@ -1361,10 +1340,9 @@
   .hdr-scrolled .site-header {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   }
-  /* The thin bar's contents are smaller too: the links and the Download button. In the folded
-     menu (#nav on a tablet or a phone) the links keep their own size. */
-  .site-header .nav-link,
-  .site-header .cta.small {
+  /* The thin bar's links are smaller too. In the folded menu (#nav on a tablet or a phone) the
+     links keep their own size. */
+  .site-header .nav-link {
     transition:
       font-size 0.3s ease,
       padding 0.3s ease,
@@ -1373,10 +1351,6 @@
   .hdr-scrolled .site-header .nav-link {
     font-size: 14px;
     padding: 6px 12px;
-  }
-  .hdr-scrolled .site-header .cta.small {
-    font-size: 14px;
-    padding: 7px 16px;
   }
 
   /* On a tablet or a phone, with the script, the header's links fold into the menu (a Sheet
@@ -1456,15 +1430,14 @@
   .menu-panel[data-state="open"] .nav-link:nth-of-type(6) {
     animation-delay: 0.2s;
   }
+  /* The theme, Download and GitHub: one row of round icon buttons at the foot of the menu. */
   .menu-panel .nav-extra {
-    display: grid;
-    gap: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
     margin-top: auto;
     padding-top: 20px;
     border-top: 1px solid var(--border);
-  }
-  .menu-panel .nav-extra .btn-outline {
-    gap: 10px;
   }
 }
 

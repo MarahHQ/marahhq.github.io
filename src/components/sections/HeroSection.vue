@@ -20,7 +20,9 @@ import { links } from "@/content/site";
       <p class="my-[1em] max-w-[520px] text-lead text-muted-foreground max-md:mx-auto">{{ hero.lead }}</p>
       <div class="mt-7 flex flex-wrap gap-3.5 max-md:justify-center">
         <Button as="a" href="#get">Get Marah Launcher</Button>
-        <Button as="a" variant="outline" :href="links.launcherRepo">View on GitHub</Button>
+        <Button as="a" variant="outline" :href="links.launcherRepo" target="_blank" rel="noopener">
+          View on GitHub
+        </Button>
       </div>
     </div>
     <div class="mascot-wrap relative flex items-center justify-center">

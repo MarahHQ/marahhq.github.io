@@ -506,6 +506,35 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     }
   });
 
+  it("leaves the switch, GitHub and Download to the menu while the menu is there", async () => {
+    for (const [width, shown] of [
+      [390, 0],
+      [800, 0],
+      [960, 0],
+      [961, 3],
+      [1440, 3],
+    ]) {
+      await browser.load(site.url, { width });
+      const count = await browser.run(
+        `return [...document.querySelectorAll(".site-header .wrap > div > *")].filter((e) => e.getClientRects().length).length`,
+      );
+      assert.equal(count, shown, `${width} px`);
+    }
+  });
+
+  it("sends Download to the Get it section and opens GitHub in a new tab", async () => {
+    await browser.load(site.url, { width: 390, ua: ANDROID });
+    await browser.click(".menu");
+    await sleep(500);
+    const found = await browser.run(`const all = (sel) => [...document.querySelectorAll(sel)];
+      return { download: all('a[aria-label="Download Marah Launcher"]').map((a) => a.getAttribute("href")),
+        github: all('a[href^="https://github.com/MarahHQ"]').filter((a) => /GitHub/.test(a.textContent + a.getAttribute("aria-label")))
+          .map((a) => [a.target, a.rel]) }`);
+    assert.deepEqual(found.download, ["#get", "#get"], "the header's and the menu's Download");
+    assert.equal(found.github.length, 3, "the header's, the menu's and the hero's GitHub");
+    assert.ok(found.github.every(([target, rel]) => target === "_blank" && rel === "noopener"));
+  });
+
   it("copies the example game file", async () => {
     await browser.load(site.url);
     const text = await browser.run(`document.querySelector('[data-copy=add-game-json]').click();
@@ -540,9 +569,10 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     try {
       await fresh();
       assert.equal(await theme(), "dark");
-      const label = () => browser.run(`return document.querySelector(".theme-switch").getAttribute("aria-label")`);
+      const label = () =>
+        browser.run(`return document.querySelector(".site-header [data-theme-switch]").getAttribute("aria-label")`);
       assert.equal(await label(), "Switch to light theme");
-      await browser.run(`document.querySelector(".theme-switch").click()`);
+      await browser.run(`document.querySelector(".site-header [data-theme-switch]").click()`);
       assert.equal(await theme(), "light");
       assert.equal(await label(), "Switch to dark theme");
       assert.equal(await browser.run(`return localStorage.getItem("marah-theme")`), "light");
@@ -553,16 +583,22 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
       await browser.load(site.url, { width: 390, ua: ANDROID });
       await browser.click(".menu");
       await sleep(500);
-      assert.equal(
-        await browser.run(`return document.querySelector("[data-theme-label]").textContent`),
-        "Switch to dark theme",
-      );
+      // The theme, Download and GitHub: icon buttons on one row, named for a screen reader.
+      const extras = await browser.run(`const b = [...document.querySelectorAll("#menu .nav-extra > *")];
+        return { count: b.length, oneRow: new Set(b.map((e) => Math.round(e.getBoundingClientRect().top))).size === 1,
+          noWords: b.every((e) => e.textContent.trim() === ""), labels: b.map((e) => e.getAttribute("aria-label")) }`);
+      assert.deepEqual(extras, {
+        count: 3,
+        oneRow: true,
+        noWords: true,
+        labels: ["Switch to dark theme", "MarahHQ on GitHub", "Download Marah Launcher"],
+      });
+      const menuLabel = () =>
+        browser.run(`return document.querySelector("#menu [data-theme-switch]").getAttribute("aria-label")`);
+      assert.equal(await menuLabel(), "Switch to dark theme");
       await browser.click("#menu [data-theme-switch]");
       assert.equal(await theme(), "dark", "the menu's switch works too");
-      assert.equal(
-        await browser.run(`return document.querySelector("[data-theme-label]").textContent`),
-        "Switch to light theme",
-      );
+      assert.equal(await menuLabel(), "Switch to light theme");
     } finally {
       await reset();
     }
