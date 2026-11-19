@@ -388,9 +388,13 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
 
   it("doesn't scroll sideways on a phone, with every panel open", async () => {
     await browser.load(site.url, { width: 390, ua: ANDROID });
-    const wide = await browser.run(`document.querySelector('.repos-toggle').click();
-      document.querySelectorAll('.qa-head').forEach((b) => b.click());
+    // One answer at a time, as a visitor opens them: each click reads the state the last one left.
+    const opened = await browser.run(`document.querySelector('.repos-toggle').click();
+      for (const b of document.querySelectorAll('.qa-head')) { b.click(); await new Promise((r) => requestAnimationFrame(r)); }
       await new Promise((r) => setTimeout(r, 300));
+      return [...document.querySelectorAll('[data-qa]')].filter((q) => q.dataset.state === 'open').length`);
+    assert.equal(opened, 7, "every answer is open");
+    const wide = await browser.run(`
       const visible = (e) => getComputedStyle(e).visibility !== 'hidden';
       return { scroll: document.scrollingElement.scrollWidth - innerWidth,
         past: [...document.querySelectorAll('body *')].filter((e) => visible(e) && e.getBoundingClientRect().right > innerWidth + 1 && !e.closest('.gamepad, pre, .overflow-x-auto'))
@@ -875,5 +879,149 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     const hidden = await browser.run(`return [...document.querySelectorAll("[data-reveal], [data-stagger] > *")]
       .filter((e) => getComputedStyle(e).opacity !== "1").length`);
     assert.equal(hidden, 0);
+  });
+
+  it("switches the screenshots, one at a time", async () => {
+    await browser.load(site.url);
+    const state = () =>
+      browser.run(`const s = document.querySelector('#screen');
+      return [s.getAttribute('src'), s.alt, [...document.querySelectorAll('.switcher button')].map((b) => b.getAttribute('aria-pressed')),
+        document.querySelector('.screen-next').classList.contains('show')]`);
+    const first = await state();
+    assert.equal(first[0], "/assets/screen-home.webp");
+    assert.deepEqual(first[2], ["true", "false", "false", "false"]);
+    for (const [i, file, words] of [
+      [1, "screen-library", /^The Library/],
+      [2, "screen-hub", /^A game's page/],
+      [3, "screen-settings", /^The Settings screen/],
+      [0, "screen-home", /home screen/],
+    ]) {
+      await browser.click(`.switcher button:nth-child(${i + 1})`);
+      await sleep(800); // The swap's fade is 320 ms with reduced motion.
+      const [src, alt, pressed, layer] = await state();
+      assert.equal(src, `/assets/${file}.webp`);
+      assert.match(alt, words);
+      assert.deepEqual(
+        pressed,
+        [0, 1, 2, 3].map((n) => String(n === i)),
+      );
+      assert.equal(layer, false, "the layer hides once the picture has swapped");
+    }
+  });
+
+  it("shows the launcher's latest release, its files' sizes and the download for the visitor's system", async () => {
+    const release = {
+      tag: "v8.8.8",
+      date: "2026-02-03T00:00:00Z",
+      assets: { "Marah-Launcher-x86_64.AppImage": 123e6, "marah-launcher-windows-x86_64-setup.exe": 2.5e9 },
+      digests: {},
+    };
+    try {
+      await browser.load(site.url);
+      await browser.run(
+        `localStorage.setItem("marah-release-marah-launcher", ${JSON.stringify(JSON.stringify({ at: Date.now(), release }))})`,
+      );
+      await browser.load(site.url);
+      const shown =
+        await browser.run(`return { lines: [...document.querySelectorAll('[data-release="launcher"]')].map((e) => e.textContent.trim()),
+        sizes: Object.fromEntries([...document.querySelectorAll("[data-size]")].map((e) => [e.dataset.size, e.textContent.trim()])),
+        mine: document.querySelector("[data-for-you]").textContent.trim() }`);
+      assert.deepEqual(shown.lines, ["v8.8.8 · 3 Feb 2026", "v8.8.8 · 3 Feb 2026"]);
+      assert.equal(shown.sizes["Marah-Launcher-x86_64.AppImage"], "123 MB");
+      assert.equal(shown.sizes["marah-launcher-windows-x86_64-setup.exe"], "2.5 GB");
+      assert.equal(
+        shown.sizes["marah-launcher-macos-universal.dmg"],
+        "",
+        "no size for a file the release doesn't list",
+      );
+      assert.equal(shown.mine, "Download for Linux (AppImage) · 123 MB");
+    } finally {
+      await reset();
+    }
+  });
+
+  it("gives the logo's gamepad a glow in the dark theme and a dark edge in the light theme", async () => {
+    try {
+      const filters = {};
+      for (const scheme of ["dark", "light"]) {
+        await fresh({ theme: scheme });
+        filters[scheme] = await browser.run(
+          `return [...document.querySelectorAll(".logo-mark")].map((e) => getComputedStyle(e).filter)`,
+        );
+      }
+      assert.deepEqual(filters.dark, Array(2).fill("drop-shadow(rgba(130, 216, 245, 0.35) 0px 0px 10px)"));
+      assert.deepEqual(
+        filters.light,
+        Array(2).fill("drop-shadow(rgb(13, 25, 38) 0px 0px 1px) drop-shadow(rgba(13, 25, 38, 0.35) 0px 2px 4px)"),
+      );
+    } finally {
+      await reset();
+    }
+  });
+
+  it("shows the keyboard focus on each tab panel", async () => {
+    await browser.load(site.url, { width: 390, ua: ANDROID });
+    await browser.run(`document.querySelector("[role=tab]").focus()`);
+    await browser.send("Input.dispatchKeyEvent", {
+      type: "keyDown",
+      key: "Tab",
+      code: "Tab",
+      windowsVirtualKeyCode: 9,
+    });
+    await browser.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
+    const ring = await browser.run(
+      `const e = document.activeElement; return [e.getAttribute("role"), getComputedStyle(e).outlineStyle, getComputedStyle(e).outlineWidth]`,
+    );
+    assert.deepEqual(ring, ["tabpanel", "solid", "3px"]);
+  });
+});
+
+// The same page with motion on, as most visitors have it: the parts fade in as they come into
+// view, and the menu and the answers slide.
+describe("in a browser, with motion on", { skip: chrome ? false : "no Chrome on this machine" }, () => {
+  let site, browser;
+  before(async () => {
+    site = await serve("dist");
+    browser = await open({ reducedMotion: false });
+  });
+  after(() => {
+    browser?.close();
+    site?.close();
+  });
+
+  it("shows every part once the page has scrolled past it", async () => {
+    await browser.load(site.url);
+    const hiddenAtFirst = await browser.run(
+      `return [...document.querySelectorAll("[data-reveal]")].filter((e) => getComputedStyle(e).opacity === "0").length`,
+    );
+    assert.ok(hiddenAtFirst > 5, "the parts below the screen wait to fade in");
+    await browser.run(
+      `for (let y = 0; y < document.scrollingElement.scrollHeight; y += 400) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); }`,
+    );
+    await sleep(2500); // The last parts' fade: 0.7 s, after a stagger of up to 0.45 s.
+    const hidden = await browser.run(`return [...document.querySelectorAll("[data-reveal], [data-stagger] > *")]
+      .filter((e) => e.getClientRects().length && getComputedStyle(e).opacity !== "1") // A part laid out on the page, not one display: none hides (the keys' list on a desktop).
+      .map((e) => e.tagName + "." + (e.getAttribute("class") ?? "").split(" ")[0] + " in #" + e.closest("section")?.id)`);
+    assert.deepEqual(hidden, []);
+  });
+
+  it("slides the menu and an answer open and shut", async () => {
+    await browser.load(site.url, { width: 390, ua: ANDROID });
+    await browser.click(".menu");
+    await sleep(600);
+    assert.equal(await browser.run(`return !!document.querySelector("#menu")`), true);
+    await browser.click(".nav-close");
+    await sleep(800);
+    assert.equal(await browser.run(`return document.querySelector("#menu")`), null, "gone once it has slid out");
+    const answer = () =>
+      browser.run(
+        `return Math.round(document.querySelector("[data-qa] [data-slot=accordion-content]").getBoundingClientRect().height)`,
+      );
+    await browser.click("[data-qa] .qa-head");
+    await sleep(600);
+    assert.ok((await answer()) > 20, "open");
+    await browser.click("[data-qa] .qa-head");
+    await sleep(600);
+    assert.equal(await answer(), 0, "shut");
   });
 });
