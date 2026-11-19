@@ -1,0 +1,56 @@
+<script setup lang="ts">
+// The first screen: the promise, the mascot and the Home screen.
+import { Button } from "@/components/ui/button";
+import { hero } from "@/content/hero";
+import { links } from "@/content/site";
+</script>
+
+<template>
+  <section
+    id="top"
+    class="wrap grid min-h-[520px] grid-cols-[1.1fr_.8fr_1.1fr] items-center gap-4 pt-10 pb-8 max-lg:grid-cols-[1fr_.7fr_1fr] max-md:grid-cols-2 max-md:gap-6 max-sm:flex max-sm:flex-col max-sm:pt-7"
+    aria-labelledby="hero-title"
+  >
+    <div class="hero-copy max-md:col-span-full max-md:text-center">
+      <p class="pill">{{ hero.pill }}</p>
+      <h1 id="hero-title" class="mt-6 mb-4 text-[clamp(38px,4.2vw,62px)] font-extrabold max-sm:text-[40px]">
+        {{ hero.title }}<br />
+        <span class="accent-text">{{ hero.accent }}</span>
+      </h1>
+      <p class="my-[1em] max-w-[520px] text-lead text-muted-foreground max-md:mx-auto">{{ hero.lead }}</p>
+      <div class="mt-7 flex flex-wrap gap-3.5 max-md:justify-center">
+        <Button as="a" href="#get">Get Marah Launcher</Button>
+        <Button as="a" variant="outline" :href="links.launcherRepo">View on GitHub</Button>
+      </div>
+    </div>
+    <div class="mascot-wrap relative flex items-center justify-center">
+      <div
+        class="mascot-glow absolute inset-[18%] rounded-full bg-[rgba(76,139,220,.45)] blur-[60px]"
+        aria-hidden="true"
+      ></div>
+      <img
+        class="mascot relative w-[115%] max-w-[440px] drop-shadow-[0_10px_22px_rgba(130,216,245,.3)] max-sm:w-[80%]"
+        src="/assets/mascot.webp"
+        fetchpriority="high"
+        :alt="hero.mascotAlt"
+        width="720"
+        height="720"
+      />
+    </div>
+    <figure class="preview perspective-[1000px]">
+      <div
+        class="preview-frame [transform:rotate(-3deg)_rotateY(-5deg)] overflow-hidden rounded-[18px] border-3 border-primary border-r-blue bg-background shadow-[0_0_24px_rgba(130,216,245,.45),0_0_48px_rgba(76,139,220,.3)] max-md:[transform:none]"
+      >
+        <img
+          src="/assets/screen-home.webp"
+          :alt="hero.screenAlt"
+          width="1600"
+          height="900"
+          decoding="async"
+          class="block"
+        />
+      </div>
+      <figcaption class="mt-3.5 text-center text-caption text-muted-foreground">{{ hero.caption }}</figcaption>
+    </figure>
+  </section>
+</template>

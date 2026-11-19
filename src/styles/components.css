@@ -1,0 +1,1508 @@
+@layer components {
+  /* The logo's gamepad, in the header and the footer: an ice glow, and in the light theme a thin
+     dark edge and a shadow, so the light parts of the drawing read on paper. */
+  .logo-mark {
+    filter: drop-shadow(0 0 10px rgba(130, 216, 245, 0.35));
+    @variant light {
+      filter: drop-shadow(0 0 1px #0d1926) drop-shadow(0 2px 4px rgba(13, 25, 38, 0.35));
+    }
+  }
+
+  /* Buttons (the Button component's `cta` and `outline` variants): the ice gradient, and the
+     outline. The hover glow is a layer that only fades. */
+  .cta,
+  .btn-outline {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 999px;
+    padding: 14px 24px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s;
+  }
+  .cta::after,
+  .btn-outline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 28px rgba(130, 216, 245, 0.45);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .cta {
+    background: linear-gradient(105deg, var(--primary-hi), var(--primary) 45%, var(--sky));
+    color: var(--background);
+    border: 1px solid #b8ecfb;
+    box-shadow: 0 0 22px rgba(130, 216, 245, 0.3);
+  }
+  .btn-outline {
+    color: var(--foreground);
+    border: 1px solid #5d7d99;
+    background: rgba(13, 25, 38, 0.5);
+  }
+  .cta:hover,
+  .btn-outline:hover,
+  .cta:focus-visible,
+  .btn-outline:focus-visible {
+    transform: translateY(-2px);
+  }
+  .cta:hover::after,
+  .btn-outline:hover::after,
+  .cta:focus-visible::after,
+  .btn-outline:focus-visible::after {
+    opacity: 1;
+  }
+  .btn-outline:hover,
+  .btn-outline:focus-visible {
+    border-color: var(--primary);
+  }
+  .cta:active,
+  .btn-outline:active {
+    transform: translateY(0) scale(0.98);
+  }
+  .cta.small,
+  .btn-outline.small {
+    padding: 10px 20px;
+  }
+
+  /* The header: its links, and the menu button that folds them on a tablet or a phone. Not
+     utilities: the script folds the links, so their display must stay a component's. */
+  #nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .menu {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    padding: 9px 11px;
+    border-radius: 12px;
+    line-height: 0;
+  }
+  /* The dark or light switch: a round button in the header, a row in the folded menu. It shows
+     the theme it switches to. */
+  .theme-switch {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--foreground);
+    transition:
+      background-color 0.2s,
+      translate 0.2s,
+      width 0.2s,
+      height 0.2s;
+  }
+  .theme-switch:hover,
+  .theme-switch:focus-visible {
+    translate: 0 -2px;
+    background: var(--border-hi);
+  }
+  .hdr-scrolled .theme-switch {
+    width: 36px;
+    height: 36px;
+  }
+  .i-sun,
+  .i-moon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .i-moon {
+    display: none;
+  }
+  .i-sun {
+    @variant light {
+      display: none;
+    }
+  }
+  .i-moon {
+    @variant light {
+      display: inline;
+    }
+  }
+  /* The header's links: a line grows under the one you point at. */
+  .nav-link {
+    position: relative;
+    color: var(--foreground);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 999px;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 4px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+  }
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+  /* After the rules above, or they would win: the links are closer on a narrower screen. */
+  @media (width < 1201px) {
+    #nav {
+      gap: 2px;
+    }
+    .nav-link {
+      font-size: 14px;
+      padding: 8px;
+    }
+    .nav-link::after {
+      left: 8px;
+      right: 8px;
+    }
+  }
+
+  /* An icon on a tile, as in the feature strip. */
+  .icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, var(--haze), var(--card));
+    border: 1px solid var(--border);
+    transition:
+      translate 0.3s ease,
+      rotate 0.3s ease,
+      border-color 0.3s;
+  }
+  .icon svg {
+    width: 32px;
+    height: 32px;
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* A card with a gradient border that glows under the pointer. */
+  .platform {
+    position: relative;
+    min-height: 104px;
+    padding: 14px 10px;
+    border-radius: 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    background:
+      linear-gradient(var(--card), #0c1c2b) padding-box,
+      linear-gradient(125deg, var(--primary), var(--blue)) border-box;
+    border: 2px solid transparent;
+    transition: transform 0.25s ease;
+  }
+  .platform::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 26px rgba(130, 216, 245, 0.4);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .platform:hover {
+    transform: translateY(-4px);
+  }
+  .platform:hover::after {
+    opacity: 1;
+  }
+
+  /* A download card: a soft light follows the pointer (DownloadSection sets --mx and --my). */
+  .card {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px 16px;
+    border-radius: 18px;
+    text-decoration: none;
+    color: var(--foreground);
+    background: var(--card);
+    border: 1px solid var(--border);
+    transition:
+      border-color 0.2s,
+      transform 0.2s ease;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(130, 216, 245, 0.16),
+      transparent 70%
+    );
+  }
+  .card > * {
+    position: relative;
+  }
+  .card:hover,
+  .card:focus-visible {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+  }
+  .card:hover::before,
+  .card:focus-visible::before {
+    opacity: 1;
+  }
+  .card strong {
+    font-size: 17px;
+  }
+  .card span {
+    color: var(--muted-foreground);
+    font-size: 14px;
+  }
+  .card small {
+    color: var(--muted-foreground);
+    font-size: 12.5px;
+  }
+
+  /* A command to copy: monospace on ink, with a copy button that turns into a tick. */
+  .cmd {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .cmd code {
+    flex: 1;
+    min-width: 0;
+    font: 15px/1.5 var(--font-mono);
+    color: var(--code);
+    overflow-wrap: anywhere;
+  }
+  .cmd > code::before {
+    content: "$ ";
+    color: var(--primary);
+  }
+  /* A command scrolls without a scrollbar: the copy button copies it all. The right edge fades,
+     so a line that goes on shows it does. */
+  .cmd pre,
+  .cmd > code {
+    scrollbar-width: none;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent);
+  }
+  .cmd pre::-webkit-scrollbar {
+    display: none;
+  }
+  .cmd > code {
+    mask-image: none;
+  }
+  .cmd pre {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    overflow-x: auto;
+  }
+  .cmd pre code {
+    white-space: pre;
+    overflow-wrap: normal;
+  }
+  .copy {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: var(--border);
+    color: var(--foreground);
+    border: 1px solid var(--edge);
+    border-radius: 10px;
+    transition:
+      border-color 0.2s,
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .copy svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .copy .i-done {
+    display: none;
+  }
+  .copy.done {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--background);
+  }
+  .copy.done .i-copy {
+    display: none;
+  }
+  .copy.done .i-done {
+    display: block;
+  }
+  .copy:hover,
+  .copy:focus-visible {
+    border-color: var(--primary);
+  }
+  .hint code {
+    font-size: 14.5px;
+    color: var(--foreground);
+    white-space: nowrap;
+  }
+
+  /* Tabs, and the screenshot switcher: the chosen one is filled. */
+  .tab {
+    background: none;
+    border: 0;
+    color: var(--muted-foreground);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .tab[aria-selected="true"] {
+    background: var(--border);
+    color: var(--foreground);
+  }
+  .chip-button {
+    background: var(--card);
+    border: 1px solid var(--edge);
+    border-radius: 999px;
+    color: var(--foreground);
+    padding: 9px 20px;
+    font-weight: 600;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s,
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .chip-button:hover,
+  .chip-button:focus-visible {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .chip-button:active {
+    transform: scale(0.97);
+  }
+  .chip-button[aria-pressed="true"] {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--background);
+  }
+
+  /* A list with ticks; the release line gets a dot. */
+  .ticks li::before {
+    content: "✓";
+    color: var(--primary);
+    font-weight: 700;
+    margin-right: 8px;
+  }
+  .ticks li[data-release]::before {
+    content: "●";
+    font-size: 10px;
+    vertical-align: 2px;
+  }
+
+  /* Numbered steps: the number sits in an ice circle. */
+  .steps {
+    counter-reset: step;
+  }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 20px 20px 20px 76px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--background);
+    font-weight: 800;
+  }
+  .steps li:hover {
+    transform: translateX(6px);
+    border-color: var(--edge);
+  }
+
+  /* The screenshots: a picture on a tilted card. ScreenshotsSection slides the next one in on a layer. */
+  .screen-stack > img {
+    position: relative;
+    display: block;
+    width: 100%;
+    border: 2px solid var(--primary);
+    border-radius: 14px;
+    transform: rotate(3deg);
+    box-shadow: var(--shadow-glow);
+  }
+  .screen-stack > img.screen-next {
+    position: absolute;
+    top: 24px;
+    left: 20px;
+    width: calc(100% - 40px);
+    opacity: 0;
+    pointer-events: none;
+    translate: 9% 0;
+    scale: 0.94;
+  }
+  .screen-stack > img.screen-next.show {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    transition:
+      opacity 0.35s ease,
+      translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+      scale 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .screen-stack > #screen {
+    transition:
+      opacity 0.45s ease,
+      translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+      scale 0.6s ease;
+  }
+  .screen-stack > #screen.leaving {
+    opacity: 0.15;
+    translate: -7% 0;
+    scale: 0.94;
+  }
+  .screen-stack.swing .screen-back {
+    animation: swing 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .screen-stack > img.screen-next {
+      translate: none;
+      scale: none;
+    }
+  }
+  .screen-back {
+    position: absolute;
+    inset: 0 30px 40px 0;
+    border: 2px solid var(--blue);
+    border-radius: 16px;
+    transform: rotate(-5deg);
+  }
+  /* The Home of the themes section, tilted until you point at it. */
+  .theme-shot {
+    rotate: 2deg;
+  }
+
+  /* The Home demo: the launcher's Home in a 16:9 frame. Sizes are in cqw, a hundredth of the
+     frame's width, so it scales as one picture. HomeDemo sets --a, the focused game's
+     colour, on the frame. On a phone the frame grows taller and the cards scroll. */
+  .demo {
+    position: relative;
+    container-type: inline-size;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 2px solid var(--primary);
+    border-radius: 18px;
+    background: #070b14;
+    box-shadow: var(--shadow-glow);
+    color: var(--foreground);
+  }
+  .demo-bg {
+    position: absolute;
+    inset: -4%;
+    background:
+      radial-gradient(ellipse at 75% 30%, color-mix(in srgb, var(--a, #4c8bdc) 45%, transparent), transparent 60%),
+      linear-gradient(90deg, rgba(7, 11, 20, 0.92) 25%, rgba(7, 11, 20, 0.35)),
+      url("/assets/screen-home.webp") 50% 0 / 260% auto;
+    filter: blur(12px) saturate(1.1);
+    transition: background 0.5s ease;
+  }
+  .demo-bar {
+    position: absolute;
+    top: 3.5cqw;
+    right: 4cqw;
+    left: 4cqw;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2.4cqw;
+  }
+  .demo-icons {
+    display: flex;
+    gap: 2.2cqw;
+  }
+  .demo-icons svg {
+    width: 1.7cqw;
+    height: 1.7cqw;
+    fill: none;
+    stroke: var(--foreground);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .demo-clock {
+    font-size: 1.9cqw;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  /* The download in the top bar: the game, the share done, and a bar. */
+  .demo-download {
+    display: grid;
+    gap: 0.5cqw;
+    min-width: 17cqw;
+    margin-right: auto;
+    padding: 0.8cqw 1.4cqw;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 1.3cqw;
+    font-weight: 600;
+  }
+  /* A long title ends in "…" so the pill keeps one line. */
+  .demo-download > :first-child {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .demo-meter {
+    display: block;
+    height: 0.35cqw;
+    min-height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+  }
+  .demo-meter > span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--primary);
+    transform-origin: left;
+    transform: scaleX(var(--done, 0));
+    transition: transform 0.2s linear;
+  }
+  .demo-info {
+    position: absolute;
+    top: 13cqw;
+    left: 5cqw;
+    right: 40cqw;
+  }
+  .demo-system {
+    font-size: 1.4cqw;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  /* Real titles can be long: two lines at most, above the row. */
+  .demo-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin-top: 0.6cqw;
+    font-size: 3.6cqw;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .demo-fact {
+    margin-top: 1.2cqw;
+    font-size: 1.6cqw;
+    color: var(--primary);
+  }
+  .demo-row {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6.5cqw;
+    display: flex;
+    gap: 1.8cqw;
+    padding: 4.5cqw 5cqw 2.5cqw;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+  .demo-row::-webkit-scrollbar {
+    display: none;
+  }
+  .demo-row:focus-visible {
+    outline: none;
+  }
+  /* A game's cover, with the system's badge on it. The cover keeps its middle at 3:4. */
+  .demo-card {
+    position: relative;
+    flex: none;
+    width: 12cqw;
+    aspect-ratio: 3 / 4;
+    border-radius: 1.2cqw;
+    background: #0b1020;
+    box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.45);
+    scroll-snap-align: center;
+    cursor: pointer;
+    transform-origin: bottom center;
+    transition:
+      scale 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.25s ease,
+      opacity 0.25s ease;
+    opacity: 0.78;
+  }
+  .demo-card[aria-selected="true"] {
+    scale: 1.18;
+    opacity: 1;
+    z-index: 1;
+    box-shadow:
+      0 0 0 0.3cqw #fff,
+      0 0 2.5cqw rgba(130, 216, 245, 0.55);
+  }
+  /* The focus ring is the selected card's, brighter, while the row has the keyboard focus. */
+  .demo-row:focus-visible .demo-card[aria-selected="true"] {
+    box-shadow:
+      0 0 0 0.35cqw var(--primary),
+      0 0 3cqw rgba(130, 216, 245, 0.8);
+  }
+  .demo-card[data-state="get"] {
+    filter: grayscale(0.6);
+  }
+  .demo-badge {
+    position: absolute;
+    top: 0.8cqw;
+    right: 0.8cqw;
+    padding: 0.1cqw 0.7cqw;
+    border-radius: 0.6cqw;
+    background: rgba(7, 11, 20, 0.7);
+    font-size: 0.95cqw;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .demo-cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+  }
+  .demo-hints {
+    position: absolute;
+    right: 4cqw;
+    bottom: 2.2cqw;
+    display: flex;
+    gap: 2cqw;
+    padding: 0.6cqw 1.6cqw;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 1.25cqw;
+  }
+  .demo-hints kbd {
+    font-size: 1.1cqw;
+  }
+  .demo-hints .on {
+    color: var(--primary);
+  }
+  /* The keyboard focus is on the row, whose cards are only drawn: the frame shows it. */
+  .demo:has(.demo-row:focus-visible) {
+    outline: 3px solid var(--primary);
+    outline-offset: 5px;
+  }
+  /* A tablet, or a phone on its side: a taller frame, so the cards and their words can be
+     larger, and the row scrolls. */
+  @media (601px <= width < 961px) {
+    .demo {
+      aspect-ratio: 4 / 3;
+    }
+    .demo-icons svg {
+      width: 2.6cqw;
+      height: 2.6cqw;
+    }
+    .demo-clock {
+      font-size: 2.8cqw;
+    }
+    .demo-download {
+      min-width: 30cqw;
+      font-size: 2.2cqw;
+    }
+    .demo-info {
+      top: 15cqw;
+      right: 8cqw;
+    }
+    .demo-system {
+      font-size: 2.2cqw;
+    }
+    .demo-title {
+      font-size: 5.4cqw;
+    }
+    .demo-fact {
+      font-size: 2.5cqw;
+    }
+    .demo-row {
+      bottom: 8cqw;
+      gap: 2.5cqw;
+      padding: 6cqw 5cqw 3cqw;
+    }
+    .demo-card {
+      width: 19cqw;
+      border-radius: 1.8cqw;
+    }
+    .demo-badge {
+      top: 1.3cqw;
+      right: 1.3cqw;
+      padding: 0.2cqw 1cqw;
+      border-radius: 0.9cqw;
+      font-size: 1.6cqw;
+    }
+    .demo-hints {
+      bottom: 2.5cqw;
+      font-size: 2cqw;
+    }
+    .demo-hints kbd {
+      font-size: 1.8cqw;
+    }
+  }
+  @media (width < 601px) {
+    .demo {
+      aspect-ratio: auto;
+      height: 118cqw;
+    }
+    .demo-bar {
+      top: 5cqw;
+      gap: 4cqw;
+    }
+    .demo-icons {
+      display: none;
+    }
+    .demo-clock {
+      font-size: 4cqw;
+    }
+    .demo-download {
+      min-width: 52cqw;
+      padding: 2cqw 4cqw;
+      gap: 1.5cqw;
+      font-size: 3.4cqw;
+    }
+    .demo-info {
+      top: 22cqw;
+      right: 5cqw;
+    }
+    .demo-system {
+      font-size: 3.2cqw;
+    }
+    .demo-title {
+      -webkit-line-clamp: 3;
+      font-size: 8.5cqw;
+    }
+    .demo-fact {
+      font-size: 3.8cqw;
+    }
+    .demo-row {
+      bottom: 3cqw;
+      gap: 4cqw;
+      padding: 8cqw 6cqw 5cqw;
+    }
+    .demo-card {
+      width: 30cqw;
+      border-radius: 3cqw;
+    }
+    .demo-card[aria-selected="true"] {
+      scale: 1.1;
+    }
+    .demo-badge {
+      top: 2cqw;
+      right: 2cqw;
+      padding: 0.3cqw 1.6cqw;
+      border-radius: 1.4cqw;
+      font-size: 2.4cqw;
+    }
+    .demo-hints {
+      display: none;
+    }
+  }
+
+  /* The theme file, coloured as an editor would. */
+  .editor i {
+    font-style: normal;
+    color: #9cc0ff;
+  }
+  .editor s {
+    text-decoration: none;
+    color: #a6e3b8;
+  }
+  .editor u {
+    text-decoration: none;
+    color: #f0a5d8;
+  }
+  .editor em {
+    font-style: normal;
+    color: #5f7f99;
+  }
+  .sw {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+    vertical-align: -1px;
+    border-radius: 3px;
+    background: var(--c);
+    box-shadow: 0 0 10px var(--c);
+  }
+
+  /* The controller drawing: line art in the theme's colours. Its parts are SVG, styled by class;
+     ControllerSection lights .b and .call. --pad-line draws the lines, --pad-body fills the shell and the
+     keys, --pad-core fills the dark middle, and --pad-on-core draws what sits on it. */
+  .gamepad {
+    --pad-line: var(--muted-foreground);
+    --pad-body: var(--card);
+    --pad-core: var(--ink);
+    --pad-on-core: var(--muted-foreground);
+  }
+  .gamepad {
+    @variant light {
+      --pad-line: var(--foreground);
+      --pad-core: var(--foreground);
+      --pad-on-core: var(--card);
+    }
+  }
+  .gamepad svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .gamepad .body {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .gamepad .shell,
+  .gamepad .trim {
+    fill: var(--pad-body);
+    stroke: var(--pad-line);
+    stroke-width: 2.6;
+  }
+  .gamepad .shell {
+    filter: drop-shadow(0 18px 24px color-mix(in srgb, var(--ink) 40%, transparent));
+  }
+  .gamepad .trim {
+    stroke-width: 2;
+  }
+  .gamepad .fill {
+    fill: var(--pad-body);
+  }
+  .gamepad:focus-visible .shell,
+  .gamepad.live .shell {
+    stroke: var(--primary);
+  }
+  .gamepad .pad-face {
+    fill: var(--pad-body);
+    stroke: var(--pad-line);
+    stroke-width: 2;
+  }
+  .gamepad .core {
+    fill: var(--pad-core);
+    stroke: var(--pad-line);
+    stroke-width: 1.2;
+  }
+  .gamepad .speaker,
+  .gamepad .mute {
+    fill: var(--pad-on-core);
+  }
+  .gamepad .stick-ring {
+    fill: var(--pad-on-core);
+  }
+  .gamepad .cap {
+    fill: var(--pad-body);
+    stroke: var(--pad-core);
+    stroke-width: 5.5;
+  }
+  .gamepad .b {
+    cursor: pointer;
+  }
+  .gamepad .b .k {
+    fill: var(--pad-body);
+    stroke: var(--pad-line);
+    stroke-width: 2;
+    transition:
+      fill 0.12s,
+      stroke 0.12s;
+  }
+  .gamepad .b .k.trig,
+  .gamepad .b .k.bump {
+    fill: var(--pad-core);
+    stroke-width: 2.6;
+  }
+  .gamepad .b .k.cap {
+    stroke: var(--pad-core);
+    stroke-width: 5.5;
+  }
+  .gamepad .b .k.dk {
+    stroke: none;
+  }
+  .gamepad [data-part="home"] .k {
+    fill: var(--pad-core);
+    stroke: var(--pad-on-core);
+  }
+  .gamepad .ink {
+    fill: var(--pad-line);
+    fill-rule: evenodd;
+    transition: fill 0.12s;
+  }
+  .gamepad .g {
+    fill: none;
+    stroke: var(--pad-line);
+    stroke-width: 2;
+    transition: stroke 0.12s;
+  }
+  .gamepad [data-part="create"] .g,
+  .gamepad [data-part="options"] .g {
+    stroke-width: 1;
+  }
+  .gamepad .b:hover .k {
+    stroke: var(--primary);
+  }
+  .gamepad .b.on .k,
+  .gamepad .b.on .k.cap,
+  .gamepad .b.on .k.trig,
+  .gamepad .b.on .k.bump {
+    fill: var(--primary);
+  }
+  .gamepad .b.on .k:not(.cap, .dk) {
+    stroke: var(--primary);
+  }
+  .gamepad .b.on .ink {
+    fill: var(--background);
+  }
+  .gamepad .b.on .g {
+    stroke: var(--background);
+  }
+  /* The lines from each button to what it does. */
+  .gamepad .call {
+    pointer-events: none;
+  }
+  .gamepad .call polyline {
+    fill: none;
+    stroke: var(--edge);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+    transition: stroke 0.15s;
+  }
+  .gamepad .call circle {
+    fill: var(--primary);
+    stroke: var(--background);
+    stroke-width: 1;
+  }
+  .gamepad .call text {
+    font: 15px var(--font-sans);
+  }
+  .gamepad .call .cn {
+    fill: var(--foreground);
+    font-weight: 700;
+  }
+  .gamepad .call .cw {
+    fill: var(--muted-foreground);
+    font-size: 13.5px;
+  }
+  .gamepad .call .ck {
+    fill: var(--muted-foreground);
+    fill-opacity: 0.75;
+    /* At 0.75 the light theme's muted falls under 4.5:1 on the haze; 0.9 keeps it over 5:1. */
+    @variant light {
+      fill-opacity: 0.9;
+    }
+  }
+  .gamepad .call.on polyline {
+    stroke: var(--primary);
+    stroke-dasharray: none;
+    stroke-width: 1.6;
+  }
+  .gamepad .call.on .cn {
+    fill: var(--primary);
+  }
+  .gamepad .call.on .cw {
+    fill: var(--foreground);
+  }
+  /* On a tablet or a phone the labels get too small: the list below says it instead, and the
+     controller fills the width (the picture is cut to it). */
+  @media (width < 961px) {
+    .gamepad {
+      overflow: hidden;
+    }
+    .gamepad .calls {
+      display: none;
+    }
+    .gamepad svg {
+      width: 230%;
+      max-width: none;
+      margin: -15% 0 -19% -65%;
+    }
+  }
+  .keys > div.on {
+    border-color: var(--primary);
+    background: var(--accent);
+  }
+  kbd {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 0 6px;
+    border-radius: 6px;
+    border: 1px solid var(--edge);
+    font: 600 12px/1.6 var(--font-sans);
+    color: var(--muted-foreground);
+    background: var(--muted);
+  }
+
+  /* A fold animates its height: the grid row goes from 0fr to 1fr. */
+  .fold {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.3s ease;
+  }
+  .fold.open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .fold-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+  .chev {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: rotate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .repos-toggle {
+    padding-right: 56px;
+  }
+  .chev-ring {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--edge);
+    background: var(--muted);
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+  }
+  .repos-toggle[aria-expanded="true"] {
+    border-color: var(--primary);
+  }
+  .repos-toggle[aria-expanded="true"] .chev-ring {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  .repos-toggle[aria-expanded="true"] .chev {
+    stroke: var(--background);
+    rotate: 180deg;
+  }
+  .repo {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--card);
+    transition:
+      border-color 0.25s,
+      background-color 0.25s;
+  }
+  .repo:hover {
+    border-color: #2c5272;
+  }
+  .repo[data-state="open"] {
+    border-color: var(--edge);
+    background: linear-gradient(160deg, var(--card-hi), var(--card));
+  }
+  .repo[data-state="open"] .repo-head .chev {
+    rotate: 180deg;
+  }
+
+  /* Marah OS's checksums: a command, or a file's name and its SHA-256, which wrap anywhere. */
+  .sum-cmd code,
+  .sum-hash {
+    font: 14px/1.5 var(--font-mono);
+    color: var(--foreground);
+    overflow-wrap: anywhere;
+  }
+  .sum-hash {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--muted);
+    font-size: 13px;
+  }
+
+  /* Will it run: a fact card as a game's page draws it, and one verdict of This PC a line. */
+  .fact {
+    display: grid;
+    gap: 2px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--muted);
+  }
+  .fact-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .fact-value {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--primary);
+  }
+  .verdict {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: var(--muted);
+    font-size: 14px;
+  }
+  .verdict > :first-child {
+    flex: none;
+    width: 34px;
+  }
+  /* The level as a mark too: filled for "Should run well", a ring for "May run slowly", a cross
+     for "Won't start". The words say it as well, so the mark is only for the eye. */
+  .verdict-text::before {
+    display: inline-block;
+    width: 1.2em;
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .verdict[data-level="good"] .verdict-text::before {
+    content: "●" / "";
+  }
+  .verdict[data-level="slow"] .verdict-text::before {
+    content: "◐" / "";
+  }
+  .verdict[data-level="no"] .verdict-text::before {
+    content: "✕" / "";
+    color: var(--muted-foreground);
+  }
+
+  /* The comparison table: one row a question, the launcher's answer, the OS's answer. */
+  .compare {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 560px;
+  }
+  .compare th,
+  .compare td {
+    padding: 16px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .compare thead th {
+    font-size: 18px;
+  }
+  .compare tbody th {
+    font-weight: 600;
+    color: var(--muted-foreground);
+    width: 30%;
+  }
+  .compare tfoot td {
+    border-bottom: 0;
+    padding-top: 24px;
+  }
+  .compare tbody td:nth-child(3),
+  .compare thead th:nth-child(3) {
+    background: rgba(130, 216, 245, 0.05);
+  }
+  /* On a phone the table's buttons move under it: a column is too narrow for them. */
+  @media (width < 601px) {
+    .compare {
+      min-width: 0;
+      font-size: 14px;
+    }
+    .compare th,
+    .compare td {
+      padding: 12px 8px;
+    }
+    .compare tbody th {
+      width: 28%;
+    }
+    .compare tfoot {
+      display: none;
+    }
+  }
+
+  /* A question that opens: its answer slides out (a fold), and the plus turns into a cross. */
+  .qa {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--card);
+    margin-bottom: 12px;
+    transition:
+      border-color 0.2s,
+      background-color 0.25s;
+  }
+  .qa:hover,
+  .qa[data-state="open"] {
+    border-color: var(--edge);
+  }
+  .qa[data-state="open"] {
+    background: linear-gradient(160deg, var(--card-hi), var(--card));
+  }
+  .qa-head {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    border-radius: 16px;
+    text-align: left;
+    font: inherit;
+    font-weight: 700;
+    color: var(--foreground);
+  }
+  .qa-head::after {
+    content: "";
+    flex: none;
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background:
+      linear-gradient(var(--primary), var(--primary)) center / 100% 2px no-repeat,
+      linear-gradient(var(--primary), var(--primary)) center / 2px 100% no-repeat;
+  }
+  .qa[data-state="open"] .qa-head::after {
+    transform: rotate(45deg);
+  }
+  .qa p {
+    margin: 0;
+    padding: 0 22px 18px;
+    color: var(--muted-foreground);
+  }
+
+  /* The header's blur sits on a layer behind it: a backdrop-filter on the header itself would
+     hold the menu's fixed panel inside the header's box. */
+  .site-header {
+    /* Below a phone's status bar or notch; the header's background still fills behind it. */
+    padding-top: var(--safe-top);
+    border-bottom: 1px solid var(--border);
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  .site-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--night) 85%, transparent);
+    backdrop-filter: blur(14px);
+    transition: opacity 0.3s ease;
+  }
+  /* At the top of the page the header is see-through; once the page scrolls, it is a thin bar
+     with its background, its border and a shadow (the app and the head script set the class). */
+  .hdr-top .site-header {
+    border-bottom-color: transparent;
+  }
+  .hdr-top .site-header::before {
+    opacity: 0;
+  }
+  .hdr-scrolled .site-header {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+  /* The thin bar's contents are smaller too: the links and the Download button. In the folded
+     menu (#nav on a tablet or a phone) the links keep their own size. */
+  .site-header .nav-link,
+  .site-header .cta.small {
+    transition:
+      font-size 0.3s ease,
+      padding 0.3s ease,
+      transform 0.2s ease;
+  }
+  .hdr-scrolled .site-header .nav-link {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+  .hdr-scrolled .site-header .cta.small {
+    font-size: 14px;
+    padding: 7px 16px;
+  }
+
+  /* On a tablet or a phone, with the script, the header's links fold into the menu (a Sheet
+     that slides in from the right over a dimmed page). Without the script they stay in the header. */
+  @media (width < 961px) {
+    .js .menu {
+      display: block;
+      order: 3;
+    }
+    .js #nav {
+      display: none;
+    }
+  }
+
+  /* The menu's panel. Its width, gap, shadow and border colour are utilities on SheetContent. */
+  .menu-panel {
+    padding: calc(22px + var(--safe-top)) calc(18px + var(--safe-right)) calc(24px + var(--safe-bottom)) 18px;
+    overflow-y: auto;
+    background-image: linear-gradient(180deg, var(--card-hi), var(--night) 60%);
+    font-size: 16px;
+  }
+  .menu-panel .nav-title {
+    margin: 6px 0 14px 16px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    line-height: 1.6;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  .menu-panel .nav-close {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    top: calc(16px + var(--safe-top));
+    right: calc(16px + var(--safe-right));
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--foreground);
+  }
+  .menu-panel .nav-close:hover,
+  .menu-panel .nav-close:focus-visible {
+    border-color: var(--primary);
+  }
+  .menu-panel .nav-link {
+    font-size: 18px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    transition: background-color 0.2s;
+  }
+  .menu-panel .nav-link::after {
+    display: none;
+  }
+  .menu-panel .nav-link:hover,
+  .menu-panel .nav-link:focus-visible {
+    background: var(--card);
+  }
+  /* The links come in one after another as the panel opens. */
+  .menu-panel[data-state="open"] .nav-link {
+    animation: menu-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+  .menu-panel[data-state="open"] .nav-link:nth-of-type(2) {
+    animation-delay: 0.04s;
+  }
+  .menu-panel[data-state="open"] .nav-link:nth-of-type(3) {
+    animation-delay: 0.08s;
+  }
+  .menu-panel[data-state="open"] .nav-link:nth-of-type(4) {
+    animation-delay: 0.12s;
+  }
+  .menu-panel[data-state="open"] .nav-link:nth-of-type(5) {
+    animation-delay: 0.16s;
+  }
+  .menu-panel[data-state="open"] .nav-link:nth-of-type(6) {
+    animation-delay: 0.2s;
+  }
+  .menu-panel .nav-extra {
+    display: grid;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .menu-panel .nav-extra .btn-outline {
+    gap: 10px;
+  }
+}
+
+@layer components {
+  /* The light theme's own versions of the colours above that are not tokens. */
+  .cta {
+    @variant light {
+      border-color: var(--primary);
+      box-shadow: 0 6px 18px rgba(10, 101, 160, 0.25);
+    }
+  }
+  .btn-outline {
+    @variant light {
+      border-color: var(--edge);
+      background: rgba(255, 255, 255, 0.6);
+    }
+  }
+  .btn-outline:hover,
+  .btn-outline:focus-visible {
+    @variant light {
+      border-color: var(--primary);
+    }
+  }
+  .platform {
+    @variant light {
+      background:
+        linear-gradient(var(--card), var(--card-hi)) padding-box,
+        linear-gradient(125deg, var(--primary), var(--blue)) border-box;
+    }
+  }
+  .repo:hover {
+    @variant light {
+      border-color: var(--edge);
+    }
+  }
+  .hdr-scrolled .site-header {
+    @variant light {
+      box-shadow: 0 10px 30px rgba(13, 25, 38, 0.12);
+    }
+  }
+}

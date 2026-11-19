@@ -1,0 +1,164 @@
+/* Motion. All of it moves only transform, translate, scale and opacity, so the browser
+   doesn't lay the page out again. With prefers-reduced-motion: reduce, none of it runs. */
+@keyframes bob {
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+}
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+@keyframes pop {
+  from {
+    scale: 0.92;
+  }
+}
+@keyframes float {
+  50% {
+    translate: 0 -8px;
+  }
+}
+@keyframes glow {
+  50% {
+    opacity: 0.6;
+    scale: 1.12;
+  }
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    translate: 24px 0;
+  }
+}
+@keyframes swing {
+  40% {
+    rotate: -5deg;
+    translate: -14px 6px;
+  }
+}
+
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Hero: the copy comes in line by line. The mascot is the largest picture, so it never
+       starts hidden: it only grows a little. */
+    .hero-copy > * {
+      animation: enter 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    }
+    .hero-copy > :nth-child(2) {
+      animation-delay: 0.08s;
+    }
+    .hero-copy > :nth-child(3) {
+      animation-delay: 0.16s;
+    }
+    .hero-copy > :nth-child(4) {
+      animation-delay: 0.24s;
+    }
+    .mascot {
+      animation: bob 5s ease-in-out infinite;
+    }
+    .mascot-wrap {
+      animation: pop 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    }
+    .mascot-glow {
+      animation: glow 5s ease-in-out infinite;
+    }
+    .preview {
+      animation: enter 0.7s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    }
+    .preview-frame {
+      animation: float 7s 1s ease-in-out infinite;
+    }
+    .screen-back {
+      transition: transform 0.5s ease;
+    }
+    .screen-stack:hover .screen-back {
+      transform: rotate(-7deg);
+    }
+    .theme-shot {
+      transition:
+        rotate 0.5s ease,
+        translate 0.5s ease;
+    }
+    .theme-art:hover .theme-shot {
+      rotate: 0deg;
+      translate: 0 -6px;
+    }
+
+    /* Scroll reveal. The head script adds .reveal; v-reveal adds .in when a part comes into view. */
+    .reveal [data-reveal]:not(.in),
+    .reveal [data-stagger]:not(.in) > * {
+      opacity: 0;
+    }
+    .reveal [data-reveal].in,
+    .reveal [data-stagger].in > * {
+      animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+      animation-delay: calc(var(--i, 0) * 90ms);
+    }
+    [data-stagger] > :nth-child(2) {
+      --i: 1;
+    }
+    [data-stagger] > :nth-child(3) {
+      --i: 2;
+    }
+    [data-stagger] > :nth-child(4) {
+      --i: 3;
+    }
+    [data-stagger] > :nth-child(5) {
+      --i: 4;
+    }
+    [data-stagger] > :nth-child(6) {
+      --i: 5;
+    }
+  }
+}
+
+/* Back to top: a round button in the bottom corner, clear of a phone's home bar. It shows once
+   the page is a screen down (`far-down`, set by the script). */
+@layer components {
+  .back-to-top {
+    position: fixed;
+    right: calc(20px + var(--safe-right));
+    bottom: calc(20px + var(--safe-bottom));
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--foreground);
+    border: 1px solid var(--border-hi);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 12px;
+    transition:
+      opacity 0.25s ease,
+      translate 0.25s ease,
+      visibility 0.25s,
+      background-color 0.2s ease;
+  }
+  .far-down .back-to-top {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+  .back-to-top:hover,
+  .back-to-top:focus-visible {
+    background: var(--border-hi);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .back-to-top {
+      transition: none;
+    }
+  }
+}
