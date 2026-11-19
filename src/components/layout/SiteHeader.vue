@@ -1,8 +1,10 @@
 <script setup lang="ts">
 // The header: the logo, the links, the dark or light switch, GitHub and Download. On a tablet or
 // a phone, with JavaScript, the links move into a menu that slides in from the right (a Sheet);
-// without it they stay in the header. On a phone the switch is in the menu.
+// without it they stay in the header. The menu also holds the switch, GitHub and Download, so the
+// header hides them while the menu is there.
 import { onMounted, onUnmounted, ref } from "vue";
+import DownloadIcon from "@/components/icons/DownloadIcon.vue";
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import ThemeSwitch from "./ThemeSwitch.vue";
 import { Button } from "@/components/ui/button";
@@ -81,11 +83,26 @@ onUnmounted(() => wide?.removeEventListener("change", closeWhenWide));
             </a>
           </nav>
           <div class="nav-extra">
-            <ThemeSwitch with-words />
-            <Button as="a" href="#download" @click="menuOpen = false">Download Marah Launcher</Button>
-            <Button as="a" variant="outline" :href="links.org">
+            <ThemeSwitch in-menu />
+            <Button
+              as="a"
+              size="icon"
+              href="#download"
+              aria-label="Download Marah Launcher"
+              title="Download Marah Launcher"
+              @click="menuOpen = false"
+            >
+              <DownloadIcon />
+            </Button>
+            <Button
+              as="a"
+              variant="outline"
+              size="icon"
+              :href="links.org"
+              aria-label="MarahHQ on GitHub"
+              title="MarahHQ on GitHub"
+            >
               <GitHubIcon />
-              <span>MarahHQ on GitHub</span>
             </Button>
           </div>
         </SheetContent>
@@ -96,13 +113,13 @@ onUnmounted(() => wide?.removeEventListener("change", closeWhenWide));
       <div class="flex items-center gap-4 max-lg:gap-2">
         <ThemeSwitch />
         <a
-          class="grid size-11 place-items-center rounded-full bg-border text-foreground transition-[background-color,translate,width,height] duration-200 hover:-translate-y-0.5 hover:bg-border-hi focus-visible:-translate-y-0.5 focus-visible:bg-border-hi in-[.hdr-scrolled]:size-9 max-sm:hidden"
+          class="grid size-11 place-items-center rounded-full bg-border text-foreground transition-[background-color,translate,width,height] duration-200 hover:-translate-y-0.5 hover:bg-border-hi focus-visible:-translate-y-0.5 focus-visible:bg-border-hi in-[.hdr-scrolled]:size-9 max-md:in-[.js]:hidden max-sm:hidden"
           :href="links.org"
         >
           <GitHubIcon :size="22" />
           <span class="sr-only">MarahHQ on GitHub</span>
         </a>
-        <Button as="a" size="small" class="max-sm:hidden" href="#download">Download</Button>
+        <Button as="a" size="small" class="max-md:in-[.js]:hidden max-sm:hidden" href="#download">Download</Button>
       </div>
     </div>
   </header>
