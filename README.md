@@ -1,115 +1,169 @@
-# marahhq.github.io
+# Marah site
 
-The Marah site, built with Vue 3, shadcn-vue and Tailwind CSS 4. vite-ssg renders each page to
-static HTML at build time, and the same Vue app then hydrates that HTML in the browser. A GitHub
-Actions workflow builds it, checks it in a browser, and publishes `dist/` to GitHub Pages on each
-push to `main`.
+The source of [marahhq.github.io](https://marahhq.github.io), the home page of Marah Launcher and
+Marah OS. The page shows what the launcher does, which PCs it runs on, and where to download the
+latest release of each.
 
-## Work on it
+![The site's share card: the logo, "All your games. One launcher." and the launcher's home screen](public/assets/og.png)
 
-You need Node.js 24, and Chrome for the browser checks.
+The picture above is the site's share card (`public/assets/og.png`), not a screenshot of the page.
+To see the page, open [marahhq.github.io](https://marahhq.github.io).
+
+## Run it locally
+
+You need Node.js 24 (the version the workflow uses) and Git. The browser tests also need Google
+Chrome or Chromium on your `PATH`. Without it, `npm test` skips them.
 
 ```sh
-npm ci                # the exact versions of package-lock.json
-npm run dev           # a live preview while you edit (rendered in the browser only)
-npm run build         # dist/: the site as GitHub Pages serves it
-npm test              # the checks, on dist/ (they need Chrome for the browser part)
-npm run check         # type check, ESLint, Prettier, build, then test: what CI runs
-npm run format        # Prettier, which also sorts the Tailwind classes
+git clone https://github.com/MarahHQ/marahhq.github.io
+cd marahhq.github.io
+npm ci
+npm run dev
 ```
 
-## The stack
+`npm run dev` starts Vite's live preview. It renders the page in the browser only. To see the
+prerendered HTML that GitHub Pages serves, run `npm run build`, then `npm run preview`.
 
-- **Vite and Vue 3**, with `<script setup lang="ts">` and TypeScript in strict mode.
-- **vite-ssg** prerenders `/` to `index.html` and `/404` to `404.html`. A visitor without
-  JavaScript, a search engine and a link preview get the whole page as HTML.
-- **shadcn-vue** on Reka UI: its CLI copied `Button`, `Accordion`, `Tabs` and `Sheet` into
-  `src/components/ui/`. They are our code now, restyled to the site's look. Add another with
-  `npx shadcn-vue@latest add <name>` (`components.json` has the settings). The state variants
-  they use (`data-open:` and the rest) are a copy in `src/styles/shadcn.css`, so the build doesn't
-  need the CLI's package.
-- **Tailwind CSS 4**, through `@tailwindcss/vite`.
-- **@unhead/vue** writes each page's title, description, canonical and Open Graph tags.
+## Commands
 
-## Files
+| Command                | What it does                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------- |
+| `npm run dev`          | Starts a live preview that reloads as you edit.                                       |
+| `npm run build`        | Builds the site into `dist/` with vite-ssg.                                           |
+| `npm run preview`      | Serves `dist/` on a local server.                                                     |
+| `npm test`             | Runs the tests on `dist/`. Run `npm run build` first.                                 |
+| `npm run typecheck`    | Checks the types with `vue-tsc`.                                                      |
+| `npm run lint`         | Runs ESLint.                                                                          |
+| `npm run format`       | Formats every file with Prettier. Prettier also sorts the Tailwind classes.           |
+| `npm run format:check` | Fails if a file is not formatted.                                                     |
+| `npm run check`        | Runs `typecheck`, `lint`, `format:check`, `build`, then `test`. The workflow runs it. |
 
-- `index.html`: the head both pages share. Its first script sets the theme, dark or light,
-  before the first paint: the visitor's choice, else the system's setting. It also marks the
-  page for the scroll reveal and the header's state.
-- `src/main.ts`, `src/routes.ts`, `src/App.vue`: the app, its two pages, and the root. `App.vue`
-  marks the page as live once it runs (`useHydrated`).
-- `src/pages/`: `HomePage.vue` lists the sections in order and sets the head tags;
-  `NotFoundPage.vue` is the page for a missing address. Its paths start with `/`, because it is
-  served at any depth.
-- `src/layouts/SiteLayout.vue`: the skip link, the header, `main`, the footer and Back to top.
-- `src/content/`: the words and lists of the page, one file per section. Change the text here;
-  the components only lay it out. A string that holds a link or `<code>` is HTML, shown by
-  `RichText`.
-- `src/components/`:
-  - `sections/`: one component per section, from `HeroSection` to `FaqSection`, with the parts
-    only one section uses: `HomeDemo` (the small live Home) and `ControllerDrawing` (the SVG).
-  - `layout/`: the header (with the phone's menu), the footer, the theme switch, Back to top.
-  - `common/`: `CopyButton`, `CommandBlock`, `CodeCard` and `RichText`.
-  - `icons/`: the site's own SVG icons.
-  - `ui/`: the shadcn-vue components.
-- `src/composables/`: the theme (`useTheme`), the latest releases from GitHub (`useReleases`),
-  the header's scroll state, and `useHydrated`.
-- `src/directives/reveal.ts`: `v-reveal`, the fade-up as a part comes into view.
-- `src/lib/`: `cn` (the class helper shadcn-vue's components use) and the "Will it run?"
-  verdicts.
-- `src/style.css`: Tailwind's entry and the theme: the colours as CSS variables in the shadcn
-  format (`--background`, `--foreground`, `--card`, `--primary`, `--muted-foreground` and the
-  rest, plus the site's own: `--night`, `--edge`, `--haze`...), the fonts, the text sizes and the
-  three widths. `src/styles/` holds the base styles, the components and the motion.
-- `public/`: copied as it is, so its URLs never change.
-  - `assets/fonts/`: Ubuntu (`ubuntu-*.woff2`) for all text and Ubuntu Mono
-    (`ubuntu-mono-*.woff2`) for commands and code, under the Ubuntu Font Licence
-    (`UFL-Ubuntu.txt`). Latin-only subsets, with the box-drawing characters, made from
-    google/fonts' TTF files with fontTools (`pyftsubset … --flavor=woff2`).
-  - `assets/logo.svg` (animated) and `logo-static.svg`: the logo. `logo-mark.svg` is the gamepad
-    alone.
-  - `assets/icon-180.png`: the icon for a phone's home screen.
-  - `assets/og.png`: the picture a shared link to the site shows, 1200 by 630.
-  - `assets/mascot.webp`: the mascot.
-  - `assets/screen-*.webp`: screenshots of Marah Launcher, from `docs/screenshots/` in the
-    launcher repository.
-  - `assets/demo/*.webp`: the Home demo's covers, the games' official art, 360 px wide, as the
-    launcher downloads it for each game. They are here to show the launcher.
-- `tests/`: the checks, with Node's own test runner and headless Chrome. No test packages.
+Run `npm run check` before you open a pull request. With Chrome, it takes a few minutes.
 
-## Rules that keep it working
+The tests use Node's own test runner and drive headless Chrome directly, with no test packages.
+The tests are in `tests/site.test.mjs`. The Chrome driver and a small static server are in
+`tests/browser.mjs`.
 
-- **The HTML is the page without JavaScript.** The server renders every panel open, every answer
-  shown, both of the launcher's tabs and all three example PCs, and hides the parts that need the
-  script (`:hidden="!hydrated"`). Once the app runs, it folds them in `onMounted`. A value that
-  only the browser knows (the time, the visitor's system, the stored theme) is set in
-  `onMounted` too, or the hydration doesn't match.
-- **The light theme** goes through the `light` variant: `light:` in the markup, `@variant light`
-  in the CSS. It applies under `[data-theme="light"]`, and also with JavaScript off when the
-  system's setting is light. Write each light rule through it, never with `[data-theme="light"]`
-  alone, or the no-JavaScript case loses it. `dark:` is its opposite. Commands, code and the Home
-  demo stay dark. Each text colour is at least 4.5:1 on each surface in both themes, and a test
-  checks it. The page is written for a desktop first: `max-lg:` is up to 1200 px, `max-md:` up
-  to 960 px, `max-sm:` up to 600 px.
-- **`cn` joins classes and doesn't merge them.** shadcn-vue's default merges clashing Tailwind
-  classes, at about 12 kB (gzip) a page. To change a `ui/` component's look, change its own
-  classes rather than override them from outside.
-- **Whitespace is kept** as written in templates (`whitespace: "preserve"` in `vite.config.ts`):
-  Vue's default would join words around inline elements such as `<kbd>`.
-- **A component's class name** in `src/styles/` must not be a Tailwind utility. `outline` and
-  `collapse` are both utilities. A test checks this.
-- **Utility names** stay whole strings in the templates. Tailwind only finds a class it can read
-  in `src/`, so never build a name in a script.
-- **The controller's SVG** (`ControllerDrawing.vue`) has `<!-- prettier-ignore -->`: Prettier
-  would re-wrap its labels, and spaces inside SVG text show. Each part has a `data-part`
-  (`cross`, `l2`, `dpad-up`, `ls`, `touchpad` and the rest); each line's `data-for` names its
-  part. The drawing is line art after a seeklogo drawing, with its brand logo taken out; a test
-  checks that no shape sits where the logo was.
+## How the site is built and deployed
 
-The facts on the page come from the launcher and OS repositories. Change them there first:
+The site is one Vue 3 app with two pages: `/` and `/404`.
 
-- the keys: `docs/user-guide.md` (here `src/content/controller.ts`);
-- what a PC needs: each emulator's `plugin.toml` (`[requires]`), here
-  `src/content/willItRun.ts`;
-- the words for how a game runs: `crates/core/src/view.rs` and `crates/core/src/hardware.rs`;
-- the OS steps: the Marah OS README.
+1. **Build.** `vite-ssg build` builds the app, then renders each page to static HTML:
+   `dist/index.html` and `dist/404.html`. A search engine, a link preview and a visitor without
+   JavaScript get the whole page as HTML.
+2. **Hydrate.** In the browser, the same Vue app takes over the prerendered HTML. This step is
+   called hydration. After it, the tabs, the menu and the other parts that need a script work.
+3. **Deploy.** The workflow in [`.github/workflows/pages.yml`](.github/workflows/pages.yml) runs
+   `npm run check`, then publishes `dist/` to GitHub Pages. It deploys on each push to `main`. You
+   can also start it by hand from the Actions tab. A pull request gets the same check, without the
+   deploy.
+
+GitHub Pages serves `dist/404.html` for any address that has no page.
+
+## How release data reaches the page
+
+The page has no version numbers in its HTML. In the browser, `src/composables/useReleases.ts` asks
+the GitHub API for the latest release of [marah-launcher](https://github.com/MarahHQ/marah-launcher)
+and [marah-os](https://github.com/MarahHQ/marah-os). It reads each release's tag, date and file
+sizes, and the SHA-256 that GitHub has for each file.
+
+The browser keeps each answer in `localStorage` for one hour. GitHub allows 60 calls an hour for
+each visitor, and this cache keeps the page to two. So a new launcher or Marah OS release shows on
+the page without a rebuild: at once for a new visitor, and within an hour for a visitor who has the
+old release in the cache.
+
+If the page can't read GitHub, it shows "The latest release" in place of the version. The download
+links still work, because they point at GitHub's latest release.
+
+## Where to change things
+
+| To change                               | Edit                                                                      |
+| --------------------------------------- | ------------------------------------------------------------------------- |
+| The words, lists and links of a section | Its file in `src/content/`, for example `src/content/faq.ts`              |
+| The site's title, description and links | `src/content/site.ts`                                                     |
+| The header's links                      | `src/content/nav.ts`                                                      |
+| The order of the sections               | `src/pages/HomePage.vue`                                                  |
+| The layout of a section                 | Its component in `src/components/sections/`                               |
+| A shadcn-vue component                  | Its folder in `src/components/ui/`                                        |
+| The dark theme's colours                | The CSS variables in `src/style.css`                                      |
+| The light theme's colours               | The CSS variables in `src/styles/base.css`                                |
+| The fonts, text sizes and page widths   | `src/style.css`                                                           |
+| Images, fonts and icons                 | `public/assets/`. Vite copies `public/` as it is, so the URLs stay fixed. |
+
+A string in `src/content/` that holds a link or `<code>` is HTML. The `RichText` component shows
+it.
+
+A test checks that each text colour has a contrast of at least 4.5:1 on each surface, in both
+themes. Run `npm run check` after you change a colour.
+
+[docs/how-the-site-works.md](docs/how-the-site-works.md) has the full file map and the rules that
+keep the page working without JavaScript and in both themes. Read it before you change a
+component.
+
+## Add a shadcn-vue component
+
+shadcn-vue is a set of components that its CLI copies into your repo as source. The site's copies
+of `Button`, `Accordion`, `Tabs` and `Sheet` are in `src/components/ui/`. They are our code now,
+restyled to the site's look. `components.json` holds the CLI's settings.
+
+The CLI also changes files that the site keeps as they are. So add a component in five steps:
+
+1. Run the CLI, for example for `badge`:
+
+   ```sh
+   npx shadcn-vue@latest add badge
+   ```
+
+2. Undo the CLI's changes outside the new folder. The CLI adds packages, loosens the pinned
+   versions, and adds a Google Fonts import and base styles to `src/style.css`:
+
+   ```sh
+   git checkout -- package.json package-lock.json src/style.css
+   npm ci
+   ```
+
+3. In the new files, change `import { cn } from 'cn'` to `import { cn } from "@/lib/utils"`.
+4. Run `npm run format`.
+5. Restyle the component with its own classes, then run `npm run check`.
+
+These steps were checked with shadcn-vue 2.9.0. A later CLI can change other files, so check
+`git status` after step 1.
+
+The state variants that the components use (`data-open:`, `data-closed:` and the rest) are a copy
+in `src/styles/shadcn.css`. So the build does not need the CLI's package.
+
+The site's `cn` helper (in `src/lib/utils.ts`) joins class names. It does not merge Tailwind
+classes that clash, because the merge code would add about 12 kB (gzip) to each page. So change a
+component's own classes. Do not override them from outside.
+
+## Conventions
+
+- **TypeScript in strict mode.** Components use `<script setup lang="ts">`. `vue-tsc` checks the
+  types.
+- **Lint and format.** ESLint uses Vue's and typescript-eslint's recommended rules
+  (`eslint.config.mjs`). Prettier formats every file, Markdown too, at 120 characters a line
+  (`.prettierrc.json`).
+- **Commits.** Commit messages follow [Conventional Commits](https://www.conventionalcommits.org),
+  for example `fix: the 404 page follows the light theme`. No tool enforces this.
+- **Exact versions.** `package.json` pins each package to one version. `npm ci` installs the
+  versions in `package-lock.json`.
+
+## Facts from other repositories
+
+Some facts on the page come from the launcher and Marah OS repositories. Change them there first,
+then here.
+
+| Fact on the page                   | Source                                                                        | File here                   |
+| ---------------------------------- | ----------------------------------------------------------------------------- | --------------------------- |
+| The controller's keys              | `docs/user-guide.md` in marah-launcher                                        | `src/content/controller.ts` |
+| What a PC needs for an emulator    | The `[requires]` table in an emulator's `plugin.toml`, in marah-launcher      | `src/content/willItRun.ts`  |
+| The words for how well a game runs | `crates/core/src/view.rs` and `crates/core/src/hardware.rs` in marah-launcher | `src/content/willItRun.ts`  |
+| The steps to install Marah OS      | The marah-os README                                                           | `src/content/marahOs.ts`    |
+
+## Licence
+
+The site is free software under the [GNU GPL, version 3 or later](LICENSE).
+
+The Ubuntu and Ubuntu Mono fonts in `public/assets/fonts/` are under the
+[Ubuntu Font Licence](public/assets/fonts/UFL-Ubuntu.txt). The covers in `public/assets/demo/` are
+the games' official art. They are here to show the launcher.
