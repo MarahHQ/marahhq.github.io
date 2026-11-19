@@ -1,0 +1,178 @@
+@layer base {
+  /* The page fills the whole screen (viewport-fit=cover), so a phone's notch, status bar and
+     home bar can cover it. These insets keep the content clear of them; 0 elsewhere. */
+  :root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(96px + var(--safe-top));
+    background: var(--page);
+  }
+  body {
+    color: var(--foreground);
+    background:
+      radial-gradient(ellipse at 60% 12%, var(--haze) 0%, transparent 40%),
+      linear-gradient(160deg, var(--night), var(--background) 55%, var(--page));
+    font: 16px/1.6 var(--font-sans);
+  }
+  a {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+  img,
+  svg {
+    display: inline;
+  }
+  button {
+    cursor: pointer;
+  }
+  /* Thin scrollbars in the site's colours. Firefox and Chrome read scrollbar-color; Safari reads
+     the ::-webkit-scrollbar rules. Phones mostly draw their own, over the content. */
+  html {
+    scrollbar-color: var(--edge) transparent; /* Inherited: every scroll box has it. */
+  }
+  * {
+    scrollbar-width: thin;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: var(--edge) padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary);
+  }
+  :focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  /* All motion stops when the visitor asks for less. The screenshot switch still fades. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    /* Here, not in components: an !important rule of an earlier layer wins over a later one's. */
+    .screen-stack > img.screen-next.show {
+      transition: opacity 0.3s ease !important;
+    }
+  }
+}
+
+/* The light theme: the same variables, on paper (the `light` variant is in style.css). */
+@layer base {
+  :root {
+    @variant light {
+      color-scheme: light;
+      --background: #f2f6fa;
+      --night: #e8eff5;
+      --page: #f6f9fc;
+      --card: #ffffff;
+      --card-hi: #f3f8fc;
+      --muted: #e6eef5;
+      --border: #cddbe6;
+      --edge: #6a8aa4;
+      --primary: #0a65a0;
+      --blue: #2a5fbf;
+      --foreground: #0d1926;
+      --muted-foreground: #3d5266;
+      --haze: #d3e7f6;
+      --primary-hi: #136fae;
+      --sky: #2a5fbf;
+      --border-hi: #c3d7e7;
+      --accent: #dbecf8;
+    }
+  }
+  /* Commands, code and the Home demo stay dark in the light theme, as a terminal, an editor or
+     the launcher would be. */
+  :is(.cmd, .editor, .demo) {
+    @variant light {
+      --background: #0d1926;
+      --ink: #07111b;
+      --border: #1d3750;
+      --edge: #3a6d98;
+      --primary: #82d8f5;
+      --foreground: #eef6fb;
+      --muted-foreground: #b4c7d6;
+      --code: #d9eef8;
+      --muted: #0b1724;
+      --card: #102332;
+      color: var(--foreground);
+    }
+  }
+}
+
+/* One class for a thing used across the page. Each one works with every variant (hover:, max-sm:). */
+@utility wrap {
+  width: min(1280px, 100% - 64px);
+  margin-inline: auto;
+  /* A phone on its side: its notch covers a side, which only the inset clears. 0 elsewhere. */
+  padding-inline: var(--safe-left) var(--safe-right);
+  @variant max-lg {
+    width: min(1280px, 100% - 48px);
+  }
+  @variant max-sm {
+    width: calc(100% - 32px);
+  }
+}
+@utility eyebrow {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+@utility pill {
+  display: inline-block;
+  margin: 0;
+  padding: 6px 16px;
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  color: var(--foreground);
+  font-size: 13px;
+}
+@utility accent-text {
+  color: var(--primary);
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    background: linear-gradient(100deg, #a6e6fa, var(--primary) 45%, #6fa8ef);
+    -webkit-background-clip: text;
+    @variant light {
+      background-image: linear-gradient(100deg, var(--primary-hi), var(--primary) 45%, var(--sky));
+    }
+    background-clip: text;
+    color: transparent;
+  }
+}
+@utility hint {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 14px;
+}

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Dark or light. The browser bar's colour: the script below and the app write data-dark or
+         data-light into both. Without JavaScript, the media attributes and the CSS follow the
+         system's setting. -->
+    <meta
+      name="theme-color"
+      content="#0d1926"
+      media="(prefers-color-scheme: dark)"
+      data-dark="#0d1926"
+      data-light="#f2f6fa"
+    />
+    <meta
+      name="theme-color"
+      content="#f2f6fa"
+      media="(prefers-color-scheme: light)"
+      data-dark="#0d1926"
+      data-light="#f2f6fa"
+    />
+    <meta name="color-scheme" content="dark light" />
+    <script>
+      // The theme, before the first paint: the visitor's choice (the app keeps it), else the
+      // system's setting.
+      (function () {
+        var theme = null;
+        try {
+          theme = localStorage.getItem("marah-theme");
+        } catch (e) {}
+        if (theme !== "light" && theme !== "dark") {
+          theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        document.documentElement.dataset.theme = theme;
+        document.querySelectorAll('meta[name="theme-color"]').forEach(function (bar) {
+          bar.content = bar.dataset[theme];
+        });
+      })();
+      // The scroll reveal hides sections until the app shows them. If the app does not run, show everything.
+      document.documentElement.classList.add("reveal");
+      // The header is see-through at the top of the page, and a thin bar once the page scrolls.
+      document.documentElement.classList.add(scrollY < 8 ? "hdr-top" : "hdr-scrolled");
+      setTimeout(function () {
+        if (!window.marahReady) document.documentElement.classList.remove("reveal");
+      }, 4000);
+    </script>
+    <link rel="icon" href="/assets/logo-static.svg" type="image/svg+xml" />
+    <link rel="preload" href="/assets/fonts/ubuntu-bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/ubuntu-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="apple-touch-icon" href="/assets/icon-180.png" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

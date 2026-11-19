@@ -1,0 +1,180 @@
+/* The site's styles: Tailwind, with the Marah theme in the shadcn-vue format. Layout, spacing and
+   type are utilities in the templates. The files below hold the base styles and the components:
+   the parts with states, pseudo-elements or SVG that utilities would only spell out at length. */
+@import "tailwindcss" source(none);
+@import "tw-animate-css";
+@import "./styles/shadcn.css";
+@import "./styles/base.css";
+@import "./styles/components.css";
+@import "./styles/motion.css";
+
+@source "./";
+
+/* Ubuntu, for all text, and Ubuntu Mono, for commands and code. Latin only, with the box-drawing
+   characters for the folder tree (Ubuntu Font Licence: public/assets/fonts/UFL-Ubuntu.txt). */
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-medium.woff2") format("woff2");
+  font-weight: 500 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/assets/fonts/ubuntu-bold.woff2") format("woff2");
+  font-weight: 700 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu Mono";
+  src: url("/assets/fonts/ubuntu-mono-regular.woff2") format("woff2");
+  font-weight: 400 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu Mono";
+  src: url("/assets/fonts/ubuntu-mono-bold.woff2") format("woff2");
+  font-weight: 700 900;
+  font-display: swap;
+}
+
+/* The light theme. The head script in index.html sets data-theme on <html> before the first
+   paint: the visitor's choice, else the system's setting. Without JavaScript there is no
+   data-theme, and the system's setting chooses through the media query. Every light rule goes
+   through this variant, so both cases get each one. `dark` is its opposite, for the shadcn-vue
+   components' `dark:` classes. */
+@custom-variant light {
+  &:is([data-theme="light"], [data-theme="light"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: light) {
+    &:is(html:not([data-theme]), html:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+@custom-variant dark {
+  &:is([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media not (prefers-color-scheme: light) {
+    &:is(html:not([data-theme]), html:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
+@theme {
+  /* The page's three widths: a phone up to 600 px, a tablet up to 960 px, a small laptop up to
+     1200 px. The page is written for a desktop first, so it uses max-sm:, max-md: and max-lg:. */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 601px;
+  --breakpoint-md: 961px;
+  --breakpoint-lg: 1201px;
+
+  /* Only the theme's colours below: no default palette. */
+  --color-*: initial;
+
+  --font-sans: "Ubuntu", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif;
+  /* The headings and the logo's name: the same Ubuntu, as its own token. */
+  --font-display: var(--font-sans);
+  --font-mono: "Ubuntu Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  /* Sizes only: the line height stays the body's 1.6 unless a utility sets it. */
+  --text-caption: 13px;
+  --text-small: 14px;
+  --text-body: 15px;
+  --text-lead: 17px;
+  --text-section: clamp(34px, 4vw, 56px);
+
+  --radius-pill: 999px;
+  --radius-card: 18px;
+  --radius-box: 14px;
+
+  --shadow-glow: 0 0 25px rgba(130, 216, 245, 0.5);
+}
+
+/* The colours as utilities (bg-card, text-primary, border-border...), read from the variables
+   below at each element, so a part can set its own (the commands stay dark in the light theme). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  /* The site's own colours beyond shadcn's set. */
+  --color-night: var(--night);
+  --color-page: var(--page);
+  --color-card-hi: var(--card-hi);
+  --color-ink: var(--ink);
+  --color-edge: var(--edge);
+  --color-blue: var(--blue);
+  --color-code: var(--code);
+  --color-haze: var(--haze);
+  --color-primary-hi: var(--primary-hi);
+  --color-sky: var(--sky);
+  --color-border-hi: var(--border-hi);
+  --color-black: #000;
+  --color-white: #fff;
+}
+
+/* The logo's colours: ice blue and blue on deep navy. Each text colour is at least 4.5:1 on each
+   surface in both themes, and the borders 3:1 (WCAG AA; a test checks it). Hex values: the test
+   reads them. */
+@layer base {
+  :root {
+    color-scheme: dark;
+    --radius: 1.125rem;
+    --background: #0d1926;
+    --foreground: #eef6fb;
+    --card: #102332;
+    --card-foreground: var(--foreground);
+    --popover: var(--card);
+    --popover-foreground: var(--foreground);
+    /* Ice blue: links, accents and the filled buttons. */
+    --primary: #82d8f5;
+    --primary-foreground: var(--background);
+    --secondary: var(--border);
+    --secondary-foreground: var(--foreground);
+    --muted: #0b1724;
+    --muted-foreground: #b4c7d6;
+    /* A panel a key lights. */
+    --accent: #15324b;
+    --accent-foreground: var(--foreground);
+    --destructive: #f2867a;
+    --border: #1d3750;
+    --input: var(--edge);
+    --ring: var(--primary);
+    --night: #0a1520;
+    --page: #0f1f30;
+    --card-hi: #13293d;
+    --ink: #07111b;
+    --edge: #3a6d98;
+    --blue: #4c8bdc;
+    --code: #d9eef8;
+    /* The blue haze behind the page and some sections, and the gradients' lighter and bluer ends. */
+    --haze: #173a5a;
+    --primary-hi: #9ae2f8;
+    --sky: #6bb6ec;
+    /* A line under the pointer. */
+    --border-hi: #26486a;
+  }
+}
