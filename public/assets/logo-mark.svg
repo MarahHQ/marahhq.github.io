@@ -47,7 +47,7 @@
   <g id="g9">
     <!-- Geometry is shared between the sharp outline and blurred glow. -->
     <path id="pad" d="M256 99 H297 C369 99 410 131 433 194 C449 237 462 299 450 342 C441 372 416 390 392 382 C367 374 351 345 329 327 H256 H183 C161 345 145 374 120 382 C96 390 71 372 62 342 C50 299 63 237 79 194 C102 131 143 99 215 99 H256" fill="none" stroke="url(#neon)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" filter="url(#outerGlow)" opacity=".75" class="pad-pulse"/>
-    <path d="M256 99 H297 C369 99 410 131 433 194 C449 237 462 299 450 342 C441 372 416 390 392 382 C367 374 351 345 329 327 H256 H183 C161 345 145 374 120 382 C96 390 71 372 62 342 C50 299 63 237 79 194 C102 131 143 99 215 99 H256" fill="none" stroke="url(#neon)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" id="path4"/>
+    <path d="M256 99 H297 C369 99 410 131 433 194 C449 237 462 299 450 342 C441 372 416 390 392 382 C367 374 351 345 329 327 H256 H183 C161 345 145 374 120 382 C96 390 71 372 62 342 C50 299 63 237 79 194 C102 131 143 99 215 99 H256" fill="url(#bg)" stroke="url(#neon)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" id="path4"/>
     <g id="winking-face" stroke-linecap="round" stroke-linejoin="round">
 <!-- Shared silhouettes ensure that blur and crisp paths match exactly -->
 <g fill="none" stroke="url(#white)" filter="url(#innerGlow)" opacity=".65">
