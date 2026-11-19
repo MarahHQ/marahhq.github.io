@@ -522,6 +522,19 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
     }
   });
 
+  it("sends Download to the Get it section and opens GitHub in a new tab", async () => {
+    await browser.load(site.url, { width: 390, ua: ANDROID });
+    await browser.click(".menu");
+    await sleep(500);
+    const found = await browser.run(`const all = (sel) => [...document.querySelectorAll(sel)];
+      return { download: all('.site-header .wrap > div > a[data-slot=button], #menu a[aria-label="Download Marah Launcher"]').map((a) => a.getAttribute("href")),
+        github: all('a[href^="https://github.com/MarahHQ"]').filter((a) => /GitHub/.test(a.textContent + a.getAttribute("aria-label")))
+          .map((a) => [a.target, a.rel]) }`);
+    assert.deepEqual(found.download, ["#get", "#get"], "the header's and the menu's Download");
+    assert.equal(found.github.length, 3, "the header's, the menu's and the hero's GitHub");
+    assert.ok(found.github.every(([target, rel]) => target === "_blank" && rel === "noopener"));
+  });
+
   it("copies the example game file", async () => {
     await browser.load(site.url);
     const text = await browser.run(`document.querySelector('[data-copy=add-game-json]').click();
