@@ -9,7 +9,7 @@ export const downloads = [
 ].map((d) => ({ ...d, href: `${links.launcherDownload}${d.file}` }));
 
 // The download a visitor's system gets on the Get it card, by its user agent. Phones and unknown
-// systems keep "Choose your system".
+// systems get none: the card's list of every system is all they see.
 export function downloadFor(userAgent: string): { label: string; file: string } | null {
   if (/Android|iPhone|iPad/.test(userAgent)) return null;
   if (/Windows/.test(userAgent)) return { label: "Windows", file: "marah-launcher-windows-x86_64-setup.exe" };

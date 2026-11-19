@@ -13,7 +13,6 @@ import ThemesSection from "@/components/sections/ThemesSection.vue";
 import AddGameSection from "@/components/sections/AddGameSection.vue";
 import MarahOsSection from "@/components/sections/MarahOsSection.vue";
 import WhichOneSection from "@/components/sections/WhichOneSection.vue";
-import DownloadSection from "@/components/sections/DownloadSection.vue";
 import FaqSection from "@/components/sections/FaqSection.vue";
 import { site } from "@/content/site";
 
@@ -49,7 +48,6 @@ useHead({
     <AddGameSection />
     <MarahOsSection />
     <WhichOneSection />
-    <DownloadSection />
     <FaqSection />
   </SiteLayout>
 </template>

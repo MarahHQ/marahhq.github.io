@@ -89,7 +89,7 @@ describe("the build", () => {
       [...page.matchAll(/<[a-z]+\b[^>]*>/g)].map((m) => m[0]).filter((tag) => tag.includes(attribute));
     const hidden = (tag) => /\shidden(=""|\s|>)/.test(tag);
     assert.deepEqual(tags("data-pc-panel=").map(hidden), [false, false, false]);
-    assert.deepEqual(tags('role="tabpanel"').map(hidden), [false, false]);
+    assert.deepEqual(tags('role="tabpanel"').map(hidden), [false, false, false]);
     assert.deepEqual(tags('role="tablist"').map(hidden), [true]);
     assert.deepEqual(
       tags("data-qa").map((tag) => tag.includes('data-state="open"')),
@@ -179,19 +179,22 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
       browser.run(
         `return [...document.querySelectorAll('[role=tab]')].map((t) => !document.getElementById(t.getAttribute('aria-controls')).hidden)`,
       );
-    assert.deepEqual(await shown(), [true, false], "Download first on a phone");
+    assert.deepEqual(await shown(), [true, false, false], "Download first on a phone");
     await browser.click("[role=tab]:nth-child(2)");
     await sleep(100);
-    assert.deepEqual(await shown(), [false, true]);
+    assert.deepEqual(await shown(), [false, true, false]);
+    await browser.click("[role=tab]:nth-child(3)");
+    await sleep(100);
+    assert.deepEqual(await shown(), [false, false, true]);
     await browser.click("[role=tab]:nth-child(1)");
     await sleep(100);
-    assert.deepEqual(await shown(), [true, false]);
+    assert.deepEqual(await shown(), [true, false, false]);
     // The arrow keys move along the tabs, and the panel follows.
     await browser.run(
       `document.querySelector('[role=tab]').focus(); document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }))`,
     );
     await sleep(100);
-    assert.deepEqual(await shown(), [false, true]);
+    assert.deepEqual(await shown(), [false, true, false]);
     assert.equal(await browser.run(`return document.activeElement.textContent.trim()`), "Linux terminal");
   });
 
@@ -206,34 +209,53 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
       "https://github.com/MarahHQ/marah-launcher/releases/latest/download/Marah-Launcher-x86_64.AppImage",
     ]);
     await browser.load(site.url, { width: 390, ua: ANDROID });
-    assert.deepEqual((await state()).slice(0, 2), ["Download", "Choose your system"], "a phone keeps the choice");
+    assert.deepEqual(
+      await browser.run(
+        `return [document.querySelector('[role=tab][aria-selected=true]').textContent.trim(), !!document.querySelector('[data-for-you]')]`,
+      ),
+      ["Download", false],
+      "a phone gets the list of every system, not a button of its own",
+    );
   });
 
-  it("opens the package panel in place, one distro at a time", async () => {
+  it("shows the packages in their own tab, one distro at a time", async () => {
     await browser.load(site.url);
     const state = () =>
       browser.run(`const r = document.querySelector('#repos');
-      return { panel: r.classList.contains('open'), height: Math.round(r.getBoundingClientRect().height), hash: location.hash,
+      return { height: Math.round(r.getBoundingClientRect().height), hash: location.hash,
         open: [...r.querySelectorAll('[data-repo]')].map((i) => i.dataset.state === 'open') }`);
-    assert.equal((await state()).height, 0, "closed at first");
-    await browser.run(`document.querySelector('.repos-toggle').click()`);
+    assert.equal((await state()).height, 0, "hidden at first");
+    await browser.click("[role=tab]:nth-child(3)");
     await sleep(300);
     let now = await state();
-    assert.ok(now.panel && now.height > 200 && now.hash === "", JSON.stringify(now));
+    assert.ok(now.height > 200 && now.hash === "", JSON.stringify(now));
     assert.deepEqual(now.open, [true, false, false]);
     await browser.run(`document.querySelectorAll('.repo-head')[1].click()`);
     await sleep(100);
     assert.deepEqual((await state()).open, [false, true, false]);
-    assert.equal(
-      await browser.run(`return document.querySelector('.repos-toggle').getAttribute('aria-expanded')`),
-      "true",
-    );
+  });
+
+  it("lists every system's file under the visitor's own, and an old link to the downloads lands there", async () => {
+    await browser.load(site.url + "#download");
+    await sleep(300);
+    const files = await browser.run(`const list = document.querySelector('#download #launcher-files');
+      return { files: [...list.querySelectorAll('a')].map((a) => a.href.split('/').pop()),
+        landed: Math.round(document.querySelector('#download').getBoundingClientRect().top) }`);
+    assert.deepEqual(files.files, [
+      "marah-launcher-windows-x86_64-setup.exe",
+      "marah-launcher-macos-universal.dmg",
+      "Marah-Launcher-x86_64.AppImage",
+      "marah-launcher-linux-x86_64.tar.gz",
+    ]);
+    assert.ok(files.landed >= 0 && files.landed < 200, `the launcher's card is at the top: ${files.landed}`);
   });
 
   it("copies a command and shows a tick", async () => {
     await browser.load(site.url);
-    const copied = await browser.run(`document.querySelector('.repos-toggle').click();
-      const b = document.querySelector('[data-copy=cmd-dnf]'); b.click(); await new Promise((r) => setTimeout(r, 200));
+    await browser.click("[role=tab]:nth-child(3)");
+    await sleep(100);
+    const copied =
+      await browser.run(`const b = document.querySelector('[data-copy=cmd-dnf]'); b.click(); await new Promise((r) => setTimeout(r, 200));
       return [b.classList.contains('done'), await navigator.clipboard.readText()]`);
     assert.equal(copied[0], true);
     assert.match(copied[1], /^sudo curl .*marah\.repo\nsudo dnf install marah-launcher$/);
@@ -389,17 +411,22 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
   it("doesn't scroll sideways on a phone, with every panel open", async () => {
     await browser.load(site.url, { width: 390, ua: ANDROID });
     // One answer at a time, as a visitor opens them: each click reads the state the last one left.
-    const opened = await browser.run(`document.querySelector('.repos-toggle').click();
-      for (const b of document.querySelectorAll('.qa-head')) { b.click(); await new Promise((r) => requestAnimationFrame(r)); }
+    const opened =
+      await browser.run(`for (const b of document.querySelectorAll('.qa-head')) { b.click(); await new Promise((r) => requestAnimationFrame(r)); }
       await new Promise((r) => setTimeout(r, 300));
       return [...document.querySelectorAll('[data-qa]')].filter((q) => q.dataset.state === 'open').length`);
     assert.equal(opened, 7, "every answer is open");
-    const wide = await browser.run(`
-      const visible = (e) => getComputedStyle(e).visibility !== 'hidden';
-      return { scroll: document.scrollingElement.scrollWidth - innerWidth,
-        past: [...document.querySelectorAll('body *')].filter((e) => visible(e) && e.getBoundingClientRect().right > innerWidth + 1 && !e.closest('.gamepad, pre, .overflow-x-auto'))
-          .map((e) => e.tagName + '.' + (e.getAttribute('class') ?? '').split(' ')[0]).slice(0, 5) }`);
-    assert.deepEqual(wide, { scroll: 0, past: [] });
+    // Each of the launcher's tabs in turn: one panel shows at a time.
+    for (const n of [1, 2, 3]) {
+      await browser.click(`[role=tab]:nth-child(${n})`);
+      await sleep(100);
+      const wide = await browser.run(`
+        const visible = (e) => getComputedStyle(e).visibility !== 'hidden';
+        return { scroll: document.scrollingElement.scrollWidth - innerWidth,
+          past: [...document.querySelectorAll('body *')].filter((e) => visible(e) && e.getBoundingClientRect().right > innerWidth + 1 && !e.closest('.gamepad, pre, .overflow-x-auto'))
+            .map((e) => e.tagName + '.' + (e.getAttribute('class') ?? '').split(' ')[0]).slice(0, 5) }`);
+      assert.deepEqual(wide, { scroll: 0, past: [] }, `tab ${n}`);
+    }
   });
 
   it("slides each answer open and shut on its own", async () => {
@@ -885,7 +912,7 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
         }`);
       assert.deepEqual(page, {
         answers: Array(7).fill(true),
-        panels: [true, true],
+        panels: [true, true, true],
         pcs: [true, true, true],
         repos: true,
         distros: [true, true, true],
@@ -962,7 +989,7 @@ describe("in a browser", { skip: chrome ? false : "no Chrome on this machine" },
         await browser.run(`return { lines: [...document.querySelectorAll('[data-release="launcher"]')].map((e) => e.textContent.trim()),
         sizes: Object.fromEntries([...document.querySelectorAll("[data-size]")].map((e) => [e.dataset.size, e.textContent.trim()])),
         mine: document.querySelector("[data-for-you]").textContent.trim() }`);
-      assert.deepEqual(shown.lines, ["v8.8.8 · 3 Feb 2026", "v8.8.8 · 3 Feb 2026"]);
+      assert.deepEqual(shown.lines, ["v8.8.8 · 3 Feb 2026"]);
       assert.equal(shown.sizes["Marah-Launcher-x86_64.AppImage"], "123 MB");
       assert.equal(shown.sizes["marah-launcher-windows-x86_64-setup.exe"], "2.5 GB");
       assert.equal(
